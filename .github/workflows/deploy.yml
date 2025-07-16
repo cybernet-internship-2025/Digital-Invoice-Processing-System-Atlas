@@ -1,10 +1,17 @@
 name: Deploy Microservices to PROD
 
-# deploy for main
 on:
   workflow_dispatch:
 
 jobs:
+  prepare-deployment:
+    runs-on: ubuntu-latest
+    outputs:
+      vps_host: ${{ secrets.VPS_HOST }}
+    steps:
+      - name: Set up deployment variables
+        run: echo "Preparing deployment variables..."
+
   build-images:
     runs-on: ubuntu-latest
     strategy:
@@ -36,14 +43,13 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
 
-
   deploy-to-vps:
-    needs: [build-images]
+    needs: [prepare-deployment, build-images]
     runs-on: ubuntu-latest
 
     environment:
       name: production
-      url: 'http://${{ secrets.VPS_HOST }}'
+      url: 'http://${{ needs.prepare-deployment.outputs.vps_host }}'
 
     steps:
       - name: Deploy to VPS via SSH
@@ -52,7 +58,6 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          
           script: |
             REPO_DIR="Digital-Invoice-Processing-System-Atlas"
             if [ ! -d "$REPO_DIR" ]; then
@@ -64,7 +69,6 @@ jobs:
             fi
 
             echo "--- Creating .env file on the server ---"
-            
             cat <<EOF > .env
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
@@ -79,12 +83,7 @@ jobs:
             USER_DB_USER=${{ secrets.USER_DB_USER }}
             USER_DB_PASS=${{ secrets.USER_DB_PASS }}
             EOF
-            
             echo "--- .env file created successfully ---"
-
-            echo "--- Pulling latest images from Docker Hub ---"
+            
             docker-compose pull
-
-            # Docker Compose yalnız dəyişmiş servisləri yenidən başladacaq.
-            echo "--- Starting all services with Docker Compose ---"
             docker-compose up -d --remove-orphans
