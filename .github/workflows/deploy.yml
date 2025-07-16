@@ -19,12 +19,16 @@ jobs:
         include:
           - folder: 'invoice'
             image: 'invoice-service'
+            context: '.'
           - folder: 'notification'
             image: 'notification-service'
+            context: '.'
           - folder: 'user-management'
             image: 'user-service'
+            context: '.'
           - folder: 'nginx'
             image: 'api-gateway'
+            context: './nginx'
 
     steps:
       - name: Checkout code
@@ -43,7 +47,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           #context: ./${{ matrix.folder }}
-          context: .
+#          context: .
+          context: ${{ matrix.context }}
           file: ./${{ matrix.folder }}/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
