@@ -1,0 +1,90 @@
+name: Deploy Microservices to PROD
+
+# deploy for main
+on:
+  workflow_dispatch:
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - folder: 'invoice'
+            image: 'invoice-service'
+          - folder: 'notification'
+            image: 'notification-service'
+          - folder: 'user-management'
+            image: 'user-service'
+          - folder: 'nginx'
+            image: 'api-gateway'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image for ${{ matrix.image }}
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.folder }}
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
+
+
+  deploy-to-vps:
+    needs: [build-images]
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      url: http://${{ secrets.VPS_HOST }}
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          
+          script: |
+            REPO_DIR="Digital-Invoice-Processing-System-Atlas"
+            if [ ! -d "$REPO_DIR" ]; then
+              git clone https://github.com/cybernet-internship-2025/Digital-Invoice-Processing-System-Atlas.git
+              cd $REPO_DIR
+            else
+              cd $REPO_DIR
+              git pull
+            fi
+
+            echo "--- Creating .env file on the server ---"
+            
+            cat <<EOF > .env
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            INVOICE_DB_NAME=${{ secrets.INVOICE_DB_NAME }}
+            INVOICE_DB_USER=${{ secrets.INVOICE_DB_USER }}
+            INVOICE_DB_PASS=${{ secrets.INVOICE_DB_PASS }}
+            NOTIFICATION_DB_NAME=${{ secrets.NOTIFICATION_DB_NAME }}
+            NOTIFICATION_DB_USER=${{ secrets.NOTIFICATION_DB_USER }}
+            NOTIFICATION_DB_PASS=${{ secrets.NOTIFICATION_DB_PASS }}
+            USER_DB_NAME=${{ secrets.USER_DB_NAME }}
+            USER_DB_USER=${{ secrets.USER_DB_USER }}
+            USER_DB_PASS=${{ secrets.USER_DB_PASS }}
+            EOF
+            
+            echo "--- .env file created successfully ---"
+
+            echo "--- Pulling latest images from Docker Hub ---"
+            docker-compose pull
+
+            # Docker Compose yalnız dəyişmiş servisləri yenidən başladacaq.
+            echo "--- Starting all services with Docker Compose ---"
+            docker-compose up -d --remove-orphans

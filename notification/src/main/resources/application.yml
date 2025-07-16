@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-db:5432/${NOTIFICATION_DB_NAME}
+    username: ${NOTIFICATION_DB_USER}
+    password: ${NOTIFICATION_DB_PASS}
