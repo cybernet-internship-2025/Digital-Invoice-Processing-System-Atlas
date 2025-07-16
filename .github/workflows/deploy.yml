@@ -43,7 +43,7 @@ jobs:
 
     environment:
       name: production
-      url: http://${{ secrets.VPS_HOST }}
+      url: 'http://${{ secrets.VPS_HOST }}'
 
     steps:
       - name: Deploy to VPS via SSH
