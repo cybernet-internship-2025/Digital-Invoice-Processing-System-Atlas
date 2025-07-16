@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /api/invoice
+
 spring:
   datasource:
     url: jdbc:postgresql://postgres-db:5432/${INVOICE_DB_NAME}
@@ -8,7 +12,3 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    config-url: /api/invoice/v3/api-docs/swagger-config
-  api-docs:
-    enabled: true
-    path: /v3/api-docs
