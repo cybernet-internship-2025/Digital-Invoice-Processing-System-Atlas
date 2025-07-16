@@ -1,3 +1,6 @@
+server:
+  forward-headers-strategy: framework
+
 spring:
   datasource:
     url: jdbc:postgresql://postgres-db:5432/${INVOICE_DB_NAME}
@@ -8,3 +11,4 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+    url: /api/invoice/v3/api-docs
