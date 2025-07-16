@@ -3,3 +3,8 @@ spring:
     url: jdbc:postgresql://postgres-db:5432/${INVOICE_DB_NAME}
     username: ${INVOICE_DB_USER}
     password: ${INVOICE_DB_PASS}
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
