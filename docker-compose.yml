@@ -15,6 +15,8 @@ services:
   postgres-db:
     image: postgres:16-alpine
     container_name: postgres-db-container
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -42,7 +44,10 @@ services:
     restart: always
 
   invoice-service:
-    build: ./invoice
+#    build: ./invoice
+    build:
+      context: .
+      dockerfile: invoice/Dockerfile
     container_name: invoice-service-container
     environment:
       POSTGRES_USER: ${INVOICE_DB_USER}
@@ -53,7 +58,10 @@ services:
     restart: always
 
   notification-service:
-    build: ./notification
+#    build: ./notification
+    build:
+      context: .
+      dockerfile: notification/Dockerfile
     container_name: notification-service-container
     environment:
       POSTGRES_USER: ${NOTIFICATION_DB_USER}
@@ -64,7 +72,10 @@ services:
     restart: always
 
   user-service:
-    build: ./user-management
+#    build: ./user-management
+    build:
+      context: .
+      dockerfile: user-management/Dockerfile
     container_name: user-service-container
     environment:
       POSTGRES_USER: ${USER_DB_USER}
