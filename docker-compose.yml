@@ -16,7 +16,8 @@ services:
     image: postgres:16-alpine
     container_name: postgres-db-container
     ports:
-      - "5432:5432"
+      - "5432:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
+                    # və application.yml - da nəzərə alın
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
