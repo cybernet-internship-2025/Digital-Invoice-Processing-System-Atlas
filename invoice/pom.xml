@@ -8,10 +8,18 @@
         <groupId>az.cybernet</groupId>
         <artifactId>DigitalInvoiceProcessingSystem</artifactId>
         <version>0.0.1</version>
+
     </parent>
 
     <artifactId>invoice</artifactId>
     <version>0.0.1</version>
 
-    
+    <dependencies>
+    <dependency>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-core</artifactId>
+        <version>4.33.0</version>
+    </dependency>
+    </dependencies>
+
 </project>
