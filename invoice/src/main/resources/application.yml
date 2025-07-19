@@ -9,7 +9,7 @@ spring:
     password: ${INVOICE_DB_PASS}
 
   liquibase:
-    change-log: classpath:liquibase/changelog-master.xml
+    change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
 springdoc:
