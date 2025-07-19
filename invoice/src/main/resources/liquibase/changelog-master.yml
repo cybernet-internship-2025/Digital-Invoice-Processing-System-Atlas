@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: v-1/invoice/create-schema.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: v-1/invoice/create-tables.yml
+      relativeToChangelogFile: true
