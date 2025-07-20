@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   api-gateway:
+    platform: linux/arm64
     build: ./nginx
     container_name: api-gateway-container
     ports:
@@ -13,7 +14,11 @@ services:
       - user-service
 
   postgres-db:
-    image: postgres:16-alpine
+#    image: postgres:16-alpine
+    platform: linux/arm64
+    build:
+      context: ./postgres-init
+      dockerfile: Dockerfile
     container_name: postgres-db-container
     ports:
       - "5432:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
@@ -43,11 +48,12 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       # db container initialization
-      - ./postgres-init:/docker-entrypoint-initdb.d
+#      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
 
   invoice-service:
 #    build: ./invoice
+    platform: linux/arm64
     build:
       context: .
       dockerfile: invoice/Dockerfile
@@ -64,6 +70,7 @@ services:
 
   notification-service:
 #    build: ./notification
+    platform: linux/arm64
     build:
       context: .
       dockerfile: notification/Dockerfile
@@ -80,6 +87,7 @@ services:
 
   user-service:
 #    build: ./user-management
+    platform: linux/arm64
     build:
       context: .
       dockerfile: user-management/Dockerfile
