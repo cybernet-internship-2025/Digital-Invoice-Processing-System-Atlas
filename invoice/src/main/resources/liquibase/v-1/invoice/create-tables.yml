@@ -1,6 +1,6 @@
 databaseChangelog:
   - changeSet:
-      id: 1
+      id: 202507210001
       author: balash300
       preConditions:
         onFail: MARK_RAN
@@ -26,7 +26,7 @@ databaseChangelog:
                   type: VARCHAR(255)
 
   - changeSet:
-      id: 2
+      id: 202507210002
       author: balash300
       preConditions:
         onFail: MARK_RAN
@@ -52,7 +52,7 @@ databaseChangelog:
                   type: VARCHAR(255)
 
   - changeSet:
-      id: 3
+      id: 202507210003
       author: balash300
       preConditions:
         onFail: MARK_RAN
@@ -87,7 +87,7 @@ databaseChangelog:
             constraintName: fk_product_measurement
 
   - changeSet:
-      id: 4
+      id: 202507210004
       author: balash300
       preConditions:
         onFail: MARK_RAN
@@ -146,7 +146,7 @@ databaseChangelog:
             constraintName: fk_invoice_customer
 
   - changeSet:
-      id: 5
+      id: 202507210005
       author: balash300
       preConditions:
         onFail: MARK_RAN
@@ -188,7 +188,7 @@ databaseChangelog:
             constraintName: fk_invoice_product_product
 
   - changeSet:
-      id: 6
+      id: 202507210006
       author: balash300
       preConditions:
         onFail: MARK_RAN
