@@ -1,4 +1,4 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.invoice.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class User {
-    int id;
+public class UserRequest {
+    Integer id;
     String name;
     String taxId;
 }

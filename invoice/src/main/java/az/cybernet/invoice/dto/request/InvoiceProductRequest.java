@@ -1,4 +1,4 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.invoice.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,9 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class InvoiceProduct {
-    int invoiceId;
-    int productId;
-    int quantity;
+public class InvoiceProductRequest {
+    Integer invoiceId;
+    Integer productId;
+    Integer quantity;
     boolean isActive;
 }

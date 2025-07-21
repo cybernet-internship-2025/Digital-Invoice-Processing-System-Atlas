@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class InvoiceProduct {
-    int invoiceId;
-    int productId;
-    int quantity;
+    Integer invoiceId;
+    Integer productId;
+    Integer quantity;
     boolean isActive;
 }

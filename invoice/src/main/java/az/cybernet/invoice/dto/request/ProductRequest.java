@@ -1,4 +1,4 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.invoice.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,9 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class Product {
-    int id;
+public class ProductRequest {
+    Integer id;
     String name;
-    double price;
-    int measurementId;
+    Double price;
+    Integer measurementId;
 }

@@ -9,8 +9,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class Product {
-    int id;
+    Integer id;
     String name;
-    double price;
-    int measurementId;
+    Double price;
+    Integer measurementId;
 }

@@ -1,5 +1,6 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.invoice.dto.response;
 
+import az.cybernet.invoice.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,14 +11,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class Invoice {
-    int id;
+public class InvoiceResponse {
+    Integer id;
     String series;
-    int invoiceNumber;
-    int senderId;
-    int customerId;
-    String status;
-    int total;
+    Integer invoiceNumber;
+    Integer senderId;
+    Integer customerId;
+    Status status;
+    Double total;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     String comment;

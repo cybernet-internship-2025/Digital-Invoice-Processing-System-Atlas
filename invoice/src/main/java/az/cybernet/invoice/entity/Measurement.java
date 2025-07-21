@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class Measurement {
-    int id;
+    Integer id;
     String name;
     String displayName;
 }

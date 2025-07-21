@@ -1,6 +1,5 @@
 package az.cybernet.invoice.entity;
 
-import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class User {
-    int id;
+    Integer id;
     String name;
     String taxId;
 }
