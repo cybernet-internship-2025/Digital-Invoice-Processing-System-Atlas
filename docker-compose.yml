@@ -18,24 +18,24 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
 
       # invoice
-      INVOICE_DB_NAME: ${INVOICE_DB_NAME}
-      INVOICE_DB_USER: ${INVOICE_DB_USER}
-      INVOICE_DB_PASS: ${INVOICE_DB_PASS}
+      INVOICE_DB_NAME: ${INVOICE_DB_NAME:-invoice}
+      INVOICE_DB_USER: ${INVOICE_DB_USER:-invoice}
+      INVOICE_DB_PASS: ${INVOICE_DB_PASS:-invoice_pass}
 
       # notification
-      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME}
-      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER}
-      NOTIFICATION_DB_PASS: ${NOTIFICATION_DB_PASS}
+      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME:-notification}
+      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER:-notification}
+      NOTIFICATION_DB_PASS: ${NOTIFICATION_DB_PASS:-notification_pass}
 
       # user
-      USER_DB_NAME: ${USER_DB_NAME}
-      USER_DB_USER: ${USER_DB_USER}
-      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME:-user}
+      USER_DB_USER: ${USER_DB_USER:-user}
+      USER_DB_PASS: ${USER_DB_PASS:-user_pass}
 
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -50,9 +50,9 @@ services:
       dockerfile: invoice/Dockerfile
     container_name: invoice-service-container
     environment:
-      POSTGRES_USER: ${INVOICE_DB_USER}
-      POSTGRES_PASSWORD: ${INVOICE_DB_PASS}
-      POSTGRES_DB: ${INVOICE_DB_NAME}
+      POSTGRES_USER: ${INVOICE_DB_USER:-invoice}
+      POSTGRES_PASSWORD: ${INVOICE_DB_PASS:-invoice_pass}
+      POSTGRES_DB: ${INVOICE_DB_NAME:-invoice}
     depends_on:
       - postgres-db
     restart: always
@@ -64,9 +64,9 @@ services:
       dockerfile: notification/Dockerfile
     container_name: notification-service-container
     environment:
-      POSTGRES_USER: ${NOTIFICATION_DB_USER}
-      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASS}
-      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
+      POSTGRES_USER: ${NOTIFICATION_DB_USER:-notification}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASS:-notification_pass}
+      POSTGRES_DB: ${NOTIFICATION_DB_NAME:-notification}
     depends_on:
       - postgres-db
     restart: always
@@ -78,9 +78,9 @@ services:
       dockerfile: user-management/Dockerfile
     container_name: user-service-container
     environment:
-      POSTGRES_USER: ${USER_DB_USER}
-      POSTGRES_PASSWORD: ${USER_DB_PASS}
-      POSTGRES_DB: ${USER_DB_NAME}
+      POSTGRES_USER: ${USER_DB_USER:-user}
+      POSTGRES_PASSWORD: ${USER_DB_PASS:-user_pass}
+      POSTGRES_DB: ${USER_DB_NAME:-user}
     depends_on:
       - postgres-db
     restart: always
