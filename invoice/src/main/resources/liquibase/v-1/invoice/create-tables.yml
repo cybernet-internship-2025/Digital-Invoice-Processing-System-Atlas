@@ -14,7 +14,7 @@ databaseChangelog:
             columns:
               - column:
                   name: id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -40,7 +40,7 @@ databaseChangelog:
             columns:
               - column:
                   name: id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -66,7 +66,7 @@ databaseChangelog:
             columns:
               - column:
                   name: id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -78,7 +78,7 @@ databaseChangelog:
                   type: DOUBLE
               - column:
                   name: measurement_id
-                  type: INTEGER
+                  type: UUID
         - addForeignKeyConstraint:
             baseTableName: product
             baseColumnNames: measurement_id
@@ -101,7 +101,7 @@ databaseChangelog:
             columns:
               - column:
                   name: id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -113,10 +113,10 @@ databaseChangelog:
                   type: INTEGER
               - column:
                   name: sender_id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: customer_id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: status
                   type: VARCHAR(255)
@@ -160,12 +160,12 @@ databaseChangelog:
             columns:
               - column:
                   name: invoice_id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     nullable: false
               - column:
                   name: product_id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     nullable: false
               - column:
@@ -202,13 +202,13 @@ databaseChangelog:
             columns:
               - column:
                   name: id
-                  type: INTEGER
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: invoice_id
-                  type: INTEGER
+                  type: UUID
               - column:
                   name: status
                   type: VARCHAR(255)
