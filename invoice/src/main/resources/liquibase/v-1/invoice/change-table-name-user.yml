@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202507210002
+      author: Jbbcch
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: user
+      changes:
+        - renameTable:
+            newTableName: users
+            oldTableName: user
