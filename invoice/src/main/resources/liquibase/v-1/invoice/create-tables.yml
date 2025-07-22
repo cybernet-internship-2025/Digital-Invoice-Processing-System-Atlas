@@ -6,11 +6,11 @@ databaseChangeLog:
         onFail: MARK_RAN
         not:
           - tableExists:
-              tableName: user
+              tableName: users
               schemaName: invoice_schema
       changes:
         - createTable:
-            tableName: user
+            tableName: users
             columns:
               - column:
                   name: id
