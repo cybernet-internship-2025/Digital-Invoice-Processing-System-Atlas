@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  postgres-db:
+#    image: postgres:16-alpine
+    platform: linux/arm64
+    build:
+      context: ./postgres-init
+      dockerfile: Dockerfile
+    container_name: postgres-db-container
+    ports:
+      - "5432:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
+                    # və application.yml - da nəzərə alın
+    environment:
+      TZ: Asia/Baku
+
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+      # invoice
+      INVOICE_DB_NAME: ${INVOICE_DB_NAME}
+      INVOICE_DB_USER: ${INVOICE_DB_USER}
+      INVOICE_DB_PASS: ${INVOICE_DB_PASS}
+
+      # notification
+      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME}
+      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER}
+      NOTIFICATION_DB_PASS: ${NOTIFICATION_DB_PASS}
+
+      # user
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # db container initialization
+#      - ./postgres-init:/docker-entrypoint-initdb.d
+    restart: always
+
+
+volumes:
+  postgres-data:
