@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -12,8 +13,8 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class InvoiceOperationResponse {
-    Integer id;
-    Integer invoiceId;
+    UUID id;
+    UUID invoiceId;
     Status status;
     Double total;
     LocalDateTime timestamp;
