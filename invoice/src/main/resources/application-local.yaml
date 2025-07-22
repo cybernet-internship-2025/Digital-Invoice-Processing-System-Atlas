@@ -1,0 +1,23 @@
+server:
+  servlet:
+    context-path: /api/invoice
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${INVOICE_DB_NAME:invoice}
+    username: ${INVOICE_DB_USER:invoice}
+    password: ${INVOICE_DB_PASS:invoice_pass}
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.xml
+    enabled: true
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
+    liquibase: DEBUG
