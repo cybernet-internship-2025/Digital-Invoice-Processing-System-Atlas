@@ -1,4 +1,4 @@
-FROM maven:3.9.6-eclipse-temurin-21 AS BUILDER
+FROM maven:3.9-amazoncorretto-21-al2023 AS BUILDER
 WORKDIR /app
 COPY . .
 #COPY src ./src

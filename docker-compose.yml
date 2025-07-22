@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   api-gateway:
+    platform: linux/arm64
     build: ./nginx
     container_name: api-gateway-container
     ports:
@@ -13,74 +14,90 @@ services:
       - user-service
 
   postgres-db:
-    image: postgres:16-alpine
+#    image: postgres:16-alpine
+    platform: linux/arm64
+    build:
+      context: ./postgres-init
+      dockerfile: Dockerfile
     container_name: postgres-db-container
     ports:
-      - "5432:5432"
+      - "5432:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
+                    # və application.yml - da nəzərə alın
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_pass}
-      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      TZ: Asia/Baku
+
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
       # invoice
-      INVOICE_DB_NAME: ${INVOICE_DB_NAME:-invoice}
-      INVOICE_DB_USER: ${INVOICE_DB_USER:-invoice}
-      INVOICE_DB_PASS: ${INVOICE_DB_PASS:-invoice_pass}
+      INVOICE_DB_NAME: ${INVOICE_DB_NAME}
+      INVOICE_DB_USER: ${INVOICE_DB_USER}
+      INVOICE_DB_PASS: ${INVOICE_DB_PASS}
 
       # notification
-      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME:-notification}
-      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER:-notification}
-      NOTIFICATION_DB_PASS: ${NOTIFICATION_DB_PASS:-notification_pass}
+      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME}
+      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER}
+      NOTIFICATION_DB_PASS: ${NOTIFICATION_DB_PASS}
 
       # user
-      USER_DB_NAME: ${USER_DB_NAME:-user}
-      USER_DB_USER: ${USER_DB_USER:-user}
-      USER_DB_PASS: ${USER_DB_PASS:-user_pass}
+      USER_DB_NAME: ${USER_DB_NAME}
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
 
     volumes:
       - postgres-data:/var/lib/postgresql/data
       # db container initialization
-      - ./postgres-init:/docker-entrypoint-initdb.d
+#      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
 
   invoice-service:
 #    build: ./invoice
+    platform: linux/arm64
     build:
       context: .
       dockerfile: invoice/Dockerfile
     container_name: invoice-service-container
     environment:
-      POSTGRES_USER: ${INVOICE_DB_USER:-invoice}
-      POSTGRES_PASSWORD: ${INVOICE_DB_PASS:-invoice_pass}
-      POSTGRES_DB: ${INVOICE_DB_NAME:-invoice}
+      TZ: Asia/Baku
+
+      INVOICE_DB_USER: ${INVOICE_DB_USER}
+      INVOICE_DB_PASS: ${INVOICE_DB_PASS}
+      INVOICE_DB_NAME: ${INVOICE_DB_NAME}
     depends_on:
       - postgres-db
     restart: always
 
   notification-service:
 #    build: ./notification
+    platform: linux/arm64
     build:
       context: .
       dockerfile: notification/Dockerfile
     container_name: notification-service-container
     environment:
-      POSTGRES_USER: ${NOTIFICATION_DB_USER:-notification}
-      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASS:-notification_pass}
-      POSTGRES_DB: ${NOTIFICATION_DB_NAME:-notification}
+      TZ: Asia/Baku
+
+      NOTIFICATION_DB_USER: ${NOTIFICATION_DB_USER}
+      NOTIFICATION_DB_PASS: ${NOTIFICATION_DB_PASS}
+      NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME}
     depends_on:
       - postgres-db
     restart: always
 
   user-service:
 #    build: ./user-management
+    platform: linux/arm64
     build:
       context: .
       dockerfile: user-management/Dockerfile
     container_name: user-service-container
     environment:
-      POSTGRES_USER: ${USER_DB_USER:-user}
-      POSTGRES_PASSWORD: ${USER_DB_PASS:-user_pass}
-      POSTGRES_DB: ${USER_DB_NAME:-user}
+      TZ: Asia/Baku
+
+      USER_DB_USER: ${USER_DB_USER}
+      USER_DB_PASS: ${USER_DB_PASS}
+      USER_DB_NAME: ${USER_DB_NAME}
     depends_on:
       - postgres-db
     restart: always

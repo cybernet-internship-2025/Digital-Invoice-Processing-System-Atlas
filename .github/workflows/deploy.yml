@@ -92,6 +92,8 @@ jobs:
             USER_DB_NAME=${{ secrets.USER_DB_NAME }}
             USER_DB_USER=${{ secrets.USER_DB_USER }}
             USER_DB_PASS=${{ secrets.USER_DB_PASS }}
+            TZ=Asia/Baku
+            LOGGING_LEVEL_ROOT=INFO
             EOF
             echo "--- .env file created successfully ---"
             
@@ -109,6 +111,8 @@ jobs:
                   - invoice-service
                   - notification-service
                   - user-service
+                environment:
+                  TZ: \${TZ}
 
               postgres-db:
                 image: postgres:16-alpine
@@ -119,6 +123,8 @@ jobs:
                   - postgres-data:/var/lib/postgresql/data
                   - ./postgres-init:/docker-entrypoint-initdb.d
                 restart: always
+                environment:
+                  TZ: \${TZ}
 
               invoice-service:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/invoice-service:latest
@@ -128,6 +134,8 @@ jobs:
                 depends_on:
                   - postgres-db
                 restart: always
+                environment:
+                  TZ: \${TZ}
 
               notification-service:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/notification-service:latest
@@ -137,6 +145,8 @@ jobs:
                 depends_on:
                   - postgres-db
                 restart: always
+                environment:
+                  TZ: \${TZ}
 
               user-service:
                 image: ${{ secrets.DOCKERHUB_USERNAME }}/user-service:latest
@@ -146,6 +156,8 @@ jobs:
                 depends_on:
                   - postgres-db
                 restart: always
+                environment:
+                  TZ: \${TZ}
 
             volumes:
               postgres-data:
