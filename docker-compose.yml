@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile
     container_name: postgres-db-container
     ports:
-      - "5432:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
+      - "5433:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
                     # və application.yml - da nəzərə alın
     environment:
       TZ: Asia/Baku
