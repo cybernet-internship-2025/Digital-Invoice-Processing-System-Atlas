@@ -1,11 +1,11 @@
 package az.cybernet.invoice.enums;
 
 public enum Status {
-    INIT,
-    REJECTED,
-    EXPIRED,
-    ERROR,
-    COMPLETED,
-    CLOSED,
-    DRAFT,
+    APPROVED, //the invoice was approved by the user
+    REJECTED, //the invoice was rejected by the user without a request for changes
+    DRAFT, //the invoice is not yet finished
+    CLOSED, //the invoice was fulfilled
+    CHANGES_REQUESTED, //user requested changes
+    DELETED, //invoice itself doesn't have is_active field so this may be used
+    PENDING, //the invoice is awaiting approval/rejection/rfc
 }
