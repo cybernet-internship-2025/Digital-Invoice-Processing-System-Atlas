@@ -5,8 +5,8 @@
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceMapper">
 
-    <insert id="insertInvoice" parameterType="az.cybernet.invoice.entity.Invoice" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO invoice_schema.invoice (id, series, invoice_number, sender_id, customer_id, status, total, created_at, updated_at, comment)
+    <insert id="insertInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
+        INSERT INTO invoice_schema.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
         VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
     </insert>
 

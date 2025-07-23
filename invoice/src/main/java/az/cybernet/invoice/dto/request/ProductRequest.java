@@ -14,5 +14,5 @@ public class ProductRequest {
     UUID id;
     String name;
     Double price;
-    Integer measurementId;
+    UUID measurementId;
 }

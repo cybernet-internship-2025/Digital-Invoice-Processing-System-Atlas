@@ -8,8 +8,6 @@ import az.cybernet.invoice.mapstruct.UserMapstruct;
 import az.cybernet.invoice.service.UserService;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -24,28 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse insertUser(UserRequest request) {
         User user = mapstruct.toEntity(request);
-
         mapper.insertUser(user);
-
         return mapstruct.toDto(user);
     }
-
-//    @Override
-//    public UserResponse insertUser(UserRequest request) {
-//        User user = new User();
-//        user.setId(request.getId());
-//        user.setName(request.getName());
-//        user.setTaxId(request.getTaxId());
-//        System.out.println("Mapped User entity: " + user);
-//
-//        mapper.insertUser(user);
-//
-//        UserResponse response = new UserResponse();
-//        response.setId(user.getId());
-//        response.setName(user.getName());
-//        response.setTaxId(user.getTaxId());
-//        System.out.println("Mapped UserResponse entity: " + response);
-//
-//        return response;
-//    }
 }

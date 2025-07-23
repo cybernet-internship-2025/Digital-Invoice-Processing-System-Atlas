@@ -9,8 +9,6 @@ import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -26,44 +24,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceResponse insertInvoice(InvoiceRequest request) {
         Invoice invoice = mapstruct.toEntity(request);
+        invoice.setCreatedAt(LocalDateTime.now());
+        invoice.setUpdatedAt(LocalDateTime.now());
 
         mapper.insertInvoice(invoice);
-
-        InvoiceResponse response = mapstruct.toDto(invoice);
-
-        return response;
+        return mapstruct.toDto(invoice);
     }
-
-//    @Override
-//    public InvoiceResponse insertInvoice(InvoiceRequest request) {
-//        Invoice invoice = Invoice.builder()
-//                .id(UUID.randomUUID())
-//                .series(request.getSeries())
-//                .invoiceNumber(request.getInvoiceNumber())
-//                .senderId(request.getSenderId())
-//                .customerId(request.getCustomerId())
-//                .status(request.getStatus())
-//                .total(request.getTotal())
-//                .createdAt(LocalDateTime.now())
-//                .updatedAt(LocalDateTime.now())
-//                .comment(request.getComment())
-//                .build();
-//
-//        mapper.insertInvoice(invoice);
-//
-//        InvoiceResponse response = InvoiceResponse.builder()
-//                .id(request.getId())
-//                .series(request.getSeries())
-//                .invoiceNumber(request.getInvoiceNumber())
-//                .senderId(request.getSenderId())
-//                .customerId(request.getCustomerId())
-//                .status(request.getStatus())
-//                .total(request.getTotal())
-//                .createdAt(LocalDateTime.now())
-//                .updatedAt(LocalDateTime.now())
-//                .comment(request.getComment())
-//                .build();
-//
-//        return response;
-//    }
 }

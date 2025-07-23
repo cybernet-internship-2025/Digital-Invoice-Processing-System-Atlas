@@ -5,8 +5,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -15,5 +14,4 @@ public class User {
     UUID id;
     String name;
     String taxId;
-
 }

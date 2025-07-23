@@ -20,7 +20,5 @@ public class InvoiceRequest {
     UUID customerId;
     Status status;
     Double total;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
     String comment;
 }
