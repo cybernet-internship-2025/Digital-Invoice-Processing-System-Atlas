@@ -14,3 +14,7 @@ databaseChangeLog:
   - include:
       file: v-1/invoice/change-table-name-user.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: v-1/invoice/create-invoice-number-sequence.yml
+      relativeToChangelogFile: true
