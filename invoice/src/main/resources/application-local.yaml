@@ -12,6 +12,10 @@ spring:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
+mybatis:
+  mapperLocations: classpath:mappers/*.xml
+  config-location: classpath:config/mybatis.xml
+
 springdoc:
   swagger-ui:
     enabled: true
