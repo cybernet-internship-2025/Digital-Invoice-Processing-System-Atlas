@@ -21,3 +21,11 @@ logging:
   level:
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     liquibase: DEBUG
+
+mybatis:
+  mapperLocations:
+    - classpath:/mappers/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
