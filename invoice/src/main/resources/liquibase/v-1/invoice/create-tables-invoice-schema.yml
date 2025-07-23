@@ -1,0 +1,247 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202507220001
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: users
+              schemaName: invoice_schema
+      changes:
+        - createTable:
+            tableName: users
+            schemaName: invoice_schema
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: tax_id
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: 202507220002
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: measurement
+              schemaName: invoice_schema
+      changes:
+        - createTable:
+            tableName: measurement
+            schemaName: invoice_schema
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: display_name
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: 202507220003
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: product
+              schemaName: invoice_schema
+      changes:
+        - createTable:
+            tableName: product
+            schemaName: invoice_schema
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: price
+                  type: DOUBLE
+              - column:
+                  name: measurement_id
+                  type: UUID
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice_schema
+            baseTableName: product
+            baseColumnNames: measurement_id
+            referencedTableSchemaName: invoice_schema
+            referencedTableName: measurement
+            referencedColumnNames: id
+            constraintName: fk_product_measurements
+
+  - changeSet:
+      id: 202507220004
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: invoice
+              schemaName: invoice_schema
+      changes:
+        - createTable:
+            tableName: invoice
+            schemaName: invoice_schema
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: series
+                  type: VARCHAR(255)
+              - column:
+                  name: invoice_number
+                  type: INTEGER
+              - column:
+                  name: sender_id
+                  type: UUID
+              - column:
+                  name: customer_id
+                  type: UUID
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: total
+                  type: INTEGER
+              - column:
+                  name: comment
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice_schema
+            baseTableName: invoice
+            baseColumnNames: sender_id
+            referencedTableSchemaName: invoice_schema
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_invoice_senders
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice_schema
+            baseTableName: invoice
+            baseColumnNames: customer_id
+            referencedTableSchemaName: invoice_schema
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_invoice_customers
+
+  - changeSet:
+      id: 202507220005
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: invoice_product
+              schemaName: invoice_schema
+      changes:
+        - createTable:
+            tableName: invoice_product
+            schemaName: invoice_schema
+            columns:
+              - column:
+                  name: invoice_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: DOUBLE
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice_schema
+            baseTableName: invoice_product
+            baseColumnNames: invoice_id
+            referencedTableSchemaName: invoice_schema
+            referencedTableName: invoice
+            referencedColumnNames: id
+            constraintName: fk_invoice_product_invoices
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice_schema
+            baseTableName: invoice_product
+            baseColumnNames: product_id
+            referencedTableSchemaName: invoice_schema
+            referencedTableName: product
+            referencedColumnNames: id
+            constraintName: fk_invoice_product_products
+
+  - changeSet:
+      id: 202507220006
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: invoice_operation
+              schemaName: invoice_schema
+      changes:
+        - createTable:
+            tableName: invoice_operation
+            schemaName: invoice_schema
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: invoice_id
+                  type: UUID
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: total
+                  type: INTEGER
+              - column:
+                  name: comment
+                  type: VARCHAR(255)
+              - column:
+                  name: timestamp
+                  type: DATETIME
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice_schema
+            baseTableName: invoice_operation
+            baseColumnNames: invoice_id
+            referencedTableSchemaName: invoice_schema
+            referencedTableName: invoice
+            referencedColumnNames: id
+            constraintName: fk_invoice_operation_invoices
