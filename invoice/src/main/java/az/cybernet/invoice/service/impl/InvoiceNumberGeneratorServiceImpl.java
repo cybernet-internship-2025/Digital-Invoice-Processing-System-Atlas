@@ -1,20 +1,23 @@
-package az.cybernet.invoice.util;
+package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.mapper.InvoiceMapper;
-import org.springframework.stereotype.Component;
+import az.cybernet.invoice.service.InvoiceNumberGeneratorService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 import static az.cybernet.invoice.constant.Constants.INVD;
 
-@Component
-public class InvoiceNumberGeneratorUtil {
+@Service
+public class InvoiceNumberGeneratorServiceImpl implements InvoiceNumberGeneratorService {
+
     private final InvoiceMapper invoiceMapper;
 
-    public InvoiceNumberGeneratorUtil(InvoiceMapper invoiceMapper) {
+    public InvoiceNumberGeneratorServiceImpl(InvoiceMapper invoiceMapper) {
         this.invoiceMapper = invoiceMapper;
     }
 
+    @Override
     public String generateInvoiceNumber() {
         int seq = invoiceMapper.getNextInvoiceNum();
         LocalDate now = LocalDate.now();
