@@ -1,6 +1,6 @@
 package az.cybernet.invoice.service.impl;
 
-import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -22,7 +22,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceResponse insertInvoice(InvoiceRequest request) {
+    public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
         Invoice invoice = mapstruct.toEntity(request);
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());

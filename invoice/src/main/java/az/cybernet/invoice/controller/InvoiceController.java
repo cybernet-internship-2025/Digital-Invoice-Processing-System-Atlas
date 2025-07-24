@@ -1,5 +1,6 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
@@ -20,7 +21,7 @@ public class InvoiceController {
     }
 
     @PostMapping
-    public ResponseEntity<InvoiceResponse> insertInvoice(@RequestBody InvoiceRequest request) {
-        return ResponseEntity.ok(service.insertInvoice(request));
+    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody CreateInvoiceRequest request) {
+        return ResponseEntity.ok(service.createInvoice(request));
     }
 }
