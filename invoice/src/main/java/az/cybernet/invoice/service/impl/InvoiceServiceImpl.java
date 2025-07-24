@@ -4,6 +4,7 @@ import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
 import az.cybernet.invoice.service.InvoiceService;
@@ -36,13 +37,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDetailResponse getInvoiceDetails(UUID id) {
-        Invoice invoice = mapper.findInvoiceDetailsById(id);
+    public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
+        InvoiceDetailed invoice;
+        invoice = mapper.getDetailedInvoice(invoiceId);
         if (invoice == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invoice not found by id (" + id.toString() + ")");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invoice not found by id (" + invoiceId.toString() + ")");
         }
-        InvoiceDetailResponse response = (InvoiceDetailResponse) mapstruct.toDto(invoice);
-        response.setProducts(mapper.getInvoiceProductListById(response.getId()));
-        return response;
+        return mapstruct.toDetailDto(invoice);
     }
 }
