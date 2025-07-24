@@ -10,13 +10,8 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-//@Slf4j
+@Slf4j
 public class UUIDTypeHandler implements TypeHandler<UUID> {
-
-    private static final Logger log = LoggerFactory.getLogger(UUIDTypeHandler.class);
 
     public void setParameter(PreparedStatement ps, int i, UUID parameter, JdbcType jdbcType) throws SQLException {
         if (parameter == null) {
