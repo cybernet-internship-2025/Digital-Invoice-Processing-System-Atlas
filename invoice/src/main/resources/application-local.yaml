@@ -4,9 +4,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${INVOICE_DB_NAME:invoice}
-    username: ${INVOICE_DB_USER:invoice}
-    password: ${INVOICE_DB_PASS:invoice_pass}
+    url: jdbc:postgresql://localhost:5432/invoice
+    username: postgres
+    password: 12345
 
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml
@@ -15,10 +15,6 @@ spring:
 mybatis:
   mapperLocations: classpath:mappers/*.xml
   config-location: classpath:config/mybatis.xml
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 100
-    default-statement-timeout: 30
 
 springdoc:
   swagger-ui:
