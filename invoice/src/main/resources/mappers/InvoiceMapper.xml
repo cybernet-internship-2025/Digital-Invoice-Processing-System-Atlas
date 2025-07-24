@@ -111,4 +111,51 @@
         SELECT nextval('invoice_schema.invoice_num_seq')
     </select>
 
+    <resultMap id="InvoiceDetailResultMap" type="az.cybernet.invoice.entity.InvoiceDetailed">
+        <id property="id" column="invoice_id"/>
+        <result property="series" column="series"/>
+        <result property="invoiceNumber" column="invoice_number"/>
+        <result property="senderId" column="sender_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="status" column="status"/>
+        <result property="total" column="total"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="comment" column="comment"/>
+
+        <collection property="products" ofType="az.cybernet.invoice.dto.response.ProductDetailResponse">
+            <result property="productName" column="product_name"/>
+            <result property="quantity" column="quantity"/>
+            <result property="price" column="price"/>
+            <result property="measurementName" column="measurement_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="getDetailedInvoice" resultMap="InvoiceDetailResultMap">
+        SELECT
+        i.id as invoice_id,
+        i.series,
+        i.invoice_number,
+        i.sender_id,
+        i.customer_id,
+        i.status,
+        i.total,
+        i.created_at,
+        i.updated_at,
+        i.comment,
+
+        ip.product_id,
+        ip.quantity,
+
+        p.name as product_name,
+        p.price,
+        m.name as measurement_name
+
+        FROM invoice_schema.invoice i
+        LEFT JOIN invoice_schema.invoice_product ip ON i.id = ip.invoice_id
+        LEFT JOIN invoice_schema.product p ON ip.product_id = p.id
+        LEFT JOIN invoice_schema.measurement m ON p.measurement_id = m.id
+        WHERE i.id = #{invoiceId}
+    </select>
+
 </mapper>
