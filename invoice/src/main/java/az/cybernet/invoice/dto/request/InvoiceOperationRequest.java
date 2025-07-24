@@ -17,6 +17,5 @@ public class InvoiceOperationRequest {
     UUID invoiceId;
     Status status;
     Double total;
-    LocalDateTime timestamp;
     String comment;
 }

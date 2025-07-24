@@ -12,6 +12,14 @@ spring:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
+mybatis:
+  mapperLocations: classpath:mappers/*.xml
+  config-location: classpath:config/mybatis.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+
 springdoc:
   swagger-ui:
     enabled: true
@@ -21,11 +29,3 @@ logging:
   level:
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     liquibase: DEBUG
-
-mybatis:
-  mapperLocations:
-    - classpath:/mappers/*Mapper.xml
-  configuration:
-    map-underscore-to-camel-case: true
-    default-fetch-size: 100
-    default-statement-timeout: 30
