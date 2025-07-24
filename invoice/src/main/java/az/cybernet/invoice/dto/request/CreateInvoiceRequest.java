@@ -20,7 +20,6 @@ public class CreateInvoiceRequest{
     UUID senderId;
     UUID customerId;
     Status status;
-    Double total;
     String comment;
     List<ProductQuantityRequest> productQuantityRequests;
 }
