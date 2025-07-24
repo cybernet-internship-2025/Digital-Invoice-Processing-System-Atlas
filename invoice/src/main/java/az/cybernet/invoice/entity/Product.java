@@ -15,4 +15,6 @@ public class Product {
     String name;
     Double price;
     UUID measurementId;
+
+    Measurement measurement;
 }
