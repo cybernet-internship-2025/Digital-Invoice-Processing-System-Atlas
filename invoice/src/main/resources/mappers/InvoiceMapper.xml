@@ -14,7 +14,4 @@
         SELECT nextval('invoice_schema.invoice_num_seq')
     </select>
 
-    <update id="changeInvoiceStatus">
-
-    </update>
 </mapper>

@@ -1,5 +1,7 @@
 package az.cybernet.invoice.exceptions.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -7,5 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExceptionDto {
+    @NotNull
+    @NotEmpty
     private String message;
 }
