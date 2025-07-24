@@ -1,14 +1,18 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
 import az.cybernet.invoice.service.InvoiceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -29,5 +33,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         mapper.insertInvoice(invoice);
         return mapstruct.toDto(invoice);
+    }
+
+    @Override
+    public InvoiceDetailResponse getInvoiceDetails(UUID id) {
+        Invoice invoice = mapper.findInvoiceDetailsById(id);
+        if (invoice == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invoice not found by id (" + id.toString() + ")");
+        }
+        InvoiceDetailResponse response = (InvoiceDetailResponse) mapstruct.toDto(invoice);
+        response.setProducts(mapper.getInvoiceProductListById(response.getId()));
+        return response;
     }
 }

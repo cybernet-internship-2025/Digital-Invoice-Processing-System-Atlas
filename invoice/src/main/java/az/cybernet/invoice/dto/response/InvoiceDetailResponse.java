@@ -8,21 +8,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class InvoiceDetailResponse {
-    UUID id;
-    String series;
-    Integer invoiceNumber;
-    Status status;
-    Double total;
-    String comment;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
-    UserResponse sender;
-    UserResponse customer;
+public class InvoiceDetailResponse extends InvoiceResponse {
     List<ProductDetailResponse> products;
 }
