@@ -1,6 +1,4 @@
 package az.cybernet.invoice.util.handler;
-
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
@@ -14,7 +12,6 @@ import java.util.UUID;
 
 @Slf4j
 public class UUIDTypeHandler implements TypeHandler<UUID> {
-
 
     public void setParameter(PreparedStatement ps, int i, UUID parameter, JdbcType jdbcType) throws SQLException {
         if (parameter == null) {

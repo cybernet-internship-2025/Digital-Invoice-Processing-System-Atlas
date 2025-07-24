@@ -4,5 +4,17 @@ databaseChangeLog:
       relativeToChangelogFile: true
 
   - include:
+      file: v-1/invoice/create-tables-invoice-schema.yml
+      relativeToChangelogFile: true
+
+  - include:
       file: v-1/invoice/create-tables.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: v-1/invoice/change-table-name-user.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: v-1/invoice/create-invoice-number-sequence.yml
       relativeToChangelogFile: true

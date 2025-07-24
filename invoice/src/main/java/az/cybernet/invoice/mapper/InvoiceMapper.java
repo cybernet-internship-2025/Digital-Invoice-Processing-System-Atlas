@@ -9,4 +9,7 @@ import java.util.List;
 @Mapper
 public interface InvoiceMapper {
     void changeInvoiceStatus(List<Invoice> invoices, Status status);
+
+    void insertInvoice(Invoice invoice);
+    int getNextInvoiceNum();
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.invoice.mapper.InvoiceMapper">
+
+    <insert id="insertInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
+        INSERT INTO invoice_schema.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
+        VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
+    </insert>
+    
+    <select id="getNextInvoiceNum" resultType="int">
+        SELECT nextval('invoice_schema.invoice_num_seq')
+    </select>
+
+    <update id="changeInvoiceStatus">
+
+    </update>
+</mapper>

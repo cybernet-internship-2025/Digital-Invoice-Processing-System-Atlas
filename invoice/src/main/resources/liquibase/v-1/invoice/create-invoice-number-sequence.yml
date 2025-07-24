@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250723-01
+      author: invoice
+      changes:
+        - createSequence:
+            sequenceName: invoice_num_seq
+            schemaName: invoice_schema
+            startValue: 1
+            incrementBy: 1
+            minValue: 1
+            maxValue: 9999
+            cycle: true
