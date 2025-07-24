@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -23,4 +24,8 @@ public class Invoice {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     String comment;
+
+    User sender;
+    User customer;
+    List<InvoiceProduct> invoiceProducts;
 }
