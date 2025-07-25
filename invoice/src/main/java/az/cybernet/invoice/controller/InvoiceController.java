@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/invoices")
+@RequestMapping("v1/invoices")
 @RequiredArgsConstructor
 public class InvoiceController {
 
