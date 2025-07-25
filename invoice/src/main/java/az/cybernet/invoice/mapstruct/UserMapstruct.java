@@ -16,10 +16,4 @@ public interface UserMapstruct {
 
     UserResponse toDto(User user);
 
-    List<Invoice> getByTaxId(User user);
-
-    List<Invoice> getSentInvoicesByTaxId(@Param ("taxId") String taxId);
-    List<Invoice> getReceivedInvoicesByTaxId(@Param("taxId") String taxId);
-    List<Invoice> getAllDraftsByTaxId(@Param("taxId") String taxId);
-    List<Invoice> getAllInvoicesByTaxId(@Param("taxId") String taxId);
 }
