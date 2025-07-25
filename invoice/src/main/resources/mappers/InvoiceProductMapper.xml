@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.invoice.mapper.InvoiceProductMapper">
+
+    <insert id="insertInvoiceProduct" parameterType="az.cybernet.invoice.entity.InvoiceProduct">
+        INSERT INTO invoice_schema.invoice_product ("invoice_id", "product_id", "quantity", "is_active")
+        VALUES (#{invoiceId}, #{productId}, #{quantity}, #{isActive})
+    </insert>
+
+</mapper>

@@ -16,11 +16,9 @@ public class InvoiceRequest {
     UUID id;
     String series;
     Integer invoiceNumber;
-    Integer senderId;
-    Integer customerId;
+    UUID senderId;
+    UUID customerId;
     Status status;
     Double total;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
     String comment;
 }
