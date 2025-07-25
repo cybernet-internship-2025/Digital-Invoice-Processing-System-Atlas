@@ -1,5 +1,6 @@
 package az.cybernet.invoice.entity;
 
+import az.cybernet.invoice.dto.response.ProductDetailResponse;
 import az.cybernet.invoice.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class Invoice {
+public class InvoiceDetailed {
     UUID id;
     String series;
     Integer invoiceNumber;
@@ -25,7 +26,5 @@ public class Invoice {
     LocalDateTime updatedAt;
     String comment;
 
-    User sender;
-    User customer;
-    List<InvoiceProduct> invoiceProducts;
+    List<ProductDetailResponse> products;
 }

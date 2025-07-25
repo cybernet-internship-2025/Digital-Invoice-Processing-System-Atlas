@@ -5,6 +5,103 @@
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceMapper">
 
+    <!-- ===================================================================== -->
+    <!-- START: NEW CODE FOR SCRUM-5 (VIEW INVOICE DETAILS)                      -->
+    <!-- ===================================================================== -->
+
+    <!-- This ResultMap is the key to mapping the complex SQL result to your Java objects -->
+    <resultMap id="InvoiceDetailResultMap" type="az.cybernet.invoice.entity.Invoice">
+        <!-- Main Invoice properties -->
+        <id property="id" column="invoice_id"/>
+        <result property="series" column="invoice_series"/>
+        <result property="invoiceNumber" column="invoice_number"/>
+        <result property="status" column="invoice_status"/>
+        <result property="total" column="invoice_total"/>
+        <result property="comment" column="invoice_comment"/>
+        <result property="createdAt" column="invoice_created_at"/>
+        <result property="updatedAt" column="invoice_updated_at"/>
+        <result property="senderId" column="sender_id"/>
+        <result property="customerId" column="customer_id"/>
+
+        <!-- Nested mapping for the 'sender' object (one-to-one relationship) -->
+        <association property="sender" javaType="az.cybernet.invoice.entity.User">
+            <id property="id" column="sender_id"/>
+            <result property="name" column="sender_name"/>
+            <result property="taxId" column="sender_tax_id"/>
+        </association>
+
+        <!-- Nested mapping for the 'customer' object (one-to-one relationship) -->
+        <association property="customer" javaType="az.cybernet.invoice.entity.User">
+            <id property="id" column="customer_id"/>
+            <result property="name" column="customer_name"/>
+            <result property="taxId" column="customer_tax_id"/>
+        </association>
+
+        <!-- Nested mapping for the 'invoiceProducts' list (one-to-many relationship) -->
+        <collection property="invoiceProducts" ofType="az.cybernet.invoice.entity.InvoiceProduct">
+            <result property="quantity" column="ip_quantity"/>
+            <result property="isActive" column="ip_is_active"/>
+            <!-- Deeper nested mapping for the 'product' object inside each list item -->
+            <association property="product" javaType="az.cybernet.invoice.entity.Product">
+                <id property="id" column="p_id"/>
+                <result property="name" column="p_name"/>
+                <result property="price" column="p_price"/>
+                <!-- Even deeper nested mapping for the 'measurement' object -->
+                <association property="measurement" javaType="az.cybernet.invoice.entity.Measurement">
+                    <id property="id" column="m_id"/>
+                    <result property="name" column="m_name"/>
+                    <result property="displayName" column="m_display_name"/>
+                </association>
+            </association>
+        </collection>
+    </resultMap>
+
+    <!-- The SQL query for our new Java method -->
+    <select id="findInvoiceDetailsById" resultMap="InvoiceDetailResultMap" parameterType="java.util.UUID">
+        SELECT
+            i.id as invoice_id,
+            i.series as invoice_series,
+            i.invoice_number as invoice_number,
+            i.status as invoice_status,
+            i.total as invoice_total,
+            i.comment as invoice_comment,
+            i.created_at as invoice_created_at,
+            i.updated_at as invoice_updated_at,
+            s.id as sender_id,
+            s.name as sender_name,
+            s.tax_id as sender_tax_id,
+            c.id as customer_id,
+            c.name as customer_name,
+            c.tax_id as customer_tax_id,
+            ip.quantity as ip_quantity,
+            ip.is_active as ip_is_active,
+            p.id as p_id,
+            p.name as p_name,
+            p.price as p_price,
+            m.id as m_id,
+            m.name as m_name,
+            m.display_name as m_display_name
+        FROM
+            invoice_schema.invoice i
+                JOIN
+            invoice_schema.user s ON i.sender_id = s.id
+                JOIN
+            invoice_schema.user c ON i.customer_id = c.id
+                LEFT JOIN
+            invoice_schema.invoice_product ip ON i.id = ip.invoice_id
+                LEFT JOIN
+            invoice_schema.product p ON ip.product_id = p.id
+                LEFT JOIN
+            invoice_schema.measurement m ON p.measurement_id = m.id
+        WHERE
+            i.id = #{invoiceId}::uuid
+    </select>
+
+    <!-- ===================================================================== -->
+    <!-- END: NEW CODE FOR SCRUM-5                                               -->
+    <!-- ===================================================================== -->
+
+
     <insert id="insertInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
         INSERT INTO invoice_schema.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
         VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
@@ -12,6 +109,53 @@
     
     <select id="getNextInvoiceNum" resultType="int">
         SELECT nextval('invoice_schema.invoice_num_seq')
+    </select>
+
+    <resultMap id="InvoiceDetailResultMap" type="az.cybernet.invoice.entity.InvoiceDetailed">
+        <id property="id" column="invoice_id"/>
+        <result property="series" column="series"/>
+        <result property="invoiceNumber" column="invoice_number"/>
+        <result property="senderId" column="sender_id"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="status" column="status"/>
+        <result property="total" column="total"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="comment" column="comment"/>
+
+        <collection property="products" ofType="az.cybernet.invoice.dto.response.ProductDetailResponse">
+            <result property="productName" column="product_name"/>
+            <result property="quantity" column="quantity"/>
+            <result property="price" column="price"/>
+            <result property="measurementName" column="measurement_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="getDetailedInvoice" resultMap="InvoiceDetailResultMap">
+        SELECT
+        i.id as invoice_id,
+        i.series,
+        i.invoice_number,
+        i.sender_id,
+        i.customer_id,
+        i.status,
+        i.total,
+        i.created_at,
+        i.updated_at,
+        i.comment,
+
+        ip.product_id,
+        ip.quantity,
+
+        p.name as product_name,
+        p.price,
+        m.name as measurement_name
+
+        FROM invoice_schema.invoice i
+        LEFT JOIN invoice_schema.invoice_product ip ON i.id = ip.invoice_id
+        LEFT JOIN invoice_schema.product p ON ip.product_id = p.id
+        LEFT JOIN invoice_schema.measurement m ON p.measurement_id = m.id
+        WHERE i.id = #{invoiceId}
     </select>
 
 </mapper>
