@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -55,5 +56,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         productList.forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
         return mapstruct.toDto(invoice);
+    }
+
+    @Override
+    public InvoiceResponse cancelInvoice(UUID id) {
+        Invoice cancelledInvoice = mapper.cancelInvoice(id);
+        return mapstruct.toDto(cancelledInvoice);
     }
 }
