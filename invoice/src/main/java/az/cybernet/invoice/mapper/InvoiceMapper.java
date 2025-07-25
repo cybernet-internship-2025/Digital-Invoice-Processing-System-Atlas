@@ -5,6 +5,7 @@ import az.cybernet.invoice.entity.InvoiceDetailed;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Mapper
@@ -13,5 +14,5 @@ public interface InvoiceMapper {
 
     int getNextInvoiceNum();
 
-    InvoiceDetailed getDetailedInvoice(@Param("invoiceId") UUID invoiceId);
+    Optional<InvoiceDetailed> getDetailedInvoice(@Param("invoiceId") UUID id);
 }

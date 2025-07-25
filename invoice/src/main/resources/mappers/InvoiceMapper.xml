@@ -111,7 +111,7 @@
         SELECT nextval('invoice_schema.invoice_num_seq')
     </select>
 
-    <resultMap id="InvoiceDetailResultMap" type="az.cybernet.invoice.entity.InvoiceDetailed">
+    <resultMap id="InvoiceDetailedResultMap" type="az.cybernet.invoice.entity.InvoiceDetailed">
         <id property="id" column="invoice_id"/>
         <result property="series" column="series"/>
         <result property="invoiceNumber" column="invoice_number"/>

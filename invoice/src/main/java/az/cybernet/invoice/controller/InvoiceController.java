@@ -17,12 +17,7 @@ import java.util.UUID;
 public class InvoiceController {
 
     private final InvoiceService service;
-    private InvoiceServiceImpl invoiceServiceImpl;
 
-    public InvoiceController(InvoiceService service, InvoiceServiceImpl invoiceServiceImpl) {
-        this.service = service;
-        this.invoiceServiceImpl = invoiceServiceImpl;
-    }
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> insertInvoice(@RequestBody InvoiceRequest request) {
@@ -31,9 +26,7 @@ public class InvoiceController {
 
     @GetMapping("/{invoiceId}")
     public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable UUID invoiceId) {
-
-        InvoiceDetailResponse invoiceDetails = invoiceServiceImpl.getInvoiceDetails(invoiceId);
-
+        InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
     }
 
