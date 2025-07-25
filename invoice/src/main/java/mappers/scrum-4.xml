@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.invoice.mapper.InvoiceMapper">
+    <select id="getSentInvoicesByTaxId" resultType="Invoice" parameterType="taxId">
+        SELECT *
+        FROM invoice
+        LEFT JOIN user on invoice.sender_id = user.id
+        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+    </select>
+
+    <select id="getReceivedInvoicesByTaxId" resultType="Invoice" parameterType="taxId">
+        SELECT *
+        FROM invoice
+        LEFT JOIN user on invoice.receiver_id = user.id
+        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+    </select>
+
+    <select id="getAllDraftsByTaxId" resultType="Invoice" parameterType="taxId">
+        SELECT *
+        FROM invoice
+        LEFT JOIN user on invoice.sender_id = user.id
+        WHERE user.tax_id = #{taxId} AND invoice.status = 'DRAFT'
+
+        UNION
+
+        SELECT *
+        FROM invoice
+        LEFT JOIN user on invoice.receiver_id = user.id
+        WHERE user.tax_id = #{taxId} AND invoice.status = 'DRAFT'
+    </select>
+
+    <select id="getAllInvoicesByTaxId" resultType="Invoice" parameterType="taxId">
+        SELECT *
+        FROM invoice
+        LEFT JOIN user on invoice.sender_id = user.id
+        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+
+        UNION
+
+        SELECT *
+        FROM invoice
+        LEFT JOIN user on invoice.receiver_id = user.id
+        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+    </select>
+</mapper>

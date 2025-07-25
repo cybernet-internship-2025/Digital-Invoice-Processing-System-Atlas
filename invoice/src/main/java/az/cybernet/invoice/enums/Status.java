@@ -7,5 +7,5 @@ public enum Status {
     CLOSED, //the invoice was fulfilled
     CHANGES_REQUESTED, //user requested changes
     DELETED, //invoice itself doesn't have is_active field so this may be used
-    PENDING, //the invoice is awaiting approval/rejection/rfc
+    PENDING,//the invoice is awaiting approval/rejection/rfc
 }
