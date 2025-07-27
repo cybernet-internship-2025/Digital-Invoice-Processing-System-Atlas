@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202507250002
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: product
+              schemaName: invoice
+      changes:
+        - createTable:
+            tableName: product
+            schemaName: invoice
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: price
+                  type: DOUBLE
+              - column:
+                  name: measurement_id
+                  type: UUID
+        - addForeignKeyConstraint:
+            baseTableSchemaName: invoice
+            baseTableName: product
+            baseColumnNames: measurement_id
+            referencedTableSchemaName: invoice
+            referencedTableName: measurement
+            referencedColumnNames: id
+            constraintName: fk_product_measurement_fk

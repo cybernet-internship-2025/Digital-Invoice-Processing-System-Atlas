@@ -6,7 +6,7 @@
 <mapper namespace="az.cybernet.invoice.mapper.ProductMapper">
 
     <insert id="insertProduct" parameterType="az.cybernet.invoice.entity.Product">
-        INSERT INTO invoice_schema.product ("id", "name", "price", "measurement_id")
+        INSERT INTO invoice.product ("id", "name", "price", "measurement_id")
         VALUES (#{id}, #{name}, #{price}, #{measurementId})
     </insert>
 

@@ -1,6 +1,9 @@
 package az.cybernet.invoice.dto.response;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.UUID;
@@ -9,9 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
 public class UserResponse {
-    UUID id;
-    String name;
-    String taxId;
+    private UUID id;
+    private String name;
+    private String taxId;
 }

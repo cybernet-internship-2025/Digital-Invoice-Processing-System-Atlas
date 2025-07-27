@@ -1,4 +1,4 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.usermanagement.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
