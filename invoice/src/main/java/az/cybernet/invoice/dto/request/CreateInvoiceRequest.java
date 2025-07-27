@@ -15,8 +15,6 @@ import java.util.UUID;
 @Builder
 public class CreateInvoiceRequest{
     UUID id;
-    String series;
-    Integer invoiceNumber;
     UUID senderId;
     UUID customerId;
     Status status;

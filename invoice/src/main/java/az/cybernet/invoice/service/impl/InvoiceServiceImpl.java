@@ -7,6 +7,7 @@ import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
+import az.cybernet.invoice.service.InvoiceNumberGeneratorService;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
@@ -24,15 +25,18 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceProductService invoiceProductService;
     private final ProductService productService;
+    private final InvoiceNumberGeneratorService generator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
                               InvoiceProductService invoiceProductService,
-                              ProductService productService) {
+                              ProductService productService,
+                              InvoiceNumberGeneratorService generator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
+        this.generator = generator;
     }
 
     @Override
@@ -43,6 +47,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<ProductRequest> productList = mapstruct.toProductRequestList(request);
         List<InvoiceProductRequest> invoiceProductList = mapstruct.toInvoiceProductRequestList(request);
 
+        String invdSeries = generator.generateInvoiceNumber();
+
+        invoice.setSeries(invdSeries.substring(0, 6));
+        invoice.setInvoiceNumber(Integer.parseInt(invdSeries.substring(5)));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
         invoice.setTotal(request.getProductQuantityRequests()
