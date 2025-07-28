@@ -1,17 +1,15 @@
 package az.cybernet.invoice.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class UserRequest {
-    UUID id;
-    String name;
-    String taxId;
+public class InvoiceCorrectionReq {
+    @NotBlank
+    String comment;
 }

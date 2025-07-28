@@ -14,4 +14,16 @@
         SELECT nextval('invoice_schema.invoice_num_seq')
     </select>
 
+    <select id="sendBackForCorrection" resultType="az.cybernet.invoice.entity.Invoice">
+        WITH cancelled AS (
+        UPDATE invoice_schema.invoice
+        SET status = 'CHANGES_REQUESTED',
+            comment = #{comment},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+            RETURNING *
+    )
+        SELECT * FROM cancelled
+    </select>
+
 </mapper>
