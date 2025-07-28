@@ -1,16 +1,21 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
+@Validated
 public class InvoiceController {
 
     private final InvoiceService service;
@@ -22,5 +27,11 @@ public class InvoiceController {
     @PostMapping
     public ResponseEntity<InvoiceResponse> insertInvoice(@RequestBody InvoiceRequest request) {
         return ResponseEntity.ok(service.insertInvoice(request));
+    }
+
+    @PatchMapping("/send-back-for-correction/{id}")
+    public ResponseEntity<InvoiceResponse> sendBackForCorrection(@PathVariable ("id") UUID id
+            , @RequestBody @Valid InvoiceCorrectionReq req) {
+        return ok(service.sendBackForCorrection(id, req));
     }
 }
