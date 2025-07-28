@@ -14,7 +14,7 @@ import java.util.UUID;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@RequestMapping("/api/v1/invoices")
+@RequestMapping("/v1/invoices")
 @Validated
 public class InvoiceController {
 
@@ -29,7 +29,7 @@ public class InvoiceController {
         return ResponseEntity.ok(service.insertInvoice(request));
     }
 
-    @PatchMapping("/send-back-for-correction/{id}")
+    @PatchMapping("/correction/{id}")
     public ResponseEntity<InvoiceResponse> sendBackForCorrection(@PathVariable ("id") UUID id
             , @RequestBody @Valid InvoiceCorrectionReq req) {
         return ok(service.sendBackForCorrection(id, req));
