@@ -61,8 +61,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         String invdSeries = generator.generateInvoiceNumber();
 
         invoice.setId(UUID.randomUUID());
-        invoice.setSeries(invdSeries.substring(0, 6));
-        invoice.setInvoiceNumber(Integer.parseInt(invdSeries.substring(5)));
+        invoice.setSeries(invdSeries.substring(0, 4));
+        invoice.setInvoiceNumber(Integer.parseInt(invdSeries.substring(4)));
         invoice.setStatus(Status.PENDING);
         invoice.setTotal(request.getProductQuantityRequests()
                 .stream()
