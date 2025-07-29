@@ -36,7 +36,7 @@ public class InvoiceController {
         return ok(service.sendBackForCorrection(id, req));
     }
 
-    @PatchMapping("/approveInvoice/{id}")
+    @PatchMapping("/approve/{id}")
     public ResponseEntity<InvoiceResponse> approveInvoice(
             @PathVariable("id")UUID id,
             @RequestBody ApprovedInvoiceRequest request) {
