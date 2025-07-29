@@ -12,6 +12,15 @@ spring:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
+  cloud:
+    openfeign:
+      client:
+        config:
+          user-management:
+            connectTimeout: 5000
+            readTimeout: 10000
+            loggerLevel: basic
+
 mybatis:
   mapperLocations: classpath:mappers/*.xml
   config-location: classpath:config/mybatis.xml
@@ -25,7 +34,3 @@ logging:
   level:
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     liquibase: DEBUG
-
-user:
-  service:
-    url: http://user-service
