@@ -1,6 +1,7 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceProductRequest;
 import az.cybernet.invoice.dto.request.ProductRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
@@ -36,8 +37,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceMapstruct mapstruct,
                               InvoiceProductService invoiceProductService,
                               ProductService productService,
-                              InvoiceNumberGeneratorService generator) {
-    public InvoiceServiceImpl(InvoiceMapper mapper, InvoiceMapstruct mapstruct, InvoiceOperationMapper invoiceOperationMapper) {
+                              InvoiceNumberGeneratorService generator,
+                              InvoiceOperationMapper invoiceOperationMapper) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;

@@ -11,7 +11,6 @@ import java.util.UUID;
 public interface InvoiceService {
 
     InvoiceResponse createInvoice(CreateInvoiceRequest request);
-    InvoiceResponse insertInvoice(InvoiceRequest request);
 
     InvoiceResponse sendBackForCorrection(UUID id, @Valid InvoiceCorrectionReq req);
 }
