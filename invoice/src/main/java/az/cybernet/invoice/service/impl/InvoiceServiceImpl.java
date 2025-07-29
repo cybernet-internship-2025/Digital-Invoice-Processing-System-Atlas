@@ -10,6 +10,7 @@ import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
 import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -47,5 +48,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         var invoiceOperation = mapstruct.invoiceToInvcOper(invoice);
         invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
         return mapstruct.toDto(invoice);
+    }
+
+    @Override
+    @Transactional
+    public InvoiceResponse cancelInvoice(UUID id) {
+        Invoice cancelledInvoice = mapper.cancelInvoice(id);
+        return mapstruct.toDto(cancelledInvoice);
     }
 }
