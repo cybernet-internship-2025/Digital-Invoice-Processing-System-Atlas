@@ -34,4 +34,9 @@ public class InvoiceController {
             , @RequestBody @Valid InvoiceCorrectionReq req) {
         return ok(service.sendBackForCorrection(id, req));
     }
+
+    @PatchMapping("/cancel/{id}")
+    public ResponseEntity<InvoiceResponse> cancelInvoice(@PathVariable("id") UUID id) {
+        return ok(service.cancelInvoice(id));
+    }
 }
