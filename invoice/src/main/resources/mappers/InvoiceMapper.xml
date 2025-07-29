@@ -9,10 +9,6 @@
         INSERT INTO invoice_schema.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
         VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
     </insert>
-    
-    <select id="getNextInvoiceNum" resultType="int">
-        SELECT nextval('invoice_schema.invoice_num_seq')
-    </select>
 
     <select id="sendBackForCorrection" resultType="az.cybernet.invoice.entity.Invoice">
         WITH cancelled AS (
@@ -24,6 +20,14 @@
             RETURNING *
     )
         SELECT * FROM cancelled
+    </select>
+
+    <select id="getLastInvoiceNumberOfMonth" resultType="int" parameterType="map">
+        <![CDATA[
+        SELECT MAX(invoice_number)
+        FROM invoice_schema.invoice
+        WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth}
+        ]]>
     </select>
 
 </mapper>
