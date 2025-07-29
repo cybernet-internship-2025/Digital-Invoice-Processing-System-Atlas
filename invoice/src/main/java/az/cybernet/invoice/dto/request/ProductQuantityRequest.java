@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class ProductQuantityRequest{
+public class ProductQuantityRequest {
     UUID id;
     String name;
     Double price;

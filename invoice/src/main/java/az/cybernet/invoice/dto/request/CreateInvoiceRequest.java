@@ -13,10 +13,8 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class CreateInvoiceRequest{
-    UUID id;
     UUID senderId;
     UUID customerId;
-    Status status;
     String comment;
     List<ProductQuantityRequest> productQuantityRequests;
 }

@@ -7,10 +7,6 @@ import az.cybernet.invoice.entity.InvoiceOperation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-import java.util.UUID;
-import org.mapstruct.Mapping;
-
 @Mapper(componentModel = "spring")
 public interface InvoiceMapstruct {
 
@@ -19,34 +15,6 @@ public interface InvoiceMapstruct {
     InvoiceResponse toDto(Invoice invoice);
 
     InvoiceRequest getInvoiceFromCreateRequest(CreateInvoiceRequest request);
-
-    @Mapping(target = "invoiceId", source = "invoiceId")
-    @Mapping(target = "productId", source = "product.id")
-    @Mapping(target = "quantity", source = "product.quantity")
-    InvoiceProductRequest toInvoiceProductRequest(UUID invoiceId, ProductQuantityRequest product);
-
-    default List<InvoiceProductRequest> toInvoiceProductRequestList(CreateInvoiceRequest request) {
-        if (request == null || request.getProductQuantityRequests() == null) {
-            return List.of();
-        }
-        return request.getProductQuantityRequests()
-                .stream()
-                .map(product -> toInvoiceProductRequest(request.getId(), product))
-                .toList();
-    }
-
-    ProductRequest toProductRequest(ProductQuantityRequest request);
-
-    default List<ProductRequest> toProductRequestList(CreateInvoiceRequest request) {
-        if (request == null || request.getProductQuantityRequests() == null) {
-            return List.of();
-        }
-        return request.getProductQuantityRequests()
-                .stream()
-                .map(this::toProductRequest)
-                .toList();
-    }
-
 
     @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "invoiceId", source = "id")
