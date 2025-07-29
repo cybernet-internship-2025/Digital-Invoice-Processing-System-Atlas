@@ -3,11 +3,13 @@ package az.cybernet.invoice.mapstruct;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceOperation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.UUID;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface InvoiceMapstruct {
@@ -45,4 +47,9 @@ public interface InvoiceMapstruct {
                 .toList();
     }
 
+
+    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "invoiceId", source = "id")
+    @Mapping(target = "timestamp", source = "updatedAt")
+    InvoiceOperation invoiceToInvcOper(Invoice invoice);
 }
