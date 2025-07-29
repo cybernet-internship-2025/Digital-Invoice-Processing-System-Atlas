@@ -17,6 +17,9 @@ spring:
       client:
         config:
           user-management:
+            url: http://user-service
+
+          default:
             connectTimeout: 5000
             readTimeout: 10000
             loggerLevel: basic
