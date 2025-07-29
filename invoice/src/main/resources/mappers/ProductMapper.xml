@@ -10,4 +10,8 @@
         VALUES (#{id}, #{name}, #{price}, #{measurementId})
     </insert>
 
+    <select id="findProductById" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Product">
+        SELECT * FROM invoice_schema.product WHERE id = #{id}
+    </select>
+
 </mapper>

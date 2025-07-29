@@ -26,4 +26,8 @@
         SELECT * FROM cancelled
     </select>
 
+    <select id="findInvoiceById" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Invoice">
+        SELECT * FROM invoice_schema.invoice WHERE id = #{id}
+    </select>
+
 </mapper>

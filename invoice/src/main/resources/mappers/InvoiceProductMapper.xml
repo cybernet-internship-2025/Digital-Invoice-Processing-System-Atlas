@@ -10,4 +10,8 @@
         VALUES (#{invoiceId}, #{productId}, #{quantity}, #{isActive})
     </insert>
 
+    <select id="findActiveByInvoiceId" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.InvoiceProduct">
+        SELECT * FROM invoice_schema.invoice_product WHERE invoice_id = #{invoice_id} AND is_active = TRUE
+    </select>
+
 </mapper>
