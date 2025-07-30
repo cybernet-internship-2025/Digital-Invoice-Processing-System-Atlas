@@ -71,9 +71,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public InvoiceResponse approveInvoice(UUID id, ApprovedInvoiceRequest request) {
-        Invoice invoice = mapper.findInvoiceById(id);
-        if (invoice == null)
-            throw new InvoiceNotFoundException("Invoice not found");
+        Invoice invoice = mapper.findInvoiceById(id)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         if (!invoice.getStatus().equals(Status.DRAFT))
             throw new RuntimeException("Only DRAFT invoices can be APPROVED");
 
@@ -83,8 +82,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         double total = 0;
         for (InvoiceProduct item: productList) {
-            Product product = productMapper.findProductById(item.getProductId());
-            if (product == null) throw new ProductNotFoundException("Product not found");
+            Product product = productMapper.findProductById(item.getProductId())
+                    .orElseThrow(() -> new ProductNotFoundException("Product not found"));
             if (product.getMeasurementId() == null)
                 throw new IllegalStateException("Product " + product.getName() + " has no measurement.");
             total += product.getPrice() * item.getQuantity();

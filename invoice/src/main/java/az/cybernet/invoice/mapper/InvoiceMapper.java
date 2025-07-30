@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Mapper
@@ -20,7 +21,7 @@ public interface InvoiceMapper {
     Invoice sendBackForCorrection(@Param("id") UUID id, @Param("comment") String comment
             , @Param("updatedAt") LocalDateTime updatedAt);
 
-    Invoice findInvoiceById(@Param("id") UUID id);
+    Optional<Invoice> findInvoiceById(@Param("id") UUID id);
 
     Invoice cancelInvoice(UUID id);
 }
