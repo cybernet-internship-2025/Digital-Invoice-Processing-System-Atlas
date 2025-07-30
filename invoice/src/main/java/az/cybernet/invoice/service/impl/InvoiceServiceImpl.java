@@ -10,6 +10,7 @@ import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
 import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -53,6 +54,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+
     public String generateInvoiceNumber() {
         LocalDate now = LocalDate.now();
         String year = String.format("%02d", now.getYear() % 100);
@@ -66,5 +68,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         int next = (lastNumber == null) ? 1 : lastNumber + 1;
 
         return series + String.format("%04d", next);
+
+    @Transactional
+    public InvoiceResponse cancelInvoice(UUID id) {
+        Invoice cancelledInvoice = mapper.cancelInvoice(id);
+        return mapstruct.toDto(cancelledInvoice);
     }
 }

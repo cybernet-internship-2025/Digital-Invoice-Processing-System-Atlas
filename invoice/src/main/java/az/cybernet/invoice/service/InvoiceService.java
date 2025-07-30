@@ -13,5 +13,9 @@ public interface InvoiceService {
 
     InvoiceResponse sendBackForCorrection(UUID id, @Valid InvoiceCorrectionReq req);
 
+
     String generateInvoiceNumber();
+
+    InvoiceResponse cancelInvoice(UUID id);
+
 }

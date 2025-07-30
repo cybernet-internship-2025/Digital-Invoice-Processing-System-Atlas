@@ -20,4 +20,6 @@ public interface InvoiceMapper {
 
     Invoice sendBackForCorrection(@Param("id") UUID id, @Param("comment") String comment
             , @Param("updatedAt") LocalDateTime updatedAt);
+
+    Invoice cancelInvoice(UUID id);
 }
