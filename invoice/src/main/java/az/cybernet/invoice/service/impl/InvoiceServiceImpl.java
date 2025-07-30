@@ -3,6 +3,7 @@ package az.cybernet.invoice.service.impl;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -14,6 +15,7 @@ import az.cybernet.invoice.service.InvoiceNumberGeneratorService;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
@@ -62,7 +65,19 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setId(UUID.randomUUID());
         invoice.setSeries(invdSeries.substring(0, 4));
-        invoice.setInvoiceNumber(Integer.parseInt(invdSeries.substring(4)));
+
+        //This block exists solely to please GitHub's codescan
+        try {
+            invoice.setInvoiceNumber(Integer.parseInt(invdSeries.substring(4)));
+        } catch (NumberFormatException e) {
+            log.warn("Somehow parsing the generated series failed. This is impossible.");
+            LocalDateTime datePart = LocalDateTime.now();
+            invoice.setInvoiceNumber(datePart.getYear()%2000*1000000
+                    + datePart.getMonthValue() * 10000
+                    + mapper.getNextInvoiceNum());
+            log.info("generated series manually");
+        }
+
         invoice.setStatus(Status.PENDING);
         invoice.setTotal(request.getProductQuantityRequests()
                 .stream()
