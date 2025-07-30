@@ -15,4 +15,6 @@ public interface InvoiceService {
     InvoiceResponse sendBackForCorrection(UUID id, @Valid InvoiceCorrectionReq req);
 
     InvoiceResponse approveInvoice(UUID id, ApprovedInvoiceRequest request);
+
+    InvoiceResponse cancelInvoice(UUID id);
 }

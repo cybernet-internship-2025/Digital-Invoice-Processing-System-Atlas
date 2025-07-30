@@ -99,5 +99,12 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceOperationMapper.insertInvoiceOperation(operation);
 
         return mapstruct.toDto(invoice);
+  
+    }
+
+    @Override
+    public InvoiceResponse cancelInvoice(UUID id) {
+        Invoice cancelledInvoice = mapper.cancelInvoice(id);
+        return mapstruct.toDto(cancelledInvoice);
     }
 }

@@ -41,5 +41,10 @@ public class InvoiceController {
             @PathVariable("id")UUID id,
             @RequestBody ApprovedInvoiceRequest request) {
         return ResponseEntity.ok(service.approveInvoice(id, request));
+
+    @PatchMapping("/cancel/{id}")
+    public ResponseEntity<InvoiceResponse> cancelInvoice(@PathVariable("id") UUID id) {
+        return ok(service.cancelInvoice(id));
     }
+      
 }

@@ -21,4 +21,6 @@ public interface InvoiceMapper {
             , @Param("updatedAt") LocalDateTime updatedAt);
 
     Invoice findInvoiceById(@Param("id") UUID id);
+
+    Invoice cancelInvoice(UUID id);
 }
