@@ -3,6 +3,7 @@ package az.cybernet.invoice.service.impl;
 import az.cybernet.invoice.dto.request.ApprovedInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
@@ -20,10 +21,13 @@ import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static az.cybernet.invoice.constant.Constants.INVD;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -69,6 +73,32 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+
+    public String generateInvoiceNumber() {
+        LocalDate now = LocalDate.now();
+        String year = String.format("%02d", now.getYear() % 100);
+        String month = String.format("%02d", now.getMonthValue());
+        String series = INVD + year + month;
+
+        LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
+
+        Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth);
+        int next = (lastNumber == null) ? 1 : lastNumber + 1;
+
+        return series + String.format("%04d", next);
+    }
+
+    @Override
+    public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
+        return mapper.getDetailedInvoice(invoiceId)
+                .map(mapstruct::toDetailDto)
+                .orElseThrow(() ->
+                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+    }
+
+
+
     @Transactional
     public InvoiceResponse approveInvoice(UUID id, ApprovedInvoiceRequest request) {
         Invoice invoice = mapper.findInvoiceById(id)

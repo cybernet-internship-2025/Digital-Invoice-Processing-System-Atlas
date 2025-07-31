@@ -1,6 +1,7 @@
 package az.cybernet.invoice.mapper;
 
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.enums.Status;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,7 +17,8 @@ public interface InvoiceMapper {
 
     void insertInvoice(Invoice invoice);
 
-    int getNextInvoiceNum();
+    Integer getLastInvoiceNumberOfMonth(@Param("startOfMonth") LocalDateTime start,
+                                        @Param("startOfNextMonth") LocalDateTime end);
 
     Invoice sendBackForCorrection(@Param("id") UUID id, @Param("comment") String comment
             , @Param("updatedAt") LocalDateTime updatedAt);
@@ -26,4 +28,6 @@ public interface InvoiceMapper {
     Invoice cancelInvoice(UUID id);
 
     void approveInvoice(Invoice invoice);
+
+    Optional<InvoiceDetailed> getDetailedInvoice(@Param("invoiceId") UUID id);
 }
