@@ -19,9 +19,10 @@ public class GlobalExceptionHandler {
         log.info(e.getMessage());
         return new ExceptionDto(e.getMessage());
     }
-    @ExceptionHandler
+
+    @ExceptionHandler(InvoiceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionDto handleInvoiceNotFoundException(InvoiceNotFoundException e) {
+    public ExceptionDto handleInvoiceNotFound(InvoiceNotFoundException e) {
         log.info(e.getMessage());
         return new ExceptionDto(e.getMessage());
     }
