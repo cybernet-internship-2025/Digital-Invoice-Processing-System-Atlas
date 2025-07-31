@@ -26,4 +26,12 @@
         SELECT * FROM cancelled
     </select>
 
+    <select id="cancelInvoice" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Invoice">
+        WITH cancelled AS (
+        UPDATE invoice_schema.invoice
+        SET status = 'CANCELLED'
+        WHERE id = #{id}
+        RETURNING * )
+        SELECT * FROM cancelled
+    </select>
 </mapper>

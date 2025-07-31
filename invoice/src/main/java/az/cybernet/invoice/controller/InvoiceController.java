@@ -40,5 +40,9 @@ public class InvoiceController {
     public ResponseEntity<Void> changeStatusInBatch(@RequestBody InvoiceBatchStatusUpdateRequest req) {
         batchService.changeStatusInBatch(req.getInvoiceIds(), req.getNewStatus());
         return ResponseEntity.ok().build();
+
+    @PatchMapping("/cancel/{id}")
+    public ResponseEntity<InvoiceResponse> cancelInvoice(@PathVariable("id") UUID id) {
+        return ok(service.cancelInvoice(id));
     }
 }
