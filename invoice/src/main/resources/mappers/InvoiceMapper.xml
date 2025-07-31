@@ -84,9 +84,9 @@
         FROM
             invoice_schema.invoice i
                 JOIN
-            invoice_schema.user s ON i.sender_id = s.id
+            users.users s ON i.sender_id = s.id
                 JOIN
-            invoice_schema.user c ON i.customer_id = c.id
+            users.users c ON i.customer_id = c.id
                 LEFT JOIN
             invoice_schema.invoice_product ip ON i.id = ip.invoice_id
                 LEFT JOIN
@@ -131,7 +131,7 @@
         </collection>
     </resultMap>
 
-    <select id="getDetailedInvoice" resultMap="InvoiceDetailResultMap">
+    <select id="getDetailedInvoice" resultMap="InvoiceDetailedResultMap">
         SELECT
         i.id as invoice_id,
         i.series,
