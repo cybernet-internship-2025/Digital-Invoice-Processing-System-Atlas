@@ -4,45 +4,48 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceViewMapper">
-    <select id="getSentInvoicesByTaxId" resultType="Invoice" parameterType="taxId">
+    <select id="getSentInvoicesByTaxId" resultType="Invoice" parameterType="string">
         SELECT *
-        FROM invoice
-                 LEFT JOIN user on invoice.sender_id = user.id
-        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+        FROM invoice.invoice
+        WHERE invoice.sender_id IN (
+            SELECT id
+            FROM users.users
+            WHERE tax_id = #{taxId}
+        ) AND invoice.status != 'DRAFT'
     </select>
 
-    <select id="getReceivedInvoicesByTaxId" resultType="Invoice" parameterType="taxId">
+    <select id="getReceivedInvoicesByTaxId" resultType="Invoice" parameterType="string">
         SELECT *
         FROM invoice
-                 LEFT JOIN user on invoice.receiver_id = user.id
-        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+        WHERE invoice.customer_id IN (
+            SELECT id
+            FROM users.users
+            WHERE tax_id = #{taxId}
+        ) AND invoice.status != 'DRAFT'
     </select>
 
-    <select id="getAllDraftsByTaxId" resultType="Invoice" parameterType="taxId">
+    <select id="getAllDraftsByTaxId" resultType="Invoice" parameterType="string">
         SELECT *
-        FROM invoice
-                 LEFT JOIN user on invoice.sender_id = user.id
-        WHERE user.tax_id = #{taxId} AND invoice.status = 'DRAFT'
-
-        UNION
-
-        SELECT *
-        FROM invoice
-                 LEFT JOIN user on invoice.receiver_id = user.id
-        WHERE user.tax_id = #{taxId} AND invoice.status = 'DRAFT'
+        FROM invoice.invoice
+        WHERE invoice.sender_id IN (
+            SELECT id
+            FROM users.users
+            WHERE tax_id = #{taxId}
+        ) AND invoice.status = 'DRAFT'
     </select>
 
-    <select id="getAllInvoicesByTaxId" resultType="Invoice" parameterType="taxId">
+    <select id="getAllInvoicesByTaxId" resultType="Invoice" parameterType="string">
         SELECT *
         FROM invoice
-                 LEFT JOIN user on invoice.sender_id = user.id
-        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
-
-        UNION
-
-        SELECT *
-        FROM invoice
-                 LEFT JOIN user on invoice.receiver_id = user.id
-        WHERE user.tax_id = #{taxId} AND invoice.status != 'DRAFT'
+        WHERE invoice.status != 'DRAFT' AND
+              (invoice.sender_id IN (
+                  SELECT id
+                  FROM users.users
+                  WHERE tax_id = #{taxId}
+              ) OR invoice.customer_id IN (
+                  SELECT id
+                  FROM users.users
+                  WHERE tax_id = #{taxId}
+              ))
     </select>
 </mapper>
