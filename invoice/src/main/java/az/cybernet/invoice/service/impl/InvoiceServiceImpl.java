@@ -1,4 +1,4 @@
-package az.cybernet.invoice.api.service.impl;
+package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
@@ -8,12 +8,16 @@ import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
-import az.cybernet.invoice.api.service.InvoiceService;
+import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static az.cybernet.invoice.constant.Constants.INVD;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -47,5 +51,29 @@ public class InvoiceServiceImpl implements InvoiceService {
         var invoiceOperation = mapstruct.invoiceToInvcOper(invoice);
         invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
         return mapstruct.toDto(invoice);
+    }
+
+    @Override
+
+    public String generateInvoiceNumber() {
+        LocalDate now = LocalDate.now();
+        String year = String.format("%02d", now.getYear() % 100);
+        String month = String.format("%02d", now.getMonthValue());
+        String series = INVD + year + month;
+
+        LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
+
+        Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth);
+        int next = (lastNumber == null) ? 1 : lastNumber + 1;
+
+        return series + String.format("%04d", next);
+
+    }
+
+    @Transactional
+    public InvoiceResponse cancelInvoice(UUID id) {
+        Invoice cancelledInvoice = mapper.cancelInvoice(id);
+        return mapstruct.toDto(cancelledInvoice);
     }
 }

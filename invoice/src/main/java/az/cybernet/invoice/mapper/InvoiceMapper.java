@@ -15,8 +15,11 @@ public interface InvoiceMapper {
 
     void insertInvoice(Invoice invoice);
 
-    int getNextInvoiceNum();
+    Integer getLastInvoiceNumberOfMonth(@Param("startOfMonth") LocalDateTime start,
+                                        @Param("startOfNextMonth") LocalDateTime end);
 
     Invoice sendBackForCorrection(@Param("id") UUID id, @Param("comment") String comment
             , @Param("updatedAt") LocalDateTime updatedAt);
+
+    Invoice cancelInvoice(UUID id);
 }
