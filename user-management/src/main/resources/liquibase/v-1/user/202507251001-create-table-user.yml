@@ -24,4 +24,4 @@ databaseChangeLog:
                   type: VARCHAR(255)
               - column:
                   name: tax_id
-                  type: VARCHAR(255)
+                  type: LONG

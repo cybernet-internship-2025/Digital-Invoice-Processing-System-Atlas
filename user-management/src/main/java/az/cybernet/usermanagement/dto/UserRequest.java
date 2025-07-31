@@ -9,5 +9,4 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRequest {
     String name;
-    String taxId;
 }

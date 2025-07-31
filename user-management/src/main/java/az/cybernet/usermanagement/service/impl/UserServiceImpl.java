@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setId(UUID.randomUUID());
         user.setName(request.getName());
-        user.setTaxId(request.getTaxId());
 
         mapper.insertUser(user);
 

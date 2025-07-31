@@ -7,7 +7,7 @@
 
     <insert id="insertUser" parameterType="az.cybernet.usermanagement.entity.User">
         INSERT INTO users.users ("id", "name", "tax_id")
-        VALUES (#{id}, #{name}, #{taxId})
+        VALUES (#{id}, #{name}, nextval('users.user_tax_id_seq'))
     </insert>
 
     <select id="findById" parameterType="java.util.UUID" resultType="az.cybernet.usermanagement.entity.User">
