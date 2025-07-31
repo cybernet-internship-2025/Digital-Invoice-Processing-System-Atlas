@@ -1,4 +1,4 @@
-package az.cybernet.invoice.service;
+package az.cybernet.invoice.api.service;
 
 import az.cybernet.invoice.dto.request.MeasurementRequest;
 import az.cybernet.invoice.dto.response.MeasurementResponse;

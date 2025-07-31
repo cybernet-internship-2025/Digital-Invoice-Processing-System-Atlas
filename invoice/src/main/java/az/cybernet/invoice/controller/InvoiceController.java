@@ -1,11 +1,11 @@
-package az.cybernet.invoice.api.controller;
+package az.cybernet.invoice.controller;
 
-import az.cybernet.invoice.api.service.InvoiceBatchOperationsService;
+import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.api.service.InvoiceService;
+import az.cybernet.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ public class InvoiceController {
         return ok(service.sendBackForCorrection(id, req));
     }
 
-    @PostMapping("/batch-operations")
+    @PostMapping("/statuses/batch-update")
     public ResponseEntity<Void> changeStatusInBatch(@RequestBody InvoiceBatchStatusUpdateRequest req) {
         batchService.changeStatusInBatch(req.getInvoiceIds(), req.getNewStatus());
         return ResponseEntity.ok().build();

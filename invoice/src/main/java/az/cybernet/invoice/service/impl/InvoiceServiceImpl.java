@@ -1,4 +1,4 @@
-package az.cybernet.invoice.service.impl;
+package az.cybernet.invoice.api.service.impl;
 
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
@@ -8,7 +8,7 @@ import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
-import az.cybernet.invoice.service.InvoiceService;
+import az.cybernet.invoice.api.service.InvoiceService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

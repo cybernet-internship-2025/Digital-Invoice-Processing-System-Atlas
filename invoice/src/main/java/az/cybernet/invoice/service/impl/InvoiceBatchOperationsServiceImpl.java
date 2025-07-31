@@ -1,12 +1,12 @@
-package az.cybernet.invoice.api.service.impl;
+package az.cybernet.invoice.service.impl;
 
-import az.cybernet.invoice.api.service.InvoiceOperationService;
+import az.cybernet.invoice.service.InvoiceOperationService;
 import az.cybernet.invoice.dto.request.InvoiceOperationRequest;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.IllegalInvoiceException;
 import az.cybernet.invoice.mapper.InvoiceBatchOperationsMapper;
-import az.cybernet.invoice.api.service.InvoiceBatchOperationsService;
+import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +37,7 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
         changePreviousStatus(invoices, newStatus);
     }
 
-    public boolean areAllStatusesSame(List<Invoice> invoices) {
+    private boolean areAllStatusesSame(List<Invoice> invoices) {
         if (isBatchEmpty(invoices)) {
             throw new IllegalInvoiceException("Batch is empty");
         }
@@ -48,15 +48,15 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
                 .size() == 1;
     }
 
-    public boolean isBatchEmpty(List<Invoice> invoices) {
+    private boolean isBatchEmpty(List<Invoice> invoices) {
         return invoices == null || invoices.isEmpty();
     }
 
-    public boolean isBatchIdsEmpty(List<UUID> ids) {
+    private boolean isBatchIdsEmpty(List<UUID> ids) {
         return ids == null || ids.isEmpty();
     }
 
-    public void changePreviousStatus(List<Invoice> invoices, Status newStatus) {
+    private void changePreviousStatus(List<Invoice> invoices, Status newStatus) {
         Status currentStatus = invoices.getFirst().getStatus();
         if (currentStatus == Status.DRAFT) {
             if (newStatus == Status.PENDING) {
@@ -93,7 +93,7 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
         throw new IllegalInvoiceException(currentStatus + " status can not be changed to: " + newStatus);
     }
 
-    public void updateStatus(List<Invoice> invoices, Status newStatus) {
+    private void updateStatus(List<Invoice> invoices, Status newStatus) {
         List<UUID> ids = invoices.stream()
                 .map(Invoice::getId)
                 .toList();
