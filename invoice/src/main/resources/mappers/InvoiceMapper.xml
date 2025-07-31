@@ -38,4 +38,13 @@
         RETURNING * )
         SELECT * FROM cancelled
     </select>
+
+    <update id="approveInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
+        UPDATE invoice_schema.invoice
+        SET status = 'APPROVED',
+            total = #{total},
+            comment = #{comment},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
 </mapper>

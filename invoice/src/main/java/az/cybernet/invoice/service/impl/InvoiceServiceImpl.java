@@ -89,16 +89,15 @@ public class InvoiceServiceImpl implements InvoiceService {
             total += product.getPrice() * item.getQuantity();
         }
 
-        invoice.setStatus(Status.APPROVED);
         invoice.setTotal(total);
         invoice.setUpdatedAt(LocalDateTime.now());
+        mapper.approveInvoice(invoice);
 
         InvoiceOperation operation = mapstruct.invoiceToInvcOper(invoice);
         operation.setComment(request.getComment());
         invoiceOperationMapper.insertInvoiceOperation(operation);
 
         return mapstruct.toDto(invoice);
-  
     }
 
     @Override
