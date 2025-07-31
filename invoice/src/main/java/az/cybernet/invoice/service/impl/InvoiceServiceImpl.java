@@ -68,6 +68,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         int next = (lastNumber == null) ? 1 : lastNumber + 1;
 
         return series + String.format("%04d", next);
+    }
 
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
