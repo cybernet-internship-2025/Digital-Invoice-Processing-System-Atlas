@@ -38,7 +38,10 @@
     <select id="updateInvoice" resultType="az.cybernet.invoice.entity.Invoice">
         WITH updated AS (
         UPDATE invoice_schema.invoice
-            SET status = #{status},
+            SET 
+            <if test="status != null">
+                status = #{status},
+            </if>
             comment = #{comment},
             total = #{total},
             updated_at = #{updatedAt}

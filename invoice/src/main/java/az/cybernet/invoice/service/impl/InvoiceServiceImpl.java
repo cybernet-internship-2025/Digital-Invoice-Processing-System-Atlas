@@ -143,6 +143,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 invoice.getId(),
                 request.getProductQuantityRequests()
         );
+        invoiceProductService.setInactive(invoice.getId());
+        invoiceProductRequestList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
         invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
