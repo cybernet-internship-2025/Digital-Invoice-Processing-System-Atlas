@@ -23,7 +23,11 @@ public interface InvoiceMapper {
     Invoice sendBackForCorrection(@Param("id") UUID id, @Param("comment") String comment
             , @Param("updatedAt") LocalDateTime updatedAt);
 
+    Optional<Invoice> findInvoiceById(@Param("id") UUID id);
+
     Invoice cancelInvoice(UUID id);
+
+    void approveInvoice(Invoice invoice);
 
     Optional<InvoiceDetailed> getDetailedInvoice(@Param("invoiceId") UUID id);
 }

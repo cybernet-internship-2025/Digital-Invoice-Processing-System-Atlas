@@ -1,5 +1,6 @@
 package az.cybernet.invoice.service;
 
+import az.cybernet.invoice.dto.request.ApprovedInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
@@ -14,6 +15,7 @@ public interface InvoiceService {
 
     InvoiceResponse sendBackForCorrection(UUID id, @Valid InvoiceCorrectionReq req);
 
+    InvoiceResponse approveInvoice(UUID id, ApprovedInvoiceRequest request);
 
     String generateInvoiceNumber();
 

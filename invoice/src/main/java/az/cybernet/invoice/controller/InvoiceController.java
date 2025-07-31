@@ -1,5 +1,6 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.dto.request.ApprovedInvoiceRequest;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
@@ -35,6 +36,13 @@ public class InvoiceController {
     public ResponseEntity<InvoiceResponse> sendBackForCorrection(@PathVariable("id") UUID id
             , @RequestBody @Valid InvoiceCorrectionReq req) {
         return ok(service.sendBackForCorrection(id, req));
+    }
+
+    @PatchMapping("/approve/{id}")
+    public ResponseEntity<InvoiceResponse> approveInvoice(
+            @PathVariable("id")UUID id,
+            @RequestBody ApprovedInvoiceRequest request) {
+        return ResponseEntity.ok(service.approveInvoice(id, request));
     }
 
     @PostMapping("/statuses/batch-update")
