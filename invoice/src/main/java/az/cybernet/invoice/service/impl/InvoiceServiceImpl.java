@@ -1,21 +1,30 @@
 package az.cybernet.invoice.service.impl;
 
-import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
-import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
+import az.cybernet.invoice.mapstruct.InvoiceProductMapstruct;
+import az.cybernet.invoice.mapstruct.ProductMapstruct;
+import az.cybernet.invoice.service.InvoiceNumberGeneratorService;
+import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
+import az.cybernet.invoice.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
 
@@ -23,19 +32,71 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceMapstruct mapstruct;
     private final InvoiceOperationMapper invoiceOperationMapper;
 
-    public InvoiceServiceImpl(InvoiceMapper mapper, InvoiceMapstruct mapstruct, InvoiceOperationMapper invoiceOperationMapper) {
+    private final InvoiceProductService invoiceProductService;
+    private final ProductService productService;
+    private final InvoiceNumberGeneratorService generator;
+    private final InvoiceProductMapstruct invoiceProductMapstruct;
+    private final ProductMapstruct productMapstruct;
+
+    public InvoiceServiceImpl(InvoiceMapper mapper,
+                              InvoiceMapstruct mapstruct,
+                              InvoiceProductService invoiceProductService,
+                              ProductService productService,
+                              InvoiceNumberGeneratorService generator,
+                              InvoiceOperationMapper invoiceOperationMapper,
+                              InvoiceProductMapstruct invoiceProductMapstruct,
+                              ProductMapstruct productMapstruct) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
+        this.invoiceProductService = invoiceProductService;
+        this.productService = productService;
+        this.generator = generator;
         this.invoiceOperationMapper = invoiceOperationMapper;
+        this.invoiceProductMapstruct = invoiceProductMapstruct;
+        this.productMapstruct = productMapstruct;
     }
 
     @Override
-    public InvoiceResponse insertInvoice(InvoiceRequest request) {
-        Invoice invoice = mapstruct.toEntity(request);
+    @Transactional
+    public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
+        Invoice invoice = mapstruct.toEntity(
+                mapstruct.getInvoiceFromCreateRequest(request));
+        String invdSeries = generator.generateInvoiceNumber();
+
+        invoice.setId(UUID.randomUUID());
+        invoice.setSeries(invdSeries.substring(0, 4));
+
+        //This block exists solely to please GitHub's codescan
+        try {
+            invoice.setInvoiceNumber(Integer.parseInt(invdSeries.substring(4)));
+        } catch (NumberFormatException e) {
+            log.warn("Somehow parsing the generated series failed. This is impossible.");
+            LocalDateTime datePart = LocalDateTime.now();
+            invoice.setInvoiceNumber(datePart.getYear()%2000*1000000
+                    + datePart.getMonthValue() * 10000
+                    + mapper.getNextInvoiceNum());
+            log.info("generated series manually");
+        }
+
+        invoice.setStatus(Status.PENDING);
+        invoice.setTotal(request.getProductQuantityRequests()
+                .stream()
+                .map(productQuantityRequest ->
+                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
+        List<ProductRequest> productList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
+
+        List<InvoiceProductRequest> invoiceProductList = invoiceProductMapstruct.toInvoiceProductRequestList(
+                invoice.getId(),
+                request.getProductQuantityRequests());
+        invoiceProductList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
+
         mapper.insertInvoice(invoice);
+        productList.forEach(productService::insertProduct);
+        invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
         return mapstruct.toDto(invoice);
     }
 

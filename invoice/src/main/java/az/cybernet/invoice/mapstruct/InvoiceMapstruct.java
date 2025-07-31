@@ -1,6 +1,6 @@
 package az.cybernet.invoice.mapstruct;
 
-import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
@@ -13,6 +13,8 @@ public interface InvoiceMapstruct {
     Invoice toEntity(InvoiceRequest InvoiceRequest);
 
     InvoiceResponse toDto(Invoice invoice);
+
+    InvoiceRequest getInvoiceFromCreateRequest(CreateInvoiceRequest request);
 
     @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "invoiceId", source = "id")
