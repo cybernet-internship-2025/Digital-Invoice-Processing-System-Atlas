@@ -4,17 +4,11 @@ import az.cybernet.invoice.dto.request.ApprovedInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.entity.Invoice;
-import az.cybernet.invoice.entity.InvoiceOperation;
-import az.cybernet.invoice.entity.InvoiceProduct;
-import az.cybernet.invoice.entity.Product;
+import az.cybernet.invoice.entity.*;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.ProductNotFoundException;
-import az.cybernet.invoice.mapper.InvoiceMapper;
-import az.cybernet.invoice.mapper.InvoiceOperationMapper;
-import az.cybernet.invoice.mapper.InvoiceProductMapper;
-import az.cybernet.invoice.mapper.ProductMapper;
+import az.cybernet.invoice.mapper.*;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
 import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.stereotype.Service;
@@ -33,18 +27,21 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceOperationMapper invoiceOperationMapper;
     private final InvoiceProductMapper invoiceProductMapper;
     private final ProductMapper productMapper;
+    private final MeasurementMapper measurementMapper;
 
     public InvoiceServiceImpl(
             InvoiceMapper mapper,
             InvoiceMapstruct mapstruct,
             InvoiceOperationMapper invoiceOperationMapper,
             InvoiceProductMapper invoiceProductMapper,
-            ProductMapper productMapper) {
+            ProductMapper productMapper,
+            MeasurementMapper measurementMapper) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceOperationMapper = invoiceOperationMapper;
         this.invoiceProductMapper = invoiceProductMapper;
         this.productMapper = productMapper;
+        this.measurementMapper = measurementMapper;
     }
 
     @Override
@@ -84,8 +81,14 @@ public class InvoiceServiceImpl implements InvoiceService {
         for (InvoiceProduct item: productList) {
             Product product = productMapper.findProductById(item.getProductId())
                     .orElseThrow(() -> new ProductNotFoundException("Product not found"));
-            if (product.getMeasurementId() == null)
-                throw new IllegalStateException("Product " + product.getName() + " has no measurement.");
+            if (product.getMeasurementId() == null) {
+//                throw new IllegalStateException("Product " + product.getName() + " has no measurement.");
+                Measurement nm = new Measurement();
+                nm.setId(product.getMeasurementId());
+                nm.setName(product.getName());
+                nm.setDisplayName(product.getName());
+                measurementMapper.insertMeasurement(nm);
+            }
             total += product.getPrice() * item.getQuantity();
         }
 
