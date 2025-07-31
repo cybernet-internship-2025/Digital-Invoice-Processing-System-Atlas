@@ -79,7 +79,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
-    }
+
 
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
