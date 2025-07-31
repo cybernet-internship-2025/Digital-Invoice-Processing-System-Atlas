@@ -2,6 +2,7 @@ package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
@@ -68,6 +69,15 @@ public class InvoiceServiceImpl implements InvoiceService {
         int next = (lastNumber == null) ? 1 : lastNumber + 1;
 
         return series + String.format("%04d", next);
+    }
+
+    @Override
+    public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
+        return mapper.getDetailedInvoice(invoiceId)
+                .map(mapstruct::toDetailDto)
+                .orElseThrow(() ->
+                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+    }
 
     }
 

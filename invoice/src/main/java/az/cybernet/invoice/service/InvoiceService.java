@@ -2,6 +2,7 @@ package az.cybernet.invoice.service;
 
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import jakarta.validation.Valid;
 
@@ -17,5 +18,7 @@ public interface InvoiceService {
     String generateInvoiceNumber();
 
     InvoiceResponse cancelInvoice(UUID id);
+
+    InvoiceDetailResponse getInvoiceDetails(UUID id);
 
 }
