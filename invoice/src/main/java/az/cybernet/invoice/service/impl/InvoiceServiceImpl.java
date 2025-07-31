@@ -117,4 +117,34 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
         return mapstruct.toDto(cancelledInvoice);
     }
+
+    @Override
+    @Transactional
+    public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
+        Invoice invoice = Optional.ofNullable(mapper.updateInvoice(
+                request.getId(),
+                request.getStatus(),
+                request.getComment(),
+                request.getProductQuantityRequests()
+                        .stream()
+                        .map(productQuantityRequest ->
+                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                        .reduce(0.0, Double::sum),
+                LocalDateTime.now())
+        ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+
+        InvoiceOperation invoiceOperation = mapstruct.invoiceToInvcOper(invoice);
+        invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
+
+        List<ProductRequest> productRequestList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
+        productRequestList.forEach(productService::insertProduct);
+
+        List<InvoiceProductRequest> invoiceProductRequestList = invoiceProductMapstruct.toInvoiceProductRequestList(
+                invoice.getId(),
+                request.getProductQuantityRequests()
+        );
+        invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
+
+        return mapstruct.toDto(invoice);
+    }
 }

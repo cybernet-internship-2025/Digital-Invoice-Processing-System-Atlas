@@ -21,4 +21,10 @@ public interface InvoiceMapper {
             , @Param("updatedAt") LocalDateTime updatedAt);
 
     Invoice cancelInvoice(UUID id);
+
+    Invoice updateInvoice(@Param("id") UUID id,
+                      @Param("status") Status status,
+                      @Param("comment") String comment,
+                      @Param("total") Double total,
+                      @Param("updatedAt") LocalDateTime updatedAt);
 }

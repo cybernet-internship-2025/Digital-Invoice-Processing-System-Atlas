@@ -2,6 +2,7 @@ package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
+import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
@@ -39,5 +40,10 @@ public class InvoiceController {
     @PatchMapping("/cancel/{id}")
     public ResponseEntity<InvoiceResponse> cancelInvoice(@PathVariable("id") UUID id) {
         return ok(service.cancelInvoice(id));
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<InvoiceResponse> updateInvoice(@RequestBody UpdateInvoiceRequest req) {
+        return ok(service.updateInvoice(req));
     }
 }

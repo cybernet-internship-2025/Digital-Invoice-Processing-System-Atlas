@@ -34,4 +34,16 @@
         RETURNING * )
         SELECT * FROM cancelled
     </select>
+
+    <select id="updateInvoice" resultType="az.cybernet.invoice.entity.Invoice">
+        WITH updated AS (
+        UPDATE invoice_schema.invoice
+            SET status = #{status},
+            comment = #{comment},
+            total = #{total},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+        RETURNING * )
+        SELECT * FROM updated
+    </select>
 </mapper>
