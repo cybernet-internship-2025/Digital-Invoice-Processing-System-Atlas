@@ -1,10 +1,10 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +19,19 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequestMapping("/v1/invoices")
 @Validated
+@RequiredArgsConstructor
 public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
-    public InvoiceController(InvoiceService service, InvoiceBatchOperationsService batchService) {
-        this.service = service;
-        this.batchService = batchService;
-    }
+
     @PostMapping
     public ResponseEntity<InvoiceResponse> insertInvoice(@RequestBody InvoiceRequest request) {
         return ResponseEntity.ok(service.insertInvoice(request));
     }
 
     @PatchMapping("/correction/{id}")
-    public ResponseEntity<InvoiceResponse> sendBackForCorrection(@PathVariable ("id") UUID id
+    public ResponseEntity<InvoiceResponse> sendBackForCorrection(@PathVariable("id") UUID id
             , @RequestBody @Valid InvoiceCorrectionReq req) {
         return ok(service.sendBackForCorrection(id, req));
     }
@@ -42,6 +40,7 @@ public class InvoiceController {
     public ResponseEntity<Void> changeStatusInBatch(@RequestBody InvoiceBatchStatusUpdateRequest req) {
         batchService.changeStatusInBatch(req.getInvoiceIds(), req.getNewStatus());
         return ResponseEntity.ok().build();
+
     }
 
     @PatchMapping("/cancel/{id}")
