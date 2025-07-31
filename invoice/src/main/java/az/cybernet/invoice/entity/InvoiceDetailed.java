@@ -8,12 +8,13 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+@EqualsAndHashCode (of = "id")
 public class InvoiceDetailed {
     UUID id;
     String series;
@@ -27,4 +28,6 @@ public class InvoiceDetailed {
     String comment;
 
     List<ProductDetailResponse> products;
+
+
 }

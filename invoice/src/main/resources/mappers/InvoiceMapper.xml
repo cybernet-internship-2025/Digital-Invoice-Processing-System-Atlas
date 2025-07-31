@@ -81,10 +81,10 @@
         p.price,
         m.name as measurement_name
 
-    FROM invoice_schema.invoice i
-             LEFT JOIN invoice_schema.invoice_product ip ON i.id = ip.invoice_id
-             LEFT JOIN invoice_schema.product p ON ip.product_id = p.id
-             LEFT JOIN invoice_schema.measurement m ON p.measurement_id = m.id
+    FROM invoice.invoice i
+             LEFT JOIN invoice.invoice_product ip ON i.id = ip.invoice_id
+             LEFT JOIN invoice.product p ON ip.product_id = p.id
+             LEFT JOIN invoice.measurement m ON p.measurement_id = m.id
     WHERE i.id = #{invoiceId}
 </select>
 

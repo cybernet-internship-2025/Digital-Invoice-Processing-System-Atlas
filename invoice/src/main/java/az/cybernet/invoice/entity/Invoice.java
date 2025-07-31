@@ -25,7 +25,4 @@ public class Invoice {
     LocalDateTime updatedAt;
     String comment;
 
-    User sender;
-    User customer;
-    List<InvoiceProduct> invoiceProducts;
 }
