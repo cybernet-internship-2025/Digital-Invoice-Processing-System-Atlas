@@ -6,12 +6,12 @@
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceMapper">
 
     <insert id="insertInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
-        INSERT INTO invoice_schema.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
+        INSERT INTO invoice.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
         VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
     </insert>
     
     <select id="getNextInvoiceNum" resultType="int">
-        SELECT nextval('invoice_schema.invoice_num_seq')
+        SELECT nextval('invoice.invoice_num_seq')
     </select>
 
 </mapper>

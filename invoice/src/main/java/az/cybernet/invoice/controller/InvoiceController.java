@@ -4,13 +4,12 @@ import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/invoices")
+@RequestMapping("/v1/invoices")
 public class InvoiceController {
 
     private final InvoiceService service;
