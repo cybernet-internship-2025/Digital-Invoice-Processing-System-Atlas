@@ -160,7 +160,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
 
         List<ProductRequest> productRequestList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
-        productRequestList.forEach(productService::insertProduct);
+        productRequestList.forEach(productRequest -> {
+            productRequest.setId(UUID.randomUUID());
+            productService.insertProduct(productRequest);
+        });
 
         List<InvoiceProductRequest> invoiceProductRequestList = invoiceProductMapstruct.toInvoiceProductRequestList(
                 invoice.getId(),
