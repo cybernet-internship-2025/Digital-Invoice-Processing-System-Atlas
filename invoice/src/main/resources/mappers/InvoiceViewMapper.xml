@@ -4,45 +4,45 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceViewMapper">
-    <select id="getSentInvoicesByTaxId" resultType="Invoice" parameterType="string">
+    <select id="getSentInvoicesByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
+        SELECT *
+        FROM invoice.invoice
+        WHERE sender_id IN (
+            SELECT id
+            FROM users.users
+            WHERE tax_id = #{taxId}
+        ) AND status != 'DRAFT'
+    </select>
+
+    <select id="getReceivedInvoicesByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
+        SELECT *
+        FROM invoice.invoice
+        WHERE customer_id IN (
+            SELECT id
+            FROM users.users
+            WHERE tax_id = #{taxId}
+        ) AND status != 'DRAFT'
+    </select>
+
+    <select id="getAllDraftsByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
         SELECT *
         FROM invoice.invoice
         WHERE invoice.sender_id IN (
             SELECT id
             FROM users.users
             WHERE tax_id = #{taxId}
-        ) AND invoice.status != 'DRAFT'
+        ) AND status = 'DRAFT'
     </select>
 
-    <select id="getReceivedInvoicesByTaxId" resultType="Invoice" parameterType="string">
-        SELECT *
-        FROM invoice
-        WHERE invoice.customer_id IN (
-            SELECT id
-            FROM users.users
-            WHERE tax_id = #{taxId}
-        ) AND invoice.status != 'DRAFT'
-    </select>
-
-    <select id="getAllDraftsByTaxId" resultType="Invoice" parameterType="string">
+    <select id="getAllInvoicesByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
         SELECT *
         FROM invoice.invoice
-        WHERE invoice.sender_id IN (
-            SELECT id
-            FROM users.users
-            WHERE tax_id = #{taxId}
-        ) AND invoice.status = 'DRAFT'
-    </select>
-
-    <select id="getAllInvoicesByTaxId" resultType="Invoice" parameterType="string">
-        SELECT *
-        FROM invoice
-        WHERE invoice.status != 'DRAFT' AND
-              (invoice.sender_id IN (
+        WHERE status != 'DRAFT' AND
+              (sender_id IN (
                   SELECT id
                   FROM users.users
                   WHERE tax_id = #{taxId}
-              ) OR invoice.customer_id IN (
+              ) OR customer_id IN (
                   SELECT id
                   FROM users.users
                   WHERE tax_id = #{taxId}

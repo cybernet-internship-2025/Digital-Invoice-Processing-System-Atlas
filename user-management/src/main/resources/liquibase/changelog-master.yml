@@ -6,3 +6,7 @@ databaseChangeLog:
   - include:
       file: v-1/user/202507251001-create-table-user.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: v-1/user/202507311000-create-sequence.yml
+      relativeToChangelogFile: true
