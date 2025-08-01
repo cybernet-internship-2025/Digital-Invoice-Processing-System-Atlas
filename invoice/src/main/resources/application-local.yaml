@@ -4,9 +4,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${INVOICE_DB_NAME:invoice}
-    username: ${INVOICE_DB_USER:invoice}
-    password: ${INVOICE_DB_PASS:invoice_pass}
+    url: jdbc:postgresql://localhost:5432/${INVOICE_DB_NAME:postgres}
+    username: ${INVOICE_DB_USER:elvin}
+    password: ${INVOICE_DB_PASS:15112002}
 
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml
