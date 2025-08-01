@@ -1,4 +1,4 @@
-package az.cybernet.invoice.dto.response;
+package az.cybernet.invoice.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,9 +10,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class InvoiceProductResponse {
-    UUID invoiceId;
-    UUID productId;
+public class ProductQuantityRequest {
+    UUID id;
+    String name;
+    Double price;
+    UUID measurementId;
     Double quantity;
-    boolean active;
 }

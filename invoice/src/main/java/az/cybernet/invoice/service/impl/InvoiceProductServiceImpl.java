@@ -8,6 +8,8 @@ import az.cybernet.invoice.mapstruct.InvoiceProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class InvoiceProductServiceImpl implements InvoiceProductService {
 
@@ -24,5 +26,10 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         InvoiceProduct product = mapstruct.toEntity(request);
         mapper.insertInvoiceProduct(product);
         return mapstruct.toDto(product);
+    }
+
+    @Override
+    public int setInactive(UUID id) {
+        return mapper.setInactive(id);
     }
 }
