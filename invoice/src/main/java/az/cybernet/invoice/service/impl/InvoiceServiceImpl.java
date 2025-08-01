@@ -36,6 +36,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceResponse insertInvoice(InvoiceRequest request) {
         Invoice invoice = mapstruct.toEntity(request);
+        invoice.setId(UUID.randomUUID());
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
