@@ -16,10 +16,6 @@ databaseChangeLog:
       relativeToChangelogFile: true
 
   - include:
-      file: v-1/invoice/create-invoice-number-sequence.yml
-      relativeToChangelogFile: true
-
-  - include:
       file: v-1/invoice/202507250000-create-schema-invoice.yml
       relativeToChangelogFile: true
 

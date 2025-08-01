@@ -1,20 +1,16 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.invoice.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class Product {
-    UUID id;
-    String name;
+public class ProductDetailResponse {
+    String productName;
+    Double quantity;
     Double price;
-    UUID measurementId;
-
-    Measurement measurement;
+    String measurementName;
 }
