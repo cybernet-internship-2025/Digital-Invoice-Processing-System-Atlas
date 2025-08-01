@@ -2,6 +2,7 @@ package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.impl.InvoiceViewService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,19 +20,19 @@ public class InvoiceViewController {
     }
 
     @GetMapping("/sent/{taxId}")
-    public ResponseEntity<List<Invoice>> getSentInvoicesByTaxId(@PathVariable String taxId) {
+    public ResponseEntity<List<Invoice>> getSentInvoicesByTaxId(@PathVariable("taxId") String taxId) {
         return ResponseEntity.ok(invoiceViewService.getSentInvoicesByTaxId(taxId));
     }
     @GetMapping("/received/{taxId}")
-    public ResponseEntity<List<Invoice>> getReceivedInvoicesByTaxId(@PathVariable String taxId) {
+    public ResponseEntity<List<Invoice>> getReceivedInvoicesByTaxId(@PathVariable("taxId") String taxId) {
         return ResponseEntity.ok(invoiceViewService.getReceivedInvoicesByTaxId(taxId));
     }
     @GetMapping("/drafts/{taxId}")
-    public ResponseEntity<List<Invoice>> getAllDraftsByTaxId(@PathVariable String taxId) {
+    public ResponseEntity<List<Invoice>> getAllDraftsByTaxId(@PathVariable("taxId") String taxId) {
         return ResponseEntity.ok(invoiceViewService.getAllDraftsByTaxId(taxId));
     }
     @GetMapping("/all/{taxId}")
-    public ResponseEntity<List<Invoice>> getAllInvoicesByTaxId(@PathVariable String taxId) {
+    public ResponseEntity<List<Invoice>> getAllInvoicesByTaxId(@PathVariable("taxId") String taxId) {
         return ResponseEntity.ok(invoiceViewService.getAllInvoicesByTaxId(taxId));
     }
 }
