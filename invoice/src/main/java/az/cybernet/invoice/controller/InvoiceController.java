@@ -1,13 +1,14 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
-import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,8 +28,8 @@ public class InvoiceController {
     private final InvoiceBatchOperationsService batchService;
 
     @PostMapping
-    public ResponseEntity<InvoiceResponse> insertInvoice(@RequestBody InvoiceRequest request) {
-        return ResponseEntity.ok(service.insertInvoice(request));
+    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody CreateInvoiceRequest request) {
+        return new ResponseEntity<>(service.createInvoice(request), HttpStatus.CREATED);
     }
 
     @PatchMapping("/correction/{id}")
