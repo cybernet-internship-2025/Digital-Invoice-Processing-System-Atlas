@@ -1,11 +1,11 @@
-package az.cybernet.invoice.service.impl;
+package az.cybernet.invoice.api.service.impl;
 
 import az.cybernet.invoice.dto.request.ProductRequest;
 import az.cybernet.invoice.dto.response.ProductResponse;
 import az.cybernet.invoice.entity.Product;
 import az.cybernet.invoice.mapper.ProductMapper;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
-import az.cybernet.invoice.service.ProductService;
+import az.cybernet.invoice.api.service.ProductService;
 import org.springframework.stereotype.Service;
 
 @Service

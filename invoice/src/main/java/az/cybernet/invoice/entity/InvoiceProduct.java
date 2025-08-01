@@ -15,4 +15,6 @@ public class InvoiceProduct {
     UUID productId;
     Double quantity;
     boolean active;
+
+    Product product;
 }

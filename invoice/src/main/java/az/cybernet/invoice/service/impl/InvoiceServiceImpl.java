@@ -1,6 +1,7 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.*;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
@@ -11,7 +12,6 @@ import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
 import az.cybernet.invoice.mapstruct.InvoiceProductMapstruct;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
-import az.cybernet.invoice.service.InvoiceNumberGeneratorService;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
@@ -19,10 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static az.cybernet.invoice.constant.Constants.INVD;
 
 @Slf4j
 @Service
@@ -34,7 +37,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     private final InvoiceProductService invoiceProductService;
     private final ProductService productService;
-    private final InvoiceNumberGeneratorService generator;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
 
@@ -42,7 +44,6 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceMapstruct mapstruct,
                               InvoiceProductService invoiceProductService,
                               ProductService productService,
-                              InvoiceNumberGeneratorService generator,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct) {
@@ -50,7 +51,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
-        this.generator = generator;
         this.invoiceOperationMapper = invoiceOperationMapper;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
@@ -61,7 +61,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
         Invoice invoice = mapstruct.toEntity(
                 mapstruct.getInvoiceFromCreateRequest(request));
-        String invdSeries = generator.generateInvoiceNumber();
+        String invdSeries = generateInvoiceNumber();
 
         invoice.setId(UUID.randomUUID());
         invoice.setSeries(invdSeries.substring(0, 4));
@@ -73,8 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             log.warn("Somehow parsing the generated series failed. This is impossible.");
             LocalDateTime datePart = LocalDateTime.now();
             invoice.setInvoiceNumber(datePart.getYear()%2000*1000000
-                    + datePart.getMonthValue() * 10000
-                    + mapper.getNextInvoiceNum());
+                    + datePart.getMonthValue() * 10000);
             log.info("generated series manually");
         }
 
@@ -112,6 +111,32 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+
+    public String generateInvoiceNumber() {
+        LocalDate now = LocalDate.now();
+        String year = String.format("%02d", now.getYear() % 100);
+        String month = String.format("%02d", now.getMonthValue());
+        String series = INVD + year + month;
+
+        LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
+
+        Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth);
+        int next = (lastNumber == null) ? 1 : lastNumber + 1;
+
+        return series + String.format("%04d", next);
+    }
+
+    @Override
+    public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
+        return mapper.getDetailedInvoice(invoiceId)
+                .map(mapstruct::toDetailDto)
+                .orElseThrow(() ->
+                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+    }
+
+
+
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
