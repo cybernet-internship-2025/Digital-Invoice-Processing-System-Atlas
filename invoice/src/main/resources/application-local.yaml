@@ -4,7 +4,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${INVOICE_DB_NAME:invoice}
+    url: jdbc:postgresql://postgres-db:5432/${INVOICE_DB_NAME:invoice}
     username: ${INVOICE_DB_USER:invoice}
     password: ${INVOICE_DB_PASS:invoice_pass}
 
