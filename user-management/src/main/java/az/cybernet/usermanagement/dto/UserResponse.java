@@ -1,4 +1,4 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.usermanagement.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,8 +9,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-public class User {
+public class UserResponse {
     UUID id;
     String name;
     String taxId;

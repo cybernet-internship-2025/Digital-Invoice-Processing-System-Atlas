@@ -6,8 +6,8 @@
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceProductMapper">
 
     <insert id="insertInvoiceProduct" parameterType="az.cybernet.invoice.entity.InvoiceProduct">
-        INSERT INTO invoice_schema.invoice_product ("invoice_id", "product_id", "quantity", "is_active")
-        VALUES (#{invoiceId}, #{productId}, #{quantity}, #{active})
+        INSERT INTO invoice.invoice_product ("invoice_id", "product_id", "quantity", "is_active")
+        VALUES (#{invoiceId}, #{productId}, #{quantity}, #{isActive})
     </insert>
 
     <update id="setInactive" parameterType="java.util.UUID">

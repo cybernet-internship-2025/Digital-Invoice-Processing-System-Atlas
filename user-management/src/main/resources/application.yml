@@ -1,5 +1,22 @@
+server:
+  servlet:
+    context-path: /api/user-management
+
 spring:
   datasource:
     url: jdbc:postgresql://postgres-db:5432/${USER_DB_NAME}
     username: ${USER_DB_USER}
     password: ${USER_DB_PASS}
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+    enabled: true
+
+mybatis:
+  mapperLocations: classpath:mappers/*.xml
+  config-location: classpath:config/mybatis.xml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

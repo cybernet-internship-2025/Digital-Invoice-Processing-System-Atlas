@@ -1,11 +1,11 @@
-package az.cybernet.invoice.api.service.impl;
+package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.MeasurementRequest;
 import az.cybernet.invoice.dto.response.MeasurementResponse;
 import az.cybernet.invoice.entity.Measurement;
 import az.cybernet.invoice.mapper.MeasurementMapper;
 import az.cybernet.invoice.mapstruct.MeasurementMapstruct;
-import az.cybernet.invoice.api.service.MeasurementService;
+import az.cybernet.invoice.service.MeasurementService;
 import org.springframework.stereotype.Service;
 
 @Service
