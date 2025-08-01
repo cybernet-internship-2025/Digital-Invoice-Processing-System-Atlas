@@ -4,7 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceBatchOperationsMapper">
-    <update id="changeInvoiceStatus">
-
+    <update id="updateStatusInBatch">
+        UPDATE invoice.invoice
+        SET status = #{status},
+        updated_at = #{updatedAt}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </update>
+
+    <select id="findAllByIds" resultType="az.cybernet.invoice.entity.Invoice">
+        SELECT *
+        FROM invoice.invoice
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>
