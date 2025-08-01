@@ -4,7 +4,6 @@ import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
-import az.cybernet.invoice.dto.request.InvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;

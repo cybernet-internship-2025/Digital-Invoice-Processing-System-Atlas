@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202507250001
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: measurement
+              schemaName: invoice
+      changes:
+        - createTable:
+            tableName: measurement
+            schemaName: invoice
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: display_name
+                  type: VARCHAR(255)

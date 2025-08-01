@@ -110,7 +110,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-
     public String generateInvoiceNumber() {
         LocalDate now = LocalDate.now();
         String year = String.format("%02d", now.getYear() % 100);
@@ -134,8 +133,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                         new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
-
-
+    @Override
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
