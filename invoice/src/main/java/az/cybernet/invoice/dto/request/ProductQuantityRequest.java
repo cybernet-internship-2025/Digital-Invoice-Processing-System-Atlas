@@ -11,7 +11,6 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class ProductQuantityRequest {
-    UUID id;
     String name;
     Double price;
     UUID measurementId;

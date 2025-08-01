@@ -8,7 +8,6 @@
     <insert id="insertProduct" parameterType="az.cybernet.invoice.entity.Product">
         INSERT INTO invoice.product ("id", "name", "price", "measurement_id")
         VALUES (#{id}, #{name}, #{price}, #{measurementId})
-        ON CONFLICT DO NOTHING
     </insert>
 
 </mapper>

@@ -86,6 +86,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setUpdatedAt(LocalDateTime.now());
 
         List<ProductRequest> productList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
+        productList.forEach(productRequest -> productRequest.setId(UUID.randomUUID()));
 
         List<InvoiceProductRequest> invoiceProductList = invoiceProductMapstruct.toInvoiceProductRequestList(
                 invoice.getId(),
