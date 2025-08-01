@@ -18,7 +18,6 @@ public interface InvoiceProductMapstruct {
     InvoiceProductResponse toDto(InvoiceProduct invoiceProduct);
 
     @Mapping(target = "invoiceId", source = "invoiceId")
-    @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "quantity", source = "product.quantity")
     InvoiceProductRequest toInvoiceProductRequest(UUID invoiceId, ProductQuantityRequest product);
 
