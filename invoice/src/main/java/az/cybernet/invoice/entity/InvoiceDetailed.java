@@ -28,6 +28,4 @@ public class InvoiceDetailed {
     String comment;
 
     List<ProductDetailResponse> products;
-
-
 }

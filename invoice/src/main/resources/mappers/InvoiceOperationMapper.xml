@@ -6,7 +6,7 @@
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceOperationMapper">
 
     <insert id="insertInvoiceOperation" parameterType="az.cybernet.invoice.entity.InvoiceOperation">
-        INSERT INTO invoice_schema.invoice_operation ("id", "invoice_id", "status", "total", "timestamp", "comment")
+        INSERT INTO invoice.invoice_operation ("id", "invoice_id", "status", "total", "timestamp", "comment")
         VALUES (#{id}, #{invoiceId}, #{status}, #{total}, #{timestamp}, #{comment})
     </insert>
 

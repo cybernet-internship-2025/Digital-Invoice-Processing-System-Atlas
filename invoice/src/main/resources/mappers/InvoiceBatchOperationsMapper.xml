@@ -5,7 +5,7 @@
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceBatchOperationsMapper">
     <update id="updateStatusInBatch">
-        UPDATE invoice_schema.invoice
+        UPDATE invoice.invoice
         SET status = #{status},
         updated_at = #{updatedAt}
         WHERE id IN
@@ -16,7 +16,7 @@
 
     <select id="findAllByIds" resultType="az.cybernet.invoice.entity.Invoice">
         SELECT *
-        FROM invoice_schema.invoice
+        FROM invoice.invoice
         WHERE id IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
             #{id}

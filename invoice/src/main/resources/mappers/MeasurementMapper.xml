@@ -6,7 +6,7 @@
 <mapper namespace="az.cybernet.invoice.mapper.MeasurementMapper">
 
     <insert id="insertMeasurement" parameterType="az.cybernet.invoice.entity.Measurement">
-        INSERT INTO invoice_schema.measurement ("id", "name", "display_name")
+        INSERT INTO invoice.measurement ("id", "name", "display_name")
         VALUES (#{id}, #{name}, #{displayName})
     </insert>
 
