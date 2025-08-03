@@ -26,4 +26,8 @@ public interface InvoiceMapper {
     Invoice cancelInvoice(UUID id);
 
     Optional<InvoiceDetailed> getDetailedInvoice(@Param("invoiceId") UUID id);
+
+    Optional<Invoice> findInvoiceById(@Param("id") UUID id);
+
+    void approveInvoice(Invoice invoice);
 }

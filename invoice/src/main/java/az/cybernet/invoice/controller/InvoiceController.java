@@ -54,4 +54,9 @@ public class InvoiceController {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
     }
+
+    @PatchMapping("/approve/{id}")
+    public ResponseEntity<InvoiceResponse> approveInvoice(@PathVariable("id") UUID id) {
+        return ok(service.approveInvoice(id));
+    }
 }
