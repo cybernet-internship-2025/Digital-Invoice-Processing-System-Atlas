@@ -21,4 +21,5 @@ public interface InvoiceService {
 
     InvoiceDetailResponse getInvoiceDetails(UUID id);
 
+    InvoiceResponse approveInvoice(UUID id);
 }

@@ -140,4 +140,19 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
         return mapstruct.toDto(cancelledInvoice);
     }
+
+    @Override
+    @Transactional
+    public InvoiceResponse approveInvoice(UUID id) {
+        Invoice invoice = mapper.findInvoiceById(id)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+        if (!invoice.getStatus().equals(Status.PENDING))
+            throw new IllegalStateException("Only PENDING invoices can be APPROVED");
+        invoice.setUpdatedAt(LocalDateTime.now());
+        mapper.approveInvoice(invoice);
+
+        invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
+
+        return mapstruct.toDto(invoice);
+    }
 }
