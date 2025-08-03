@@ -28,7 +28,7 @@ public class InvoiceController {
     private final InvoiceBatchOperationsService batchService;
 
     @PostMapping
-    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody CreateInvoiceRequest request) {
+    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
         return new ResponseEntity<>(service.createInvoice(request), HttpStatus.CREATED);
     }
 
