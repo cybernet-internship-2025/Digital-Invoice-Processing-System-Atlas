@@ -12,6 +12,8 @@ services:
       - invoice-service
       - notification-service
       - user-service
+    networks:
+      - app-network
 
   postgres-db:
 #    image: postgres:16-alpine
@@ -50,6 +52,8 @@ services:
       # db container initialization
 #      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
+    networks:
+      - app-network
 
   invoice-service:
 #    build: ./invoice
@@ -67,6 +71,8 @@ services:
     depends_on:
       - postgres-db
     restart: always
+    networks:
+      - app-network
 
   notification-service:
 #    build: ./notification
@@ -84,6 +90,8 @@ services:
     depends_on:
       - postgres-db
     restart: always
+    networks:
+      - app-network
 
   user-service:
 #    build: ./user-management
@@ -101,7 +109,13 @@ services:
     depends_on:
       - postgres-db
     restart: always
+    networks:
+      - app-network
 
 
 volumes:
   postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
