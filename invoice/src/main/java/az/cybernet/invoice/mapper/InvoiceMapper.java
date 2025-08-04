@@ -27,6 +27,10 @@ public interface InvoiceMapper {
 
     Optional<InvoiceDetailed> getDetailedInvoice(@Param("invoiceId") UUID id);
 
+    Optional<Invoice> findInvoiceById(@Param("id") UUID id);
+
+    void approveInvoice(Invoice invoice);
+
     Invoice updateInvoice(@Param("id") UUID id,
                       @Param("status") Status status,
                       @Param("comment") String comment,

@@ -1,6 +1,7 @@
 package az.cybernet.invoice.dto.request;
 
 import az.cybernet.invoice.enums.Status;
+import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,6 +17,7 @@ public class CreateInvoiceRequest{
     UUID senderId;
     UUID customerId;
     String comment;
+    @Valid
     List<ProductQuantityRequest> productQuantityRequests;
 }
 

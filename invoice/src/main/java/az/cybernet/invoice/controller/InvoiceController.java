@@ -1,14 +1,16 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ public class InvoiceController {
     private final InvoiceBatchOperationsService batchService;
 
     @PostMapping
-    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody CreateInvoiceRequest request) {
+    public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
         return new ResponseEntity<>(service.createInvoice(request), HttpStatus.CREATED);
     }
 
@@ -59,5 +61,10 @@ public class InvoiceController {
     public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable ("invoiceId") UUID invoiceId) {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
+    }
+
+    @PatchMapping("/approve/{id}")
+    public ResponseEntity<InvoiceResponse> approveInvoice(@PathVariable("id") UUID id) {
+        return ok(service.approveInvoice(id));
     }
 }

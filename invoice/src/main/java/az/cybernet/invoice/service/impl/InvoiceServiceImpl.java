@@ -86,15 +86,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
-        List<ProductRequest> productList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
+        List<ProductQuantityRequest> productQuantityList = request.getProductQuantityRequests();
+        productQuantityList.forEach(productQuantity -> productQuantity.setId(UUID.randomUUID()));
+
 
         List<InvoiceProductRequest> invoiceProductList = invoiceProductMapstruct.toInvoiceProductRequestList(
                 invoice.getId(),
-                request.getProductQuantityRequests());
+                productQuantityList);
         invoiceProductList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
 
         mapper.insertInvoice(invoice);
-        productList.forEach(productService::insertProduct);
+        productMapstruct.toProductRequestList(productQuantityList).forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
         return mapstruct.toDto(invoice);
     }
@@ -139,6 +141,21 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse cancelInvoice(UUID id) {
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
         return mapstruct.toDto(cancelledInvoice);
+    }
+
+    @Override
+    @Transactional
+    public InvoiceResponse approveInvoice(UUID id) {
+        Invoice invoice = mapper.findInvoiceById(id)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+        if (!invoice.getStatus().equals(Status.PENDING))
+            throw new IllegalStateException("Only PENDING invoices can be APPROVED");
+        invoice.setUpdatedAt(LocalDateTime.now());
+        mapper.approveInvoice(invoice);
+
+        invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
+
+        return mapstruct.toDto(invoice);
     }
 
     @Override

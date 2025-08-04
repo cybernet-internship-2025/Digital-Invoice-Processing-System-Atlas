@@ -101,4 +101,15 @@
         WHERE i.id = #{invoiceId}
     </select>
 
+    <select id="findInvoiceById" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Invoice">
+        SELECT * FROM invoice.invoice WHERE id = #{id}
+    </select>
+
+    <update id="approveInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
+        UPDATE invoice.invoice
+        SET status = 'APPROVED',
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
 </mapper>
