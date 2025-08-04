@@ -22,8 +22,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static az.cybernet.invoice.constant.Constants.INVD;
@@ -182,5 +182,45 @@ class InvoiceServiceImplTest {
         verify(mapper).insertInvoice(any(Invoice.class));
         verify(productService, times(2)).insertProduct(any(ProductRequest.class));
         verify(invoiceProductService, times(2)).insertInvoiceProduct(any(InvoiceProductRequest.class));
+    }
+
+    @Test
+    void cancelInvoice_ShouldReturnCancelledInvoiceResponse() {
+        UUID invoiceId = UUID.randomUUID();
+
+        Invoice foundInvoice = new Invoice();
+        foundInvoice.setId(invoiceId);
+
+        Invoice cancelledInvoice = new Invoice();
+        cancelledInvoice.setId(invoiceId);
+        cancelledInvoice.setStatus(Status.CANCELLED);
+
+        InvoiceResponse expectedResponse = new InvoiceResponse();
+        expectedResponse.setId(invoiceId);
+        expectedResponse.setStatus(Status.CANCELLED);
+
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(foundInvoice));
+        when(mapper.cancelInvoice(invoiceId)).thenReturn(cancelledInvoice);
+        when(mapstruct.toDto(cancelledInvoice)).thenReturn(expectedResponse);
+
+        InvoiceResponse response = service.cancelInvoice(invoiceId);
+
+        assertNotNull(response);
+        assertEquals(invoiceId, response.getId());
+        assertEquals(Status.CANCELLED, response.getStatus());
+
+        verify(mapper).cancelInvoice(invoiceId);
+        verify(mapstruct).toDto(cancelledInvoice);
+    }
+
+    @Test
+    void cancelInvoice_ShouldThrow_InvoiceNotFoundException() {
+        UUID invoiceId = UUID.randomUUID();
+
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.empty());
+
+        assertThrows(InvoiceNotFoundException.class, () -> service.cancelInvoice(invoiceId));
+
+        verify(mapper, never()).cancelInvoice(invoiceId);
     }
 }

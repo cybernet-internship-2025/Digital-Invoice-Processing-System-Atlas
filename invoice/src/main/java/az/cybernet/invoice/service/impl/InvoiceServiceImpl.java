@@ -138,6 +138,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
+        mapper.findInvoiceById(id).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
         return mapstruct.toDto(cancelledInvoice);
     }
