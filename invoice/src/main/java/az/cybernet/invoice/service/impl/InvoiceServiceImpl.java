@@ -85,16 +85,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
-        List<ProductRequest> productList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
-        productList.forEach(productRequest -> productRequest.setId(UUID.randomUUID()));
+        List<ProductQuantityRequest> productQuantityList = request.getProductQuantityRequests();
+        productQuantityList.forEach(productQuantity -> productQuantity.setId(UUID.randomUUID()));
+
 
         List<InvoiceProductRequest> invoiceProductList = invoiceProductMapstruct.toInvoiceProductRequestList(
                 invoice.getId(),
-                request.getProductQuantityRequests());
+                productQuantityList);
         invoiceProductList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
 
         mapper.insertInvoice(invoice);
-        productList.forEach(productService::insertProduct);
+        productMapstruct.toProductRequestList(productQuantityList).forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
         return mapstruct.toDto(invoice);
     }
