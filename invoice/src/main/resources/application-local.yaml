@@ -4,13 +4,31 @@ server:
 
 spring:
   datasource:
+<<<<<<< HEAD
     url: jdbc:postgresql://localhost:5432/${INVOICE_DB_NAME:postgres}
     username: ${INVOICE_DB_USER:elvin}
     password: ${INVOICE_DB_PASS:15112002}
+=======
+    url: jdbc:postgresql://postgres-db:5432/${INVOICE_DB_NAME:invoice}
+    username: ${INVOICE_DB_USER:invoice}
+    password: ${INVOICE_DB_PASS:invoice_pass}
+>>>>>>> 784d7f63ae7ae8851c8fb02b1eb0096d65ad289c
 
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          user-management:
+            url: http://user-service
+
+          default:
+            connectTimeout: 5000
+            readTimeout: 10000
+            loggerLevel: basic
 
 mybatis:
   mapperLocations: classpath:mappers/*.xml

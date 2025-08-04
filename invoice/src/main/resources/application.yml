@@ -12,6 +12,18 @@ spring:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
+  cloud:
+    openfeign:
+      client:
+        config:
+          user-management:
+            url: http://user-service
+
+          default:
+            connectTimeout: 5000
+            readTimeout: 10000
+            loggerLevel: basic
+
 mybatis:
   mapperLocations: classpath:mappers/*.xml
   config-location: classpath:config/mybatis.xml
