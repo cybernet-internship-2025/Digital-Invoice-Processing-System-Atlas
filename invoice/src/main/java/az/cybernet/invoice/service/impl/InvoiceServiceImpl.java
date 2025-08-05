@@ -1,11 +1,14 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
+import az.cybernet.invoice.exceptions.UserNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
@@ -38,6 +41,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
+    private final UserClient userClient;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -45,7 +49,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct) {
+                              ProductMapstruct productMapstruct, UserClient userClient) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -53,11 +57,15 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceOperationMapper = invoiceOperationMapper;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
+        this.userClient = userClient;
     }
 
     @Override
     @Transactional
     public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
+        validateUser("Sender", request.getSenderId());
+        validateUser("Customer", request.getCustomerId());
+
         Invoice invoice = mapstruct.toEntity(
                 mapstruct.getInvoiceFromCreateRequest(request));
         String invdSeries = generateInvoiceNumber();
@@ -154,5 +162,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
 
         return mapstruct.toDto(invoice);
+    }
+
+    private void validateUser(String role, UUID id) {
+        if (userClient.getUserById(id) == null)
+            throw new UserNotFoundException("User with id " + id + " and " + role + " not found");
     }
 }

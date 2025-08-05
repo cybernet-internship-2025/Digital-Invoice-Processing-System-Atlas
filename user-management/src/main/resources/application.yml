@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: /api/user-management
+  port: 8081
 
 spring:
   datasource:

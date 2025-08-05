@@ -39,8 +39,6 @@ services:
       # db container initialization
 #      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
-    networks:
-      - app-network
 
 volumes:
   postgres-data:

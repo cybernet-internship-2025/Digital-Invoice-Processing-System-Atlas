@@ -1,6 +1,7 @@
 server:
   servlet:
     context-path: /api/invoice
+  port: 8080
 
 spring:
   datasource:
@@ -37,3 +38,7 @@ logging:
   level:
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     liquibase: DEBUG
+
+user:
+  service:
+    url: http://localhost:8081
