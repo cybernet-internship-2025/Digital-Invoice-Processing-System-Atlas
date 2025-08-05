@@ -27,6 +27,6 @@ public class InvoicePdfGenerator {
 
         document.close();
 
-        return outputStream.toByteArray(); // Return PDF as byte array
+        return outputStream.toByteArray(); 
     }
 }
