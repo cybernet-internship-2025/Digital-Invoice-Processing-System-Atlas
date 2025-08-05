@@ -1,5 +1,6 @@
 package az.cybernet.invoice.controller;
 
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.impl.InvoiceViewService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequestMapping("/v1/invoices/view")
 public class InvoiceViewController {
     private final InvoiceViewService invoiceViewService;
+
     public InvoiceViewController(InvoiceViewService invoiceViewService) {
         this.invoiceViewService = invoiceViewService;
     }

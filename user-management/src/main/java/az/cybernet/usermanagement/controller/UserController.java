@@ -29,6 +29,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    @GetMapping("/tax-id/{taxId}")
+    public ResponseEntity<UserResponse> getUserByTaxId(@PathVariable String taxId) {
+        return ResponseEntity.ok(userService.getUserByTaxId(taxId));
+    }
+
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
