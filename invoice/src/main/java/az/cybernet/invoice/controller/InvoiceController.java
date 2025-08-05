@@ -59,4 +59,10 @@ public class InvoiceController {
     public ResponseEntity<InvoiceResponse> approveInvoice(@PathVariable("id") UUID id) {
         return ok(service.approveInvoice(id));
     }
+    @GetMapping("/{id}/pdf")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
+        return service.getInvoicePdf(id);
+    }
+
 }
