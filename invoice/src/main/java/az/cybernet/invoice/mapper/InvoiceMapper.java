@@ -30,4 +30,10 @@ public interface InvoiceMapper {
     Optional<Invoice> findInvoiceById(@Param("id") UUID id);
 
     void approveInvoice(Invoice invoice);
+
+    Invoice updateInvoice(@Param("id") UUID id,
+                      @Param("status") Status status,
+                      @Param("comment") String comment,
+                      @Param("total") Double total,
+                      @Param("updatedAt") LocalDateTime updatedAt);
 }
