@@ -1,9 +1,9 @@
 package az.cybernet.invoice.mapper;
 
-import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.enums.Status;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.reactivestreams.Publisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,5 +16,5 @@ public interface InvoiceBatchOperationsMapper {
                              @Param("updatedAt") LocalDateTime updatedAt);
 
 
-    List<Invoice> findAllByIds(@Param("ids") List<UUID> invoiceIds);
+    Publisher<?> findAllByIds(@Param("ids") List<UUID> invoiceIds);
 }
