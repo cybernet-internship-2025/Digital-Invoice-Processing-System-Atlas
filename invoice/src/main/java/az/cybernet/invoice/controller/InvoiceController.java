@@ -3,13 +3,16 @@ package az.cybernet.invoice.controller;
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
+import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
+import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +50,11 @@ public class InvoiceController {
     @PatchMapping("/cancel/{id}")
     public ResponseEntity<InvoiceResponse> cancelInvoice(@PathVariable("id") UUID id) {
         return ok(service.cancelInvoice(id));
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<InvoiceResponse> updateInvoice(@RequestBody UpdateInvoiceRequest req) {
+        return ok(service.updateInvoice(req));
     }
 
     @GetMapping("/{invoiceId}")

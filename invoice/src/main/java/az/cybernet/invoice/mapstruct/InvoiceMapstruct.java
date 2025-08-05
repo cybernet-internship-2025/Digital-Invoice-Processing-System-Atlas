@@ -1,8 +1,8 @@
 package az.cybernet.invoice.mapstruct;
 
 import az.cybernet.invoice.dto.request.InvoiceRequest;
-import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.dto.response.ProductDetailResponse;
 import az.cybernet.invoice.entity.*;
