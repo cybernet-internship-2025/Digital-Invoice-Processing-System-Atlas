@@ -4,6 +4,7 @@ import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -153,6 +154,42 @@ public class InvoiceServiceImpl implements InvoiceService {
         mapper.approveInvoice(invoice);
 
         invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
+
+        return mapstruct.toDto(invoice);
+    }
+
+    @Override
+    @Transactional
+    public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
+        Invoice invoice = Optional.ofNullable(mapper.updateInvoice(
+                request.getId(),
+                request.getStatus(),
+                request.getComment(),
+                request.getProductQuantityRequests()
+                        .stream()
+                        .map(productQuantityRequest ->
+                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                        .reduce(0.0, Double::sum),
+                LocalDateTime.now())
+        ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+
+        InvoiceOperation invoiceOperation = mapstruct.invoiceToInvcOper(invoice);
+        invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
+
+        List<ProductQuantityRequest> productQuantityRequestList = request.getProductQuantityRequests();
+        productQuantityRequestList.forEach(productQuantityRequest -> {
+            productQuantityRequest.setId(UUID.randomUUID());
+            productService.insertProduct(productMapstruct.toProductRequest(productQuantityRequest));
+        });
+
+        List<InvoiceProductRequest> invoiceProductRequestList = invoiceProductMapstruct.toInvoiceProductRequestList(
+                invoice.getId(),
+                productQuantityRequestList
+        );
+
+        invoiceProductService.setInactive(invoice.getId());
+        invoiceProductRequestList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
+        invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
     }
