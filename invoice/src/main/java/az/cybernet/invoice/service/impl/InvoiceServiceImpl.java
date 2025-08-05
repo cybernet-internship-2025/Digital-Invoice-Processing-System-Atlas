@@ -4,8 +4,8 @@ import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
@@ -17,7 +17,11 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
+import az.cybernet.invoice.util.InvoicePdfGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,28 +40,31 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceMapper mapper;
     private final InvoiceMapstruct mapstruct;
     private final InvoiceOperationMapper invoiceOperationMapper;
-
+    private final UserClient userClient;
     private final InvoiceProductService invoiceProductService;
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final UserClient userClient;
+    private final InvoicePdfGenerator pdfGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
+                              UserClient userClient,
                               InvoiceProductService invoiceProductService,
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, UserClient userClient) {
+                              ProductMapstruct productMapstruct,
+                              InvoicePdfGenerator pdfGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
+        this.userClient = userClient;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
         this.invoiceOperationMapper = invoiceOperationMapper;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
-        this.userClient = userClient;
+        this.pdfGenerator = pdfGenerator;
     }
 
     @Override
@@ -79,7 +86,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         } catch (NumberFormatException e) {
             log.warn("Somehow parsing the generated series failed. This is impossible.");
             LocalDateTime datePart = LocalDateTime.now();
-            invoice.setInvoiceNumber(datePart.getYear()%2000*1000000
+            invoice.setInvoiceNumber(datePart.getYear() % 2000 * 1000000
                     + datePart.getMonthValue() * 10000);
             log.info("generated series manually");
         }
@@ -93,16 +100,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
-        List<ProductRequest> productList = productMapstruct.toProductRequestList(request.getProductQuantityRequests());
-        productList.forEach(productRequest -> productRequest.setId(UUID.randomUUID()));
+        List<ProductQuantityRequest> productQuantityList = request.getProductQuantityRequests();
+        productQuantityList.forEach(productQuantity -> productQuantity.setId(UUID.randomUUID()));
+
 
         List<InvoiceProductRequest> invoiceProductList = invoiceProductMapstruct.toInvoiceProductRequestList(
                 invoice.getId(),
-                request.getProductQuantityRequests());
+                productQuantityList);
         invoiceProductList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
 
         mapper.insertInvoice(invoice);
-        productList.forEach(productService::insertProduct);
+        productMapstruct.toProductRequestList(productQuantityList).forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
         return mapstruct.toDto(invoice);
     }
@@ -160,6 +168,54 @@ public class InvoiceServiceImpl implements InvoiceService {
         mapper.approveInvoice(invoice);
 
         invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
+
+        return mapstruct.toDto(invoice);
+    }
+
+    public ResponseEntity<byte[]> getInvoicePdf(UUID id) {
+        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(
+                () -> new InvoiceNotFoundException("Invoice not found"));
+
+        byte[] pdfBytes = InvoicePdfGenerator.generatePdf(invoice);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + id + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
+    @Override
+    @Transactional
+    public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
+        Invoice invoice = Optional.ofNullable(mapper.updateInvoice(
+                request.getId(),
+                request.getStatus(),
+                request.getComment(),
+                request.getProductQuantityRequests()
+                        .stream()
+                        .map(productQuantityRequest ->
+                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                        .reduce(0.0, Double::sum),
+                LocalDateTime.now())
+        ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+
+        InvoiceOperation invoiceOperation = mapstruct.invoiceToInvcOper(invoice);
+        invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
+
+        List<ProductQuantityRequest> productQuantityRequestList = request.getProductQuantityRequests();
+        productQuantityRequestList.forEach(productQuantityRequest -> {
+            productQuantityRequest.setId(UUID.randomUUID());
+            productService.insertProduct(productMapstruct.toProductRequest(productQuantityRequest));
+        });
+
+        List<InvoiceProductRequest> invoiceProductRequestList = invoiceProductMapstruct.toInvoiceProductRequestList(
+                invoice.getId(),
+                productQuantityRequestList
+        );
+
+        invoiceProductService.setInactive(invoice.getId());
+        invoiceProductRequestList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
+        invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
     }

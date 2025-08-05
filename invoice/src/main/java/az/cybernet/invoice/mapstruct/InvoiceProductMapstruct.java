@@ -19,6 +19,7 @@ public interface InvoiceProductMapstruct {
 
     @Mapping(target = "invoiceId", source = "invoiceId")
     @Mapping(target = "quantity", source = "product.quantity")
+    @Mapping(target = "productId", source = "product.id")
     InvoiceProductRequest toInvoiceProductRequest(UUID invoiceId, ProductQuantityRequest product);
 
     default List<InvoiceProductRequest> toInvoiceProductRequestList(UUID invoiceId, List<ProductQuantityRequest> products) {
