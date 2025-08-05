@@ -25,12 +25,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @GetMapping("/tax-id/{taxId}")
-    public ResponseEntity<UserResponse> getUserByTaxId(@PathVariable String taxId) {
+    public ResponseEntity<UserResponse> getUserByTaxId(@PathVariable("taxId") String taxId) {
         return ResponseEntity.ok(userService.getUserByTaxId(taxId));
     }
 

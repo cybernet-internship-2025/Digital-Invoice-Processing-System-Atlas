@@ -23,18 +23,22 @@ public class InvoiceViewController {
 
     @GetMapping("/sent/{taxId}")
     public ResponseEntity<List<Invoice>> getSentInvoicesByTaxId(@PathVariable("taxId") String taxId) {
-        return ResponseEntity.ok(invoiceViewService.getSentInvoicesByTaxId(taxId));
+        List<Invoice> invoices = invoiceViewService.getSentInvoicesByTaxId(taxId);
+        return ResponseEntity.ok(invoices);
     }
     @GetMapping("/received/{taxId}")
     public ResponseEntity<List<Invoice>> getReceivedInvoicesByTaxId(@PathVariable("taxId") String taxId) {
-        return ResponseEntity.ok(invoiceViewService.getReceivedInvoicesByTaxId(taxId));
+        List<Invoice> invoices = invoiceViewService.getReceivedInvoicesByTaxId(taxId);
+        return ResponseEntity.ok(invoices);
     }
     @GetMapping("/drafts/{taxId}")
     public ResponseEntity<List<Invoice>> getAllDraftsByTaxId(@PathVariable("taxId") String taxId) {
-        return ResponseEntity.ok(invoiceViewService.getAllDraftsByTaxId(taxId));
+        List<Invoice> invoices = invoiceViewService.getAllDraftsByTaxId(taxId);
+        return ResponseEntity.ok(invoices);
     }
     @GetMapping("/all/{taxId}")
     public ResponseEntity<List<Invoice>> getAllInvoicesByTaxId(@PathVariable("taxId") String taxId) {
-        return ResponseEntity.ok(invoiceViewService.getAllInvoicesByTaxId(taxId));
+        List<Invoice> invoices = invoiceViewService.getAllInvoicesByTaxId(taxId);
+        return ResponseEntity.ok(invoices);
     }
 }
