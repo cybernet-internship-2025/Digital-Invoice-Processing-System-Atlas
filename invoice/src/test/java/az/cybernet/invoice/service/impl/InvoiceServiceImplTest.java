@@ -111,7 +111,7 @@ class InvoiceServiceImplTest {
         LocalDate now = LocalDate.now();
         String expectedPrefix = INVD + String.format("%02d", now.getYear() % 100) + String.format("%02d"
                 , now.getMonthValue());
-        when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(null);
+        when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(12);
 
         String invoiceNumber = service.generateInvoiceNumber();
 
@@ -222,5 +222,46 @@ class InvoiceServiceImplTest {
         assertThrows(InvoiceNotFoundException.class, () -> service.cancelInvoice(invoiceId));
 
         verify(mapper, never()).cancelInvoice(invoiceId);
+    }
+
+    @Test
+    void approveInvoice_shouldApprovePendingInvoiceAndReturnResponse() {
+        UUID invoiceId = UUID.randomUUID();
+        Invoice invoice = new Invoice();
+        invoice.setId(invoiceId);
+        invoice.setStatus(Status.PENDING);
+
+        InvoiceResponse expectedResponse = new InvoiceResponse();
+
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(invoice));
+        when(mapstruct.toDto(invoice)).thenReturn(expectedResponse);
+        when(mapstruct.invoiceToInvcOper(invoice)).thenReturn(new InvoiceOperation());
+
+        InvoiceResponse actualResponse = service.approveInvoice(invoiceId);
+
+        assertEquals(expectedResponse, actualResponse);
+        verify(mapper).approveInvoice(invoice);
+        verify(invoiceOperationMapper).insertInvoiceOperation(any(InvoiceOperation.class));
+        verify(mapstruct).toDto(invoice);
+    }
+
+    @Test
+    void approveInvoice_shouldThrowExceptionIfInvoiceNotFound() {
+        UUID invoiceId = UUID.randomUUID();
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.empty());
+
+        assertThrows(InvoiceNotFoundException.class, () -> service.approveInvoice(invoiceId));
+    }
+
+    @Test
+    void approveInvoice_shouldThrowExceptionIfStatusIsNotPending() {
+        UUID invoiceId = UUID.randomUUID();
+        Invoice invoice = new Invoice();
+        invoice.setId(invoiceId);
+        invoice.setStatus(Status.APPROVED);
+
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(invoice));
+
+        assertThrows(IllegalStateException.class, () -> service.approveInvoice(invoiceId));
     }
 }

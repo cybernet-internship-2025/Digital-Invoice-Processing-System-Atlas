@@ -14,7 +14,7 @@ public class InvoiceProduct {
     UUID invoiceId;
     UUID productId;
     Double quantity;
-    boolean isActive;
+    boolean active;
 
     Product product;
 }
