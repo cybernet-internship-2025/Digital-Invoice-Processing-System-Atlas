@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250807-1
+      author: agasi
+      changes:
+        - createTable:
+            tableName: shedlock
+            schemaName: invoice
+            columns:
+              - column:
+                  name: name
+                  type: VARCHAR(64)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: lock_until
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: locked_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: locked_by
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false

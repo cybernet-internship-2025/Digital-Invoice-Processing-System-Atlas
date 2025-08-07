@@ -3,6 +3,7 @@ package az.cybernet.invoice.scheduler;
 import az.cybernet.invoice.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +16,14 @@ public class InvoiceCancellationScheduler {
 
     // This will run at 01:00 AM every day
     @Scheduled(cron = "0 0 1 * * ?")
+    @SchedulerLock(
+            name = "cancelOldPendingInvoicesTask",
+            lockAtMostFor = "15m",
+            lockAtLeastFor = "1m"
+    )
     public void cancelOldPendingInvoices() {
         log.info("Starting scheduled job to cancel old pending invoices...");
         invoiceService.cancelOldPendingInvoices();
-        log.info("Finished scheduled job.");
+        log.info("Finished scheduled job. Releasing lock");
     }
 }
