@@ -15,8 +15,10 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
+import az.cybernet.invoice.util.ExcelFileExporter;
 import az.cybernet.invoice.util.InvoicePdfGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,6 +47,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
     private final InvoicePdfGenerator pdfGenerator;
+    private final ExcelFileExporter excelFileExporter;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -51,7 +55,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, InvoicePdfGenerator pdfGenerator) {
+                              ProductMapstruct productMapstruct,
+                              InvoicePdfGenerator pdfGenerator,
+                              ExcelFileExporter excelFileExporter) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -60,6 +66,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.pdfGenerator = pdfGenerator;
+        this.excelFileExporter = excelFileExporter;
     }
 
     @Override
@@ -164,8 +171,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapstruct.toDto(invoice);
     }
 
-
-
     public ResponseEntity<byte[]> getInvoicePdf(UUID id) {
         Invoice invoice = mapper.findInvoiceById(id).orElseThrow(
                 () -> new InvoiceNotFoundException("Invoice not found"));
@@ -177,6 +182,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
+
     @Override
     @Transactional
     public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
@@ -211,6 +217,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
+    }
 
+    public byte[] exportInvoice(UUID id) {
+        String[] headers = {"Qaimə ID", "Seriya", "Qaimə nömrəsi", "Göndərənin ID", "Müştəri ID", "Status", "Ümumi məbləğ", "Yaranma tarixi", "Dəyişdirilmə tarixi", "Rəy"};
+        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(() ->
+                new InvoiceNotFoundException("Invoice not found"));
+
+        return excelFileExporter.createExcelForEntity(nu, headers);
     }
 }
