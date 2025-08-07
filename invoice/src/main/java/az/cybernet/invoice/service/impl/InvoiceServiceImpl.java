@@ -176,7 +176,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + id + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
-
+    }
     @Override
     @Transactional
     public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
