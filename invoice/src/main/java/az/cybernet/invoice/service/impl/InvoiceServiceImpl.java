@@ -4,6 +4,7 @@ import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
@@ -15,8 +16,10 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
+import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import az.cybernet.invoice.util.InvoicePdfGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.javassist.NotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
     private final InvoicePdfGenerator pdfGenerator;
+    private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -51,7 +55,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, InvoicePdfGenerator pdfGenerator) {
+                              ProductMapstruct productMapstruct, InvoicePdfGenerator pdfGenerator, InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -60,6 +64,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.pdfGenerator = pdfGenerator;
+        this.invoiceHtmlGenerator = invoiceHtmlGenerator;
     }
 
     @Override
@@ -215,131 +220,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
 
+    @Override
     public String generateInvoiceHtml(UUID invoiceId) {
-        Invoice invoice = mapper.findInvoiceById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        InvoiceDetailed invoiceDetailed = mapper.getDetailedInvoice(invoiceId)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
-        String series = invoice.getSeries() != null ? invoice.getSeries() : "";
-        String number = invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber().toString() : "";
-        String customerId = invoice.getCustomerId() != null ? invoice.getCustomerId().toString() : "";
-        String sellerId = invoice.getId() != null ? invoice.getId().toString() : "";
-        String total = invoice.getTotal() != null ? invoice.getTotal().toString() : "";
-
-        return """
-                <!DOCTYPE html>
-                <html lang="az">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Elektron Qaimə-Faktura</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            padding: 30px;
-                        }
-                        table {
-                            width: 100%%;
-                            border-collapse: collapse;
-                        }
-                        th, td {
-                            border: 1px solid black;
-                            padding: 8px;
-                            text-align: left;
-                            vertical-align: middle;
-                        }
-                        .center {
-                            text-align: center;
-                        }
-                        .no-border {
-                            border: none;
-                        }
-                        .signature {
-                            margin-top: 40px;
-                            display: flex;
-                            justify-content: space-between;
-                        }
-                        .signature div {
-                            width: 45%%;
-                            text-align: center;
-                        }
-                        .bold {
-                            font-weight: bold;
-                        }
-                        .header {
-                            text-align: center;
-                            font-size: 18px;
-                            font-weight: bold;
-                            padding: 12px;
-                        }
-                        .summary {
-                            text-align: right;
-                            padding: 10px;
-                            font-weight: bold;
-                        }
-                    </style>
-                </head>
-                <body>
-
-                <table>
-                    <tr>
-                        <td colspan="2" class="header">ELEKTRON QAİMƏ-FAKTURA</td>
-                    </tr>
-                    <tr>
-                        <td><b>Tarix:</b></td>
-                        <td>%s</td>
-                    </tr>
-                    <tr>
-                        <td><b>SERİYA:</b></td>
-                        <td>%s</td>
-                    </tr>
-                    <tr>
-                        <td><b>№:</b></td>
-                        <td>%s</td>
-                    </tr>
-                    <tr>
-                        <td><b>TƏQDİM EDƏN VÖEN:</b></td>
-                        <td>%s</td>
-                    </tr>
-                    <tr>
-                        <td><b>ALICI VÖEN:</b></td>
-                        <td>%s</td>
-                    </tr>
-                </table>
-
-                <br>
-
-                <table>
-                    <tr>
-                        <th>No</th>
-                        <th>Məhsulun adı</th>
-                        <th>Ölçü vahidi</th>
-                        <th>Say</th>
-                        <th>Məbləğ</th>
-                    </tr>
-                    <!-- Burada məhsulların siyahısı əlavə edilə bilər -->
-                    <tr><td colspan="5" class="center">Məhsul əlavə edilməyib</td></tr>
-                </table>
-
-                <div class="summary">
-                    Yekun məbləğ: %s
-                </div>
-
-                <br>
-
-                <div class="signature">
-                    <div>
-                        <div class="bold">İCRAÇI: CYBERNET LLC</div>
-                        <br><br>
-                        İmza ___________________________
-                    </div>
-                    <div>
-                        <div class="bold">MÜŞTƏRİ: </div>
-                        <br><br>
-                        İmza ___________________________
-                    </div>
-                </div>
-
-                </body>
-                </html>
-                """.formatted(LocalDateTime.now(), series,number,sellerId,customerId,total);
+        return invoiceHtmlGenerator.generate(invoiceDetailed);
     }
 }

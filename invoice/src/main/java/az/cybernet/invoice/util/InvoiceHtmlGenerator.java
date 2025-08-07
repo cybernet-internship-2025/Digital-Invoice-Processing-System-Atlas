@@ -1,11 +1,40 @@
 package az.cybernet.invoice.util;
 
-import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.dto.response.ProductDetailResponse;
+import az.cybernet.invoice.entity.InvoiceDetailed;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class InvoiceHtmlGenerator {
-    public static String generateHtml(Invoice invoice) {
+
+    public String generate(InvoiceDetailed invoice) {
+        StringBuilder productRows = new StringBuilder();
+        int index = 1;
+
+        List<ProductDetailResponse> products = invoice.getProducts();
+
+        for (ProductDetailResponse ip : products) {
+            String productName = ip.getProductName();
+            String unit = ip.getMeasurementName();
+            double quantity = ip.getQuantity();
+            double price = ip.getPrice();
+
+            productRows.append("""
+        <tr>
+            <td>%d</td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%.2f</td>
+            <td>%.2f</td>
+        </tr>
+    """.formatted(index++, productName, unit, quantity, price));
+        }
+
+        String productTable = productRows.length() > 0 ? productRows.toString()
+                : "<tr><td colspan='5' class='center'>Məhsul əlavə edilməyib</td></tr>";
+
         return String.format("""
             <!DOCTYPE html>
             <html lang="az">
@@ -39,11 +68,9 @@ public class InvoiceHtmlGenerator {
                 <tr>
                     <th>No</th><th>Məhsulun adı</th><th>Ölçü vahidi</th><th>Say</th><th>Məbləğ</th>
                 </tr>
-                <!-- Buraya istəsən dinamik rows əlavə edə bilərsən -->
-                <tr><td>1</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>2</td><td></td><td></td><td></td><td></td></tr>
+                %s
             </table>
-            <div class="summary">Yekun məbləğ: %s</div>
+            <div class="summary">Yekun məbləğ: %.2f</div>
             <br>
             <div class="signature">
                 <div><div class="bold">İCRAÇI: CYBERNET LLC</div><br><br>İmza ___________________________</div>
@@ -51,13 +78,14 @@ public class InvoiceHtmlGenerator {
             </div>
             </body>
             </html>
-        """,
+            """,
+                invoice.getCreatedAt().toLocalDate(),
                 invoice.getSeries(),
                 invoice.getInvoiceNumber(),
-                invoice.getId(),
+                invoice.getSenderId(),
                 invoice.getCustomerId(),
+                productTable,
                 invoice.getTotal()
         );
     }
 }
-
