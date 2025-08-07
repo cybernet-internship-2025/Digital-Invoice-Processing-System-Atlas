@@ -15,12 +15,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: lock_until
-                  type: TIMESTAMP
+                  type: TIMESTAMP(3)
                   constraints:
                     nullable: false
               - column:
                   name: locked_at
-                  type: TIMESTAMP
+                  type: TIMESTAMP(3)
                   constraints:
                     nullable: false
               - column:
