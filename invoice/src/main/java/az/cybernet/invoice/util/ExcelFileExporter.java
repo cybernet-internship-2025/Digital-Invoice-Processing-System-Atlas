@@ -1,7 +1,6 @@
 package az.cybernet.invoice.util;
 
 import az.cybernet.invoice.enums.Status;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ExcelFileExporter {
+public class ExcelFileExporter<T> {
 
     public byte[] createExcelForEntity(List<T> entityList, String[] headers) {
         try(SXSSFWorkbook workbook = new SXSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {

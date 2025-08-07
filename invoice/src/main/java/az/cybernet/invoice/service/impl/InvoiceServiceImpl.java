@@ -18,7 +18,6 @@ import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.ExcelFileExporter;
 import az.cybernet.invoice.util.InvoicePdfGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -47,7 +45,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
     private final InvoicePdfGenerator pdfGenerator;
-    private final ExcelFileExporter excelFileExporter;
+    private final ExcelFileExporter<Invoice> excelFileExporter;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -57,7 +55,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
                               InvoicePdfGenerator pdfGenerator,
-                              ExcelFileExporter excelFileExporter) {
+                              ExcelFileExporter<Invoice> excelFileExporter) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -224,6 +222,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = mapper.findInvoiceById(id).orElseThrow(() ->
                 new InvoiceNotFoundException("Invoice not found"));
 
-        return excelFileExporter.createExcelForEntity(nu, headers);
+        return excelFileExporter.createExcelForEntity(List.of(invoice), headers);
     }
 }
