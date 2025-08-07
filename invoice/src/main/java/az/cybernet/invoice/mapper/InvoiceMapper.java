@@ -1,11 +1,14 @@
 package az.cybernet.invoice.mapper;
 
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +35,14 @@ public interface InvoiceMapper {
     void approveInvoice(Invoice invoice);
 
     Invoice updateInvoice(@Param("id") UUID id,
-                      @Param("status") Status status,
-                      @Param("comment") String comment,
-                      @Param("total") Double total,
-                      @Param("updatedAt") LocalDateTime updatedAt);
+                          @Param("status") Status status,
+                          @Param("comment") String comment,
+                          @Param("total") Double total,
+                          @Param("updatedAt") LocalDateTime updatedAt);
 
     List<Invoice> findOldPendingInvoices(@Param("date") LocalDateTime date);
+
+    List<FilteredInvoiceResp> filterInvoices(@Param("year") Integer year, @Param("fromDate") LocalDate fromDate
+            , @Param("toDate") LocalDate toDate, @Param("status") Status status, @Param("series") String series
+            , @Param("invoiceNumber") Integer invoiceNumber, @Param("type")InvoiceType type);
 }

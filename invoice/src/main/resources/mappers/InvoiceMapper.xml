@@ -118,4 +118,31 @@
         WHERE status = 'PENDING' AND updated_at &lt;= #{date}
     </select>
 
+    <select id="filterInvoices" resultType="az.cybernet.invoice.dto.response.FilteredInvoiceResp">
+        SELECT *
+        FROM invoice.invoice
+        WHERE 1 = 1
+        <if test="year != null">
+            AND EXTRACT(YEAR FROM created_at) = #{year}
+        </if>
+        <if test="fromDate != null">
+            AND created_at &gt;= #{fromDate}
+        </if>
+        <if test="toDate != null">
+            AND created_at &lt;= #{toDate}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="series != null and series != ''">
+            AND series = #{series}
+        </if>
+        <if test="invoiceNumber != null">
+            AND invoice_number = #{invoiceNumber}
+        </if>
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+    </select>
+
 </mapper>

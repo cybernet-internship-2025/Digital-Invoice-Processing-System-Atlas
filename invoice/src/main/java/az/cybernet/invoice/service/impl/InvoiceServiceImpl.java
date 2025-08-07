@@ -1,10 +1,12 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.*;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -22,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -164,7 +167,27 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapstruct.toDto(invoice);
     }
 
+    @Override
+    public List<FilteredInvoiceResp> filterInvoices(Integer year, LocalDate fromDate
+            , LocalDate toDate, Status status, String fullInvoiceNumber, InvoiceType type) {
+        String series = null;
+        Integer invoiceNumber = null;
+        if (StringUtils.hasText(fullInvoiceNumber)) {
+            series = fullInvoiceNumber.replaceAll("\\d", "");
+            invoiceNumber = Integer.parseInt(fullInvoiceNumber.replaceAll("\\D", ""));
+        }
 
+        var result = mapper.filterInvoices(year, fromDate
+                , toDate, status, series, invoiceNumber, type);
+
+        result.forEach(resp -> {
+            if (resp.getSeries() != null && resp.getInvoiceNumber() != null) {
+                resp.setFullInvoiceNumber(resp.getSeries() + resp.getInvoiceNumber());
+            }
+        });
+
+        return result;
+    }
 
     public ResponseEntity<byte[]> getInvoicePdf(UUID id) {
         Invoice invoice = mapper.findInvoiceById(id).orElseThrow(
@@ -177,6 +200,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
+
     @Override
     @Transactional
     public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
