@@ -1,13 +1,12 @@
 server:
   servlet:
     context-path: /api/user-management
-  port: 8081
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres-db:5432/${USER_DB_NAME}
-    username: ${USER_DB_USER}
-    password: ${USER_DB_PASS}
+    url: jdbc:postgresql://postgres-db:5432/${USER_DB_NAME:users}
+    username: ${USER_DB_USER:user_db_user}
+    password: ${USER_DB_PASS:user_pass}
 
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml
