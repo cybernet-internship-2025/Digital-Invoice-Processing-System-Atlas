@@ -213,4 +213,133 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapstruct.toDto(invoice);
 
     }
+
+
+    public String generateInvoiceHtml(UUID invoiceId) {
+        Invoice invoice = mapper.findInvoiceById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+
+        String series = invoice.getSeries() != null ? invoice.getSeries() : "";
+        String number = invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber().toString() : "";
+        String customerId = invoice.getCustomerId() != null ? invoice.getCustomerId().toString() : "";
+        String sellerId = invoice.getId() != null ? invoice.getId().toString() : "";
+        String total = invoice.getTotal() != null ? invoice.getTotal().toString() : "";
+
+        return """
+                <!DOCTYPE html>
+                <html lang="az">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Elektron Qaimə-Faktura</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            padding: 30px;
+                        }
+                        table {
+                            width: 100%%;
+                            border-collapse: collapse;
+                        }
+                        th, td {
+                            border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;
+                            vertical-align: middle;
+                        }
+                        .center {
+                            text-align: center;
+                        }
+                        .no-border {
+                            border: none;
+                        }
+                        .signature {
+                            margin-top: 40px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .signature div {
+                            width: 45%%;
+                            text-align: center;
+                        }
+                        .bold {
+                            font-weight: bold;
+                        }
+                        .header {
+                            text-align: center;
+                            font-size: 18px;
+                            font-weight: bold;
+                            padding: 12px;
+                        }
+                        .summary {
+                            text-align: right;
+                            padding: 10px;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+
+                <table>
+                    <tr>
+                        <td colspan="2" class="header">ELEKTRON QAİMƏ-FAKTURA</td>
+                    </tr>
+                    <tr>
+                        <td><b>Tarix:</b></td>
+                        <td>%s</td>
+                    </tr>
+                    <tr>
+                        <td><b>SERİYA:</b></td>
+                        <td>%s</td>
+                    </tr>
+                    <tr>
+                        <td><b>№:</b></td>
+                        <td>%s</td>
+                    </tr>
+                    <tr>
+                        <td><b>TƏQDİM EDƏN VÖEN:</b></td>
+                        <td>%s</td>
+                    </tr>
+                    <tr>
+                        <td><b>ALICI VÖEN:</b></td>
+                        <td>%s</td>
+                    </tr>
+                </table>
+
+                <br>
+
+                <table>
+                    <tr>
+                        <th>No</th>
+                        <th>Məhsulun adı</th>
+                        <th>Ölçü vahidi</th>
+                        <th>Say</th>
+                        <th>Məbləğ</th>
+                    </tr>
+                    <!-- Burada məhsulların siyahısı əlavə edilə bilər -->
+                    <tr><td colspan="5" class="center">Məhsul əlavə edilməyib</td></tr>
+                </table>
+
+                <div class="summary">
+                    Yekun məbləğ: %s
+                </div>
+
+                <br>
+
+                <div class="signature">
+                    <div>
+                        <div class="bold">İCRAÇI: CYBERNET LLC</div>
+                        <br><br>
+                        İmza ___________________________
+                    </div>
+                    <div>
+                        <div class="bold">MÜŞTƏRİ: </div>
+                        <br><br>
+                        İmza ___________________________
+                    </div>
+                </div>
+
+                </body>
+                </html>
+                """.formatted(LocalDateTime.now(), series,number,sellerId,customerId,total);
+    }
 }

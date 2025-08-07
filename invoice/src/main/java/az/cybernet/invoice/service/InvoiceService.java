@@ -27,4 +27,7 @@ public interface InvoiceService {
     InvoiceResponse approveInvoice(UUID id);
 
     ResponseEntity<byte[]> getInvoicePdf(UUID id);
+
+     String generateInvoiceHtml(UUID invoiceId);
+
 }
