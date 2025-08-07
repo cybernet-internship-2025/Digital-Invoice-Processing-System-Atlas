@@ -1,18 +1,18 @@
 package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
-import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
+import az.cybernet.invoice.util.ExcelFileExporter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +29,7 @@ public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
+    private final ExcelFileExporter<Invoice> excelFileExporter;
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
@@ -64,9 +65,10 @@ public class InvoiceController {
     }
 
     @GetMapping("/{id}/export-to-excel")
-    public ResponseEntity<byte[]> exportInvoiceToExcel(@PathVariable ("id") UUID id) {
-        byte[] excel = service.exportInvoice(id);
-        return new ResponseEntity<>(excel, HttpStatus.CREATED);
+    public ResponseEntity<byte[]> exportInvoiceToExcel(
+            @PathVariable ("id") UUID id,
+            @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
+        return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
     }
 
     @PatchMapping("/approve/{id}")
