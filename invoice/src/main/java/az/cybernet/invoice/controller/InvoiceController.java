@@ -63,10 +63,17 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceDetails);
     }
 
+    @GetMapping("/{invoiceId}/export-to-excel")
+    public ResponseEntity<byte[]> exportInvoiceToExcel(@PathVariable ("id") UUID id) {
+        byte[] excel = service.exportInvoice(id);
+        return new ResponseEntity<>(excel, HttpStatus.CREATED);
+    }
+
     @PatchMapping("/approve/{id}")
     public ResponseEntity<InvoiceResponse> approveInvoice(@PathVariable("id") UUID id) {
         return ok(service.approveInvoice(id));
     }
+
     @GetMapping("/{id}/pdf")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
