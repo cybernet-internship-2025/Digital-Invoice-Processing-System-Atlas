@@ -63,7 +63,7 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceDetails);
     }
 
-    @GetMapping("/{invoiceId}/export-to-excel")
+    @GetMapping("/{id}/export-to-excel")
     public ResponseEntity<byte[]> exportInvoiceToExcel(@PathVariable ("id") UUID id) {
         byte[] excel = service.exportInvoice(id);
         return new ResponseEntity<>(excel, HttpStatus.CREATED);
