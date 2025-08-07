@@ -1,25 +1,21 @@
 package az.cybernet.invoice.enums;
 
 public enum Status {
-    APPROVED, //the invoice was approved by the user
-    REJECTED, //the invoice was rejected by the user without a request for changes
-    DRAFT, //the invoice is not yet finished
-    CLOSED, //the invoice was fulfilled
+    APPROVED, //user approved the invoice
+    REJECTED, //user rejected the invoice without a request for changes
+    DRAFT, //invoice is not yet finished
+    CLOSED, //invoice was fulfilled
     CHANGES_REQUESTED, //user requested changes
     DELETED, //invoice itself doesn't have is_active field so this may be used
-    CANCELLED,
-    PENDING;//the invoice is awaiting approval/rejection/rfc
+    CANCELLED, //invoice that expired more than a month ago
+    PENDING; //invoice is awaiting approval/rejection/rfc
 
     public boolean canBeChangedTo(Status newStatus) {
-        switch (this) {
-            case DRAFT:
-                return newStatus == PENDING || newStatus == CLOSED;
-            case PENDING:
-                return newStatus == APPROVED || newStatus == REJECTED || newStatus == CHANGES_REQUESTED;
-            case CHANGES_REQUESTED:
-                return newStatus == PENDING;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DRAFT -> newStatus == PENDING || newStatus == CLOSED;
+            case PENDING -> newStatus == APPROVED || newStatus == REJECTED || newStatus == CHANGES_REQUESTED;
+            case CHANGES_REQUESTED -> newStatus == PENDING;
+            default -> false;
+        };
     }
 }

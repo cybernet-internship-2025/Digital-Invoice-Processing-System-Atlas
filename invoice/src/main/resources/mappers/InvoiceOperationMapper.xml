@@ -10,4 +10,13 @@
         VALUES (#{id}, #{invoiceId}, #{status}, #{total}, #{timestamp}, #{comment})
     </insert>
 
+    <select id="previousStatusFor"
+            resultType="az.cybernet.invoice.enums.Status">
+        SELECT status
+        FROM invoice.invoice_operation
+        WHERE invoiceId = #{id} AND status != 'CANCELED' AND timestamp &lt; #{date}
+        ORDER BY timestamp DESC
+        LIMIT 1
+    </select>
+
 </mapper>

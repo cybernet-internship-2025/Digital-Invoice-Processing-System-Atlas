@@ -112,7 +112,7 @@
         WHERE id = #{id}
     </update>
 
-    <select id="findOldPendingInvoices" resultType="az.cybernet.invoice.entity.Invoice">
+    <select id="findPendingInvoicesUntil" resultType="az.cybernet.invoice.entity.Invoice">
         SELECT *
         FROM invoice.invoice
         WHERE status = 'PENDING' AND updated_at &lt;= #{date}
