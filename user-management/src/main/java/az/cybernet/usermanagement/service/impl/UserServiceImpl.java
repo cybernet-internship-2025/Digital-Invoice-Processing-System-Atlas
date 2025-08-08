@@ -48,4 +48,13 @@ public class UserServiceImpl implements UserService {
         List<User> userList = mapper.findAllUsers();
         return mapstruct.toList(userList);
     }
+
+    @Override
+    public UserResponse getUserByTaxId(String taxId) {
+        User user = mapper.findByTaxId(taxId);
+        if (user == null) {
+            throw new UserNotFoundException("User not found with tax ID: " + taxId);
+        }
+        return mapstruct.toDto(user);
+    }
 }

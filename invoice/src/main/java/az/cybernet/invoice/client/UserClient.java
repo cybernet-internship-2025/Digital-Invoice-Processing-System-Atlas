@@ -12,4 +12,6 @@ public interface UserClient {
 
     @GetMapping("/v1/user-management/{id}")
     UserResponse getUserById(@PathVariable("id") UUID id);
+    @GetMapping("/api/user-management/v1/users/tax-id/{taxId}")
+    UserResponse getUserByTaxId(@PathVariable("taxId") String taxId);
 }

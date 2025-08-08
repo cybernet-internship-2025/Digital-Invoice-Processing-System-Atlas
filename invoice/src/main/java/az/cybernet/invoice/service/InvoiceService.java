@@ -27,4 +27,5 @@ public interface InvoiceService {
 
      String generateInvoiceHtml(UUID invoiceId);
 
+    void cancelOldPendingInvoices();
 }

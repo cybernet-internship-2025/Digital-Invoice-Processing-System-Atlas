@@ -7,7 +7,7 @@
 
     <insert id="insertInvoiceProduct" parameterType="az.cybernet.invoice.entity.InvoiceProduct">
         INSERT INTO invoice.invoice_product ("invoice_id", "product_id", "quantity", "is_active")
-        VALUES (#{invoiceId}, #{productId}, #{quantity}, #{isActive})
+        VALUES (#{invoiceId}, #{productId}, #{quantity}, #{active})
     </insert>
 
     <update id="setInactive" parameterType="java.util.UUID">
