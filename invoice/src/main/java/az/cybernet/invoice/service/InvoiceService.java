@@ -6,7 +6,6 @@ import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
@@ -26,7 +25,9 @@ public interface InvoiceService {
 
     InvoiceResponse approveInvoice(UUID id);
 
-    ResponseEntity<byte[]> getInvoicePdf(UUID id);
+     String generateInvoiceHtml(UUID invoiceId);
+
+    byte[] exportInvoice(UUID id);
 
     void cancelOldPendingInvoices();
 }

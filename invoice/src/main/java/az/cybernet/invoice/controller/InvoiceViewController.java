@@ -2,7 +2,6 @@ package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.impl.InvoiceViewService;
-import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
