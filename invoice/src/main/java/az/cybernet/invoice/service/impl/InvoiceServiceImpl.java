@@ -238,7 +238,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
         List<Invoice> oldInvoices = mapper.findPendingInvoicesUntil(oneMonthAgo);
 
-        if (oldInvoices.isEmpty()) {
+        if (oldInvoices == null || oldInvoices.isEmpty()) {
             log.info("No pending invoices older than one month found to cancel.");
             return;
         }
