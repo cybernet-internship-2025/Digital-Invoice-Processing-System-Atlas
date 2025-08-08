@@ -5,8 +5,8 @@ import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
-import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
+import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.util.HtmltoPdfConverter;
@@ -60,7 +60,7 @@ public class InvoiceController {
     }
 
     @GetMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable ("invoiceId") UUID invoiceId) {
+    public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable("invoiceId") UUID invoiceId) {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
     }
@@ -95,4 +95,8 @@ public class InvoiceController {
         return ResponseEntity.ok().headers(headers).body(pdfBytes);
     }
 
+    @PatchMapping("/restore/{id}")
+    public ResponseEntity<InvoiceResponse> restoreInvoice(@PathVariable("id") UUID id) {
+        return ok(service.restoreCanceledInvoice(id));
+    }
 }

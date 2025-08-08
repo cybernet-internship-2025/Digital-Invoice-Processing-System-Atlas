@@ -49,20 +49,20 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
-                              UserClient userClient,
                               InvoiceProductService invoiceProductService,
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
+                              UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
                               ExcelFileExporter<Invoice> excelFileExporter,
                               InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
-        this.userClient = userClient;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
         this.invoiceOperationMapper = invoiceOperationMapper;
+        this.userClient = userClient;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.excelFileExporter = excelFileExporter;
@@ -95,10 +95,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setStatus(Status.PENDING);
         invoice.setTotal(request.getProductQuantityRequests()
-                .stream()
-                .map(productQuantityRequest ->
-                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                .reduce(0.0, Double::sum));
+                                .stream()
+                                .map(productQuantityRequest ->
+                                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                                .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
@@ -147,9 +147,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
         return mapper.getDetailedInvoice(invoiceId)
-                .map(mapstruct::toDetailDto)
-                .orElseThrow(() ->
-                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+                     .map(mapstruct::toDetailDto)
+                     .orElseThrow(() ->
+                             new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
     @Override
@@ -182,10 +182,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getStatus(),
                 request.getComment(),
                 request.getProductQuantityRequests()
-                        .stream()
-                        .map(productQuantityRequest ->
-                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                        .reduce(0.0, Double::sum),
+                       .stream()
+                       .map(productQuantityRequest ->
+                               productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                       .reduce(0.0, Double::sum),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
@@ -234,16 +234,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public void cancelOldPendingInvoices() {
+    public void cancelExpiredPendingInvoices() {
         LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
-        List<Invoice> oldInvoices = mapper.findOldPendingInvoices(oneMonthAgo);
+        List<Invoice> oldInvoices = mapper.findPendingInvoicesUntil(oneMonthAgo);
 
         if (oldInvoices.isEmpty()) {
             log.info("No pending invoices older than one month found to cancel.");
             return;
         }
 
-        log.info("Found {} old pending invoices to cancel.", oldInvoices.size());
+        log.info("Found {} expired pending invoices to cancel.", oldInvoices.size());
 
         for (Invoice invoice : oldInvoices) {
             invoice.setStatus(Status.CANCELLED);
@@ -261,5 +261,25 @@ public class InvoiceServiceImpl implements InvoiceService {
             InvoiceOperation operation = mapstruct.invoiceToInvcOper(invoice);
             invoiceOperationMapper.insertInvoiceOperation(operation);
         }
+    }
+
+    @Transactional
+    @Override
+    public InvoiceResponse restoreCanceledInvoice(UUID id) {
+        Invoice invoice = mapper
+                .findInvoiceById(id)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+        if (invoice.getStatus().equals(Status.CANCELLED))
+            throw new InvoiceNotFoundException("Invoice is not canceled");
+
+        Status status = invoiceOperationMapper.previousStatusFor(invoice);
+        invoice.setStatus(status);
+        invoice.setUpdatedAt(LocalDateTime.now());
+        invoice.setComment("Revert cancel");
+
+        InvoiceOperation operation = mapstruct.invoiceToInvcOper(invoice);
+        invoiceOperationMapper.insertInvoiceOperation(operation);
+
+        return mapstruct.toDto(invoice);
     }
 }

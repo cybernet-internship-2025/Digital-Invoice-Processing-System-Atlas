@@ -37,5 +37,5 @@ public interface InvoiceMapper {
                       @Param("total") Double total,
                       @Param("updatedAt") LocalDateTime updatedAt);
 
-    List<Invoice> findOldPendingInvoices(@Param("date") LocalDateTime date);
+    List<Invoice> findPendingInvoicesUntil(@Param("date") LocalDateTime date);
 }

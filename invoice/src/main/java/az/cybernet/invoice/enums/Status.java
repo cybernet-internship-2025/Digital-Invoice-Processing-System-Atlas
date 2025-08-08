@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 
 public enum Status {
-
     DRAFT, // invoice is not yet finished
     SENT_TO_RECEIVER, // invoice is sent to receiver
     APPROVED, // invoice was approved by the user
