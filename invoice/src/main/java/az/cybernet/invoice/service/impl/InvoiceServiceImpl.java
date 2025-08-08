@@ -225,4 +225,35 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return excelFileExporter.createExcelForEntity(List.of(invoice), headers);
     }
+
+    @Override
+    @Transactional
+    public void cancelOldPendingInvoices() {
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+        List<Invoice> oldInvoices = mapper.findOldPendingInvoices(oneMonthAgo);
+
+        if (oldInvoices.isEmpty()) {
+            log.info("No pending invoices older than one month found to cancel.");
+            return;
+        }
+
+        log.info("Found {} old pending invoices to cancel.", oldInvoices.size());
+
+        for (Invoice invoice : oldInvoices) {
+            invoice.setStatus(Status.CANCELLED);
+            invoice.setUpdatedAt(LocalDateTime.now());
+            invoice.setComment("Automatically cancelled due to being in PENDING status for over a month.");
+
+            mapper.updateInvoice(
+                    invoice.getId(),
+                    invoice.getStatus(),
+                    invoice.getComment(),
+                    invoice.getTotal(),
+                    invoice.getUpdatedAt()
+            );
+
+            InvoiceOperation operation = mapstruct.invoiceToInvcOper(invoice);
+            invoiceOperationMapper.insertInvoiceOperation(operation);
+        }
+    }
 }

@@ -29,4 +29,6 @@ public interface InvoiceService {
     ResponseEntity<byte[]> getInvoicePdf(UUID id);
 
     byte[] exportInvoice(UUID id);
+
+    void cancelOldPendingInvoices();
 }
