@@ -13,6 +13,8 @@ public interface InvoiceService {
 
     InvoiceResponse createInvoice(CreateInvoiceRequest request);
 
+    InvoiceResponse restoreCanceledInvoice(UUID id);
+
     InvoiceResponse sendBackForCorrection(UUID id, @Valid InvoiceCorrectionReq req);
 
     String generateInvoiceNumber();
@@ -27,7 +29,8 @@ public interface InvoiceService {
 
      String generateInvoiceHtml(UUID invoiceId);
 
+    void cancelExpiredPendingInvoices();
     byte[] exportInvoice(UUID id);
 
-    void cancelOldPendingInvoices();
+    void cancelExpiredPendingInvoices();
 }
