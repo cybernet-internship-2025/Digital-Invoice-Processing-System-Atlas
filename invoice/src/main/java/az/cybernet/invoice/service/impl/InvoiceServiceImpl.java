@@ -4,6 +4,7 @@ import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
@@ -15,13 +16,10 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
-import az.cybernet.invoice.util.InvoicePdfGenerator;
+import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,7 +41,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final InvoicePdfGenerator pdfGenerator;
+    private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -51,7 +49,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, InvoicePdfGenerator pdfGenerator) {
+                              ProductMapstruct productMapstruct, InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -59,7 +57,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceOperationMapper = invoiceOperationMapper;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
-        this.pdfGenerator = pdfGenerator;
+        this.invoiceHtmlGenerator = invoiceHtmlGenerator;
     }
 
     @Override
@@ -164,19 +162,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapstruct.toDto(invoice);
     }
 
-
-
-    public ResponseEntity<byte[]> getInvoicePdf(UUID id) {
-        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(
-                () -> new InvoiceNotFoundException("Invoice not found"));
-
-        byte[] pdfBytes = InvoicePdfGenerator.generatePdf(invoice);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + id + ".pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdfBytes);
-    }
     @Override
     @Transactional
     public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
@@ -214,6 +199,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     }
 
+    @Override
+    public String generateInvoiceHtml(UUID invoiceId) {
+        InvoiceDetailed invoiceDetailed = mapper.getDetailedInvoice(invoiceId)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+
+        return invoiceHtmlGenerator.generate(invoiceDetailed);
+}
+  
     @Override
     @Transactional
     public void cancelOldPendingInvoices() {
