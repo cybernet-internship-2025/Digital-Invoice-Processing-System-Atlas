@@ -2,7 +2,6 @@ package az.cybernet.invoice.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 

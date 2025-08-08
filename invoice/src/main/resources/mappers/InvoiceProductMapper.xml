@@ -12,7 +12,7 @@
 
     <update id="setInactive" parameterType="java.util.UUID">
         WITH inactive AS (
-        UPDATE invoice_schema.invoice_product
+        UPDATE invoice.invoice_product
         SET is_active = 'f'
         WHERE invoice_id = #{id}
         RETURNING * )

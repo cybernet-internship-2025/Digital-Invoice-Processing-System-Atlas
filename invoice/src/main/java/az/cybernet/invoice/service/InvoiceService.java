@@ -30,4 +30,7 @@ public interface InvoiceService {
      String generateInvoiceHtml(UUID invoiceId);
 
     void cancelExpiredPendingInvoices();
+    byte[] exportInvoice(UUID id);
+
+    void cancelExpiredPendingInvoices();
 }
