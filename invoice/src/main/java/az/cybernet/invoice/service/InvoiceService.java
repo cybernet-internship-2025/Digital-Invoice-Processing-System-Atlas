@@ -27,5 +27,7 @@ public interface InvoiceService {
 
      String generateInvoiceHtml(UUID invoiceId);
 
+    byte[] exportInvoice(UUID id);
+
     void cancelOldPendingInvoices();
 }
