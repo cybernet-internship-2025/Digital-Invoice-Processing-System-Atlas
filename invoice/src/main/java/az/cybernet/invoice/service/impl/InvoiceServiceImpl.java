@@ -181,7 +181,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 , toDate, status, series, invoiceNumber, type);
 
         result.forEach(resp -> {
-            if (resp.getSeries() != null && resp.getInvoiceNumber() != null) {
+            if (StringUtils.hasText(resp.getSeries()) &&
+                    StringUtils.hasText(String.valueOf(resp.getInvoiceNumber()))) {
                 resp.setFullInvoiceNumber(resp.getSeries() + resp.getInvoiceNumber());
             }
         });
