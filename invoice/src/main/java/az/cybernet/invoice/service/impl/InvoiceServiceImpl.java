@@ -17,14 +17,9 @@ import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
-import az.cybernet.invoice.util.InvoicePdfGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.javassist.NotFoundException;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,7 +41,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final InvoicePdfGenerator pdfGenerator;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
@@ -55,7 +49,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, InvoicePdfGenerator pdfGenerator, InvoiceHtmlGenerator invoiceHtmlGenerator) {
+                              ProductMapstruct productMapstruct, InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -63,7 +57,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceOperationMapper = invoiceOperationMapper;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
-        this.pdfGenerator = pdfGenerator;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
     }
 
@@ -169,19 +162,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return mapstruct.toDto(invoice);
     }
 
-
-
-    public ResponseEntity<byte[]> getInvoicePdf(UUID id) {
-        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(
-                () -> new InvoiceNotFoundException("Invoice not found"));
-
-        byte[] pdfBytes = InvoicePdfGenerator.generatePdf(invoice);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + id + ".pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdfBytes);
-    }
     @Override
     @Transactional
     public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {

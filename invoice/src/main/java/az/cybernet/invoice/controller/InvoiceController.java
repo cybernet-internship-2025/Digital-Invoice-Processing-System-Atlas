@@ -1,22 +1,18 @@
 package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
-import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
-import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
-import az.cybernet.invoice.util.InvoiceHtmlGenerator;
+import az.cybernet.invoice.util.HtmltoPdfConverter;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,16 +66,22 @@ public class InvoiceController {
     public ResponseEntity<InvoiceResponse> approveInvoice(@PathVariable("id") UUID id) {
         return ok(service.approveInvoice(id));
     }
-    @GetMapping("/{id}/pdf")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
-        return service.getInvoicePdf(id);
-    }
 
     @GetMapping(value = "/{id}/html", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> getInvoiceHtml(@PathVariable("id") UUID id) {
         String html = service.generateInvoiceHtml(id);
         return ResponseEntity.ok(html);
+    }
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
+        String html = service.generateInvoiceHtml(id);
+        byte[] pdfBytes = HtmltoPdfConverter.generatePdfFromHtml(html);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.inline().filename("invoice.pdf").build());
+
+        return ResponseEntity.ok().headers(headers).body(pdfBytes);
     }
 
 }
