@@ -1,12 +1,15 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
+import az.cybernet.invoice.exceptions.UserNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
@@ -15,11 +18,9 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
-import az.cybernet.invoice.util.InvoicePdfGenerator;
+import az.cybernet.invoice.util.ExcelFileExporter;
+import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,33 +39,42 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceMapper mapper;
     private final InvoiceMapstruct mapstruct;
     private final InvoiceOperationMapper invoiceOperationMapper;
-
+    private final UserClient userClient;
     private final InvoiceProductService invoiceProductService;
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final InvoicePdfGenerator pdfGenerator;
+    private final ExcelFileExporter<Invoice> excelFileExporter;
+    private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
                               InvoiceProductService invoiceProductService,
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
+                              UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, InvoicePdfGenerator pdfGenerator) {
+                              ProductMapstruct productMapstruct,
+                              ExcelFileExporter<Invoice> excelFileExporter,
+                              InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
         this.invoiceOperationMapper = invoiceOperationMapper;
+        this.userClient = userClient;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
-        this.pdfGenerator = pdfGenerator;
+        this.excelFileExporter = excelFileExporter;
+        this.invoiceHtmlGenerator = invoiceHtmlGenerator;
     }
 
     @Override
     @Transactional
     public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
+        validateUser("Sender", request.getSenderId());
+        validateUser("Customer", request.getCustomerId());
+
         Invoice invoice = mapstruct.toEntity(
                 mapstruct.getInvoiceFromCreateRequest(request));
         String invdSeries = generateInvoiceNumber();
@@ -153,7 +163,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     public InvoiceResponse approveInvoice(UUID id) {
         Invoice invoice = mapper.findInvoiceById(id)
-                                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         if (!invoice.getStatus().equals(Status.PENDING))
             throw new IllegalStateException("Only PENDING invoices can be APPROVED");
         invoice.setUpdatedAt(LocalDateTime.now());
@@ -162,19 +172,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
 
         return mapstruct.toDto(invoice);
-    }
-
-
-    public ResponseEntity<byte[]> getInvoicePdf(UUID id) {
-        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(
-                () -> new InvoiceNotFoundException("Invoice not found"));
-
-        byte[] pdfBytes = InvoicePdfGenerator.generatePdf(invoice);
-
-        return ResponseEntity.ok()
-                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoice_" + id + ".pdf")
-                             .contentType(MediaType.APPLICATION_PDF)
-                             .body(pdfBytes);
     }
 
     @Override
@@ -211,7 +208,28 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
+    }
 
+    @Override
+    public byte[] exportInvoice(UUID id) {
+        String[] headers = {"Qaimə ID", "Seriya", "Qaimə nömrəsi", "Göndərənin ID", "Müştəri ID", "Status", "Ümumi məbləğ", "Yaranma tarixi", "Dəyişdirilmə tarixi", "Rəy"};
+        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(() ->
+                new InvoiceNotFoundException("Invoice not found"));
+
+        return excelFileExporter.createExcelForEntity(List.of(invoice), headers);
+    }
+
+    private void validateUser(String role, UUID id) {
+        if (userClient.getUserById(id) == null)
+            throw new UserNotFoundException("User with id " + id + " and " + role + " not found");
+    }
+
+    @Override
+    public String generateInvoiceHtml(UUID invoiceId) {
+        InvoiceDetailed invoiceDetailed = mapper.getDetailedInvoice(invoiceId)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+
+        return invoiceHtmlGenerator.generate(invoiceDetailed);
     }
 
     @Override

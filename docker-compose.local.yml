@@ -40,6 +40,5 @@ services:
 #      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
 
-
 volumes:
   postgres-data:

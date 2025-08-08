@@ -37,3 +37,7 @@ logging:
   level:
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     liquibase: DEBUG
+
+user:
+  service:
+    url: http://localhost:8081
