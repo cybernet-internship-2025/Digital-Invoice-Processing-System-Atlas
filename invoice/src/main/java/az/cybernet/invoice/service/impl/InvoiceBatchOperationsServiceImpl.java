@@ -1,5 +1,6 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.service.InvoiceOperationService;
 import az.cybernet.invoice.dto.request.InvoiceOperationRequest;
 import az.cybernet.invoice.entity.Invoice;
@@ -22,6 +23,7 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
 
     private final InvoiceBatchOperationsMapper mapper;
     private final InvoiceOperationService invoiceOperationService;
+    private final InvoiceMapper invoiceMapper;
 
     @Override
     @Transactional
@@ -35,6 +37,14 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
             throw new IllegalInvoiceException("Not all invoices have the same status");
         }
         changePreviousStatus(invoices, newStatus);
+        for (Invoice invoice : invoices) {
+            InvoiceOperationRequest req = new InvoiceOperationRequest(UUID.randomUUID(),
+                    invoice.getId(),
+                    invoice.getStatus(),
+                    invoice.getTotal(),
+                    invoice.getComment());
+            invoiceOperationService.insertInvoiceOperation(req);
+        }
     }
 
     private boolean areAllStatusesSame(List<Invoice> invoices) {
