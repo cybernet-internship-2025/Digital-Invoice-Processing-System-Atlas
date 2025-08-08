@@ -9,7 +9,6 @@ import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,7 +30,7 @@ public interface InvoiceService {
 
     InvoiceResponse approveInvoice(UUID id);
 
-    ResponseEntity<byte[]> getInvoicePdf(UUID id);
+     String generateInvoiceHtml(UUID invoiceId);
 
     void cancelOldPendingInvoices();
 
