@@ -134,6 +134,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
 
         Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth);
+        lastNumber = Integer.parseInt(String.valueOf(lastNumber).substring(4));
         int next = (lastNumber == null) ? 1 : lastNumber + 1;
 
         return series + String.format("%04d", next);
@@ -236,7 +237,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         log.info("Found {} old pending invoices to cancel.", oldInvoices.size());
 
         for (Invoice invoice : oldInvoices) {
-            invoice.setStatus(Status.CANCELLED);
+            invoice.setStatus(Status.CANCELLED_DUE_TO_TIMEOUT);
             invoice.setUpdatedAt(LocalDateTime.now());
             invoice.setComment("Automatically cancelled due to being in PENDING status for over a month.");
 
