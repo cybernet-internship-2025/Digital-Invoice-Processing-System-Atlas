@@ -17,13 +17,13 @@ public class InvoiceCancellationScheduler {
     // This will run at 01:00 AM every day
     @Scheduled(cron = "0 0 1 * * ?")
     @SchedulerLock(
-            name = "cancelOldPendingInvoicesTask",
+            name = "cancelExpiredPendingInvoices",
             lockAtMostFor = "15m",
             lockAtLeastFor = "1m"
     )
-    public void cancelOldPendingInvoices() {
+    public void cancelExpiredPendingInvoices() {
         log.info("Starting scheduled job to cancel old pending invoices...");
-        invoiceService.cancelOldPendingInvoices();
+        invoiceService.cancelExpiredPendingInvoices();
         log.info("Finished scheduled job. Releasing lock");
     }
 }
