@@ -33,7 +33,8 @@
     <select id="cancelInvoice" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Invoice">
         WITH cancelled AS (
             UPDATE invoice.invoice
-                SET status = 'CANCELLED'
+                SET status = 'CANCELLED',
+                    updated_at = now()
                 WHERE id = #{id}
                 RETURNING * )
         SELECT * FROM cancelled
