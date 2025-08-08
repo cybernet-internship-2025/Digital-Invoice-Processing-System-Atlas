@@ -1,5 +1,6 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
@@ -10,6 +11,7 @@ import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
+import az.cybernet.invoice.exceptions.UserNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
@@ -18,6 +20,7 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
+import az.cybernet.invoice.util.ExcelFileExporter;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,11 +43,12 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceMapper mapper;
     private final InvoiceMapstruct mapstruct;
     private final InvoiceOperationMapper invoiceOperationMapper;
-
+    private final UserClient userClient;
     private final InvoiceProductService invoiceProductService;
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
+    private final ExcelFileExporter<Invoice> excelFileExporter;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
@@ -52,21 +56,29 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceProductService invoiceProductService,
                               ProductService productService,
                               InvoiceOperationMapper invoiceOperationMapper,
+                              UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
-                              ProductMapstruct productMapstruct, InvoiceHtmlGenerator invoiceHtmlGenerator) {
+                              ProductMapstruct productMapstruct,
+                              ExcelFileExporter<Invoice> excelFileExporter,
+                              InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
         this.invoiceOperationMapper = invoiceOperationMapper;
+        this.userClient = userClient;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
+        this.excelFileExporter = excelFileExporter;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
     }
 
     @Override
     @Transactional
     public InvoiceResponse createInvoice(CreateInvoiceRequest request) {
+        validateUser("Sender", request.getSenderId());
+        validateUser("Customer", request.getCustomerId());
+
         Invoice invoice = mapstruct.toEntity(
                 mapstruct.getInvoiceFromCreateRequest(request));
         String invdSeries = generateInvoiceNumber();
@@ -87,10 +99,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setStatus(Status.PENDING);
         invoice.setTotal(request.getProductQuantityRequests()
-                .stream()
-                .map(productQuantityRequest ->
-                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                .reduce(0.0, Double::sum));
+                                .stream()
+                                .map(productQuantityRequest ->
+                                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                                .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
@@ -139,14 +151,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
         return mapper.getDetailedInvoice(invoiceId)
-                .map(mapstruct::toDetailDto)
-                .orElseThrow(() ->
-                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+                     .map(mapstruct::toDetailDto)
+                     .orElseThrow(() ->
+                             new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
     @Override
     @Transactional
     public InvoiceResponse cancelInvoice(UUID id) {
+        mapper.findInvoiceById(id).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
         return mapstruct.toDto(cancelledInvoice);
     }
@@ -209,10 +222,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getStatus(),
                 request.getComment(),
                 request.getProductQuantityRequests()
-                        .stream()
-                        .map(productQuantityRequest ->
-                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                        .reduce(0.0, Double::sum),
+                       .stream()
+                       .map(productQuantityRequest ->
+                               productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                       .reduce(0.0, Double::sum),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
@@ -235,7 +248,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
+    }
 
+    @Override
+    public byte[] exportInvoice(UUID id) {
+        String[] headers = {"Qaimə ID", "Seriya", "Qaimə nömrəsi", "Göndərənin ID", "Müştəri ID", "Status", "Ümumi məbləğ", "Yaranma tarixi", "Dəyişdirilmə tarixi", "Rəy"};
+        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(() ->
+                new InvoiceNotFoundException("Invoice not found"));
+
+        return excelFileExporter.createExcelForEntity(List.of(invoice), headers);
+    }
+
+    private void validateUser(String role, UUID id) {
+        if (userClient.getUserById(id) == null)
+            throw new UserNotFoundException("User with id " + id + " and " + role + " not found");
     }
 
     @Override
@@ -244,20 +270,20 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
         return invoiceHtmlGenerator.generate(invoiceDetailed);
-}
-  
+    }
+
     @Override
     @Transactional
-    public void cancelOldPendingInvoices() {
+    public void cancelExpiredPendingInvoices() {
         LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
-        List<Invoice> oldInvoices = mapper.findOldPendingInvoices(oneMonthAgo);
+        List<Invoice> oldInvoices = mapper.findPendingInvoicesUntil(oneMonthAgo);
 
-        if (oldInvoices.isEmpty()) {
+        if (oldInvoices == null || oldInvoices.isEmpty()) {
             log.info("No pending invoices older than one month found to cancel.");
             return;
         }
 
-        log.info("Found {} old pending invoices to cancel.", oldInvoices.size());
+        log.info("Found {} expired pending invoices to cancel.", oldInvoices.size());
 
         for (Invoice invoice : oldInvoices) {
             invoice.setStatus(Status.CANCELLED);
@@ -275,5 +301,25 @@ public class InvoiceServiceImpl implements InvoiceService {
             InvoiceOperation operation = mapstruct.invoiceToInvcOper(invoice);
             invoiceOperationMapper.insertInvoiceOperation(operation);
         }
+    }
+
+    @Transactional
+    @Override
+    public InvoiceResponse restoreCanceledInvoice(UUID id) {
+        Invoice invoice = mapper
+                .findInvoiceById(id)
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+        if (invoice.getStatus().equals(Status.CANCELLED))
+            throw new InvoiceNotFoundException("Invoice is not canceled");
+
+        Status status = invoiceOperationMapper.previousStatusFor(invoice);
+        invoice.setStatus(status);
+        invoice.setUpdatedAt(LocalDateTime.now());
+        invoice.setComment("Revert cancel");
+
+        InvoiceOperation operation = mapstruct.invoiceToInvcOper(invoice);
+        invoiceOperationMapper.insertInvoiceOperation(operation);
+
+        return mapstruct.toDto(invoice);
     }
 }

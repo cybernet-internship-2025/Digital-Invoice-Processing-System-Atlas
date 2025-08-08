@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 
 public enum Status {
-
     DRAFT, // invoice is not yet finished
     SENT_TO_RECEIVER, // invoice is sent to receiver
     APPROVED, // invoice was approved by the user
@@ -20,8 +19,8 @@ public enum Status {
     CLOSED, //the invoice was fulfilled
     CHANGES_REQUESTED, //user requested changes
     DELETED, //invoice itself doesn't have is_active field so this may be used
-    PENDING; //the invoice is awaiting approval/rejection/rfc
-
+    PENDING, //the invoice is awaiting approval/rejection/rfc
+    CANCELLED;
 
     private static final Map<Status, Set<Status>> STATUS_TRANSITIONS = Map.of(
             DRAFT, Set.of(SENT_TO_RECEIVER, CANCELLED_BY_SENDER),

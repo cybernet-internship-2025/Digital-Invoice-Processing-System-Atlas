@@ -18,6 +18,8 @@ public interface InvoiceService {
 
     InvoiceResponse createInvoice(CreateInvoiceRequest request);
 
+    InvoiceResponse restoreCanceledInvoice(UUID id);
+
     InvoiceResponse sendBackForCorrection(UUID id, @Valid InvoiceCorrectionReq req);
 
     String generateInvoiceNumber();
@@ -36,4 +38,8 @@ public interface InvoiceService {
 
     List<FilteredInvoiceResp> filterInvoices(Integer year, LocalDate fromDate
             , LocalDate toDate, Status status, String fullInvoiceNumber, InvoiceType type);
+  
+    void cancelExpiredPendingInvoices();
+
+    byte[] exportInvoice(UUID id);
 }

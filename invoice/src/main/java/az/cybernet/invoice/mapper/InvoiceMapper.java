@@ -45,4 +45,6 @@ public interface InvoiceMapper {
     List<FilteredInvoiceResp> filterInvoices(@Param("year") Integer year, @Param("fromDate") LocalDate fromDate
             , @Param("toDate") LocalDate toDate, @Param("status") Status status, @Param("series") String series
             , @Param("invoiceNumber") Integer invoiceNumber, @Param("type")InvoiceType type);
+
+    List<Invoice> findPendingInvoicesUntil(@Param("date") LocalDateTime date);
 }

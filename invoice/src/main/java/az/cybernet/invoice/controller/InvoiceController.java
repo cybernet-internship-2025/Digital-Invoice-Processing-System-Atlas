@@ -4,14 +4,18 @@ import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
+import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
+import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.util.HtmltoPdfConverter;
+import az.cybernet.invoice.util.ExcelFileExporter;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -37,6 +41,7 @@ public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
+    private final ExcelFileExporter<Invoice> excelFileExporter;
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
@@ -66,9 +71,16 @@ public class InvoiceController {
     }
 
     @GetMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable ("invoiceId") UUID invoiceId) {
+    public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable("invoiceId") UUID invoiceId) {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
+    }
+
+    @GetMapping("/{id}/export-to-excel")
+    public ResponseEntity<byte[]> exportInvoiceToExcel(
+            @PathVariable ("id") UUID id,
+            @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
+        return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
     }
 
     @PatchMapping("/approve/{id}")
@@ -81,6 +93,7 @@ public class InvoiceController {
         String html = service.generateInvoiceHtml(id);
         return ResponseEntity.ok(html);
     }
+
     @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
         String html = service.generateInvoiceHtml(id);
@@ -107,5 +120,10 @@ public class InvoiceController {
         List<FilteredInvoiceResp> result = service.filterInvoices(year, fromDate, toDate, status
                 , fullInvoiceNumber, type);
         return ResponseEntity.ok(result);
+    }
+  
+    @PatchMapping("/restore/{id}")
+    public ResponseEntity<InvoiceResponse> restoreInvoice(@PathVariable("id") UUID id) {
+        return ok(service.restoreCanceledInvoice(id));
     }
 }
