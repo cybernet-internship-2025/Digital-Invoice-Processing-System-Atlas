@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-return-type-invoice-table
+      author: fuad
+      changes:
+  - changeSet:
+      id: create-return-type-invoice-table
+      author: fuad
+      changes:
+        - createTable:
+            schemaName: invoice
+            tableName: return_type_invoice
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: series
+                  type: VARCHAR(50)
+
+
+              - column:
+                  name: invoice_number
+                  type: INT
+
+
+              - column:
+                  name: sender_id
+                  type: UUID
+
+
+              - column:
+                  name: customer_id
+                  type: UUID
+
+              - column:
+                  name: status
+                  type: VARCHAR(30)
+
+
+              - column:
+                  name: total
+                  type: DECIMAL(15, 2)
+
+
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+
+
+              - column:
+                  name: comment
+                  type: VARCHAR(255)
+
+              # original invoice references
+              - column:
+                  name: original_invoice_id
+                  type: UUID
+              - column:
+                  name: original_invoice_series
+                  type: VARCHAR(50)
+
+              - column:
+                  name: return_date
+                  type: TIMESTAMP

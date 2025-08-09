@@ -11,4 +11,8 @@
         WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth} AND series LIKE 'IVR%'
         ]]>
     </select>
+    <insert id="insertReturnTypeInvoice" parameterType="az.cybernet.invoice.entity.ReturnTypeInvoice">
+        INSERT INTO invoice.return_type_invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "updated_at", "comment", "original_invoice_id", "original_invoice_series", "return_date")
+        VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{updatedAt}, #{comment}, #{originalInvoiceId}, #{originalInvoiceSeries}, #{returnDate})
+    </insert>
 </mapper>

@@ -27,7 +27,6 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         LocalDateTime dateTime = LocalDateTime.now();
         LocalDateTime Month = dateTime.withDayOfMonth(1).toLocalDate().atStartOfDay();
         LocalDateTime NextMonth = Month.plusMonths(1).withDayOfMonth(1).toLocalDate().atStartOfDay();
-        LocalDateTime Year = dateTime.withYear(dateTime.getYear() % 2000);
         Integer invoiceNumber = returnTypeInvoiceMapper.findLastReturnTypeInvoiceNumber(Month, NextMonth);;
         returnType.setReturnDate(dateTime);
         returnType.setStatus(Status.PENDING);
@@ -41,10 +40,9 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         }
         returnType.setSeries(generateInvoiceSeriesNumber(dateTime) + String.format("%04d", invoiceNumber));
 
-
         // Save the return type invoice to the database (repository save logic would go here)
         // For example: returnTypeRepository.save(returnType);
-
+        returnTypeInvoiceMapper.insertReturnTypeInvoice(returnType); // Save the return type invoice using mapper
         return returnType; // Return the saved entity
     }
     String generateInvoiceSeriesNumber(LocalDateTime dateTime){
