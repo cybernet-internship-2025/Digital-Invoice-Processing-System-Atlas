@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.invoice.mapper.ReturnTypeInvoiceMapper">
+    <select id="findLastReturnTypeInvoiceNumber" resultType="Integer" parameterType="map">
+        <![CDATA[
+        SELECT MAX(invoice_number)
+        FROM invoice.invoice
+        WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth} AND series LIKE 'IVR%'
+        ]]>
+    </select>
+</mapper>
