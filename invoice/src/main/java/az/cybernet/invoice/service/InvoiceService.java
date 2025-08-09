@@ -34,8 +34,6 @@ public interface InvoiceService {
 
      String generateInvoiceHtml(UUID invoiceId);
 
-    void cancelOldPendingInvoices();
-
     List<FilteredInvoiceResp> filterInvoices(Integer year, LocalDate fromDate
             , LocalDate toDate, Status status, String fullInvoiceNumber, InvoiceType type);
   
