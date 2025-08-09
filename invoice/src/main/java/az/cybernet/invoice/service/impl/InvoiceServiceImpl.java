@@ -2,11 +2,13 @@ package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
@@ -23,6 +25,8 @@ import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -173,6 +177,29 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
 
         return mapstruct.toDto(invoice);
+    }
+
+    @Override
+    public List<FilteredInvoiceResp> filterInvoices(Integer year, LocalDate fromDate
+            , LocalDate toDate, Status status, String fullInvoiceNumber, InvoiceType type) {
+        String series = null;
+        Integer invoiceNumber = null;
+        if (StringUtils.hasText(fullInvoiceNumber)) {
+            series = fullInvoiceNumber.replaceAll("\\d", "");
+            invoiceNumber = Integer.parseInt(fullInvoiceNumber.replaceAll("\\D", ""));
+        }
+
+        var result = mapper.filterInvoices(year, fromDate
+                , toDate, status, series, invoiceNumber, type);
+
+        result.forEach(resp -> {
+            if (StringUtils.hasText(resp.getSeries()) &&
+                    StringUtils.hasText(String.valueOf(resp.getInvoiceNumber()))) {
+                resp.setFullInvoiceNumber(resp.getSeries() + resp.getInvoiceNumber());
+            }
+        });
+
+        return result;
     }
 
     @Override

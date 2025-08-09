@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508070001
+      author: invoice
+      changes:
+        - addColumn:
+            tableName: invoice
+            schemaName: invoice
+            columns:
+              - column:
+                  name: type
+                  type: VARCHAR(25)
