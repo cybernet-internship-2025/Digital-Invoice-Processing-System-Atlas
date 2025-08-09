@@ -1,13 +1,12 @@
 package az.cybernet.invoice.controller;
 
-import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.exceptions.InvalidInvoiceNumberException;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
-import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
@@ -22,8 +21,6 @@ import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -117,11 +114,14 @@ public class InvoiceController {
             @RequestParam(name = "fullInvoiceNumber", required = false) String fullInvoiceNumber,
             @RequestParam(name = "type", required = false) InvoiceType type
     ) {
+        if (fullInvoiceNumber != null && !fullInvoiceNumber.matches("^(INVD|INR)\\d{8}$")) {
+            throw new InvalidInvoiceNumberException("Invalid invoice number format.");
+        }
         List<FilteredInvoiceResp> result = service.filterInvoices(year, fromDate, toDate, status
                 , fullInvoiceNumber, type);
         return ResponseEntity.ok(result);
     }
-  
+
     @PatchMapping("/restore/{id}")
     public ResponseEntity<InvoiceResponse> restoreInvoice(@PathVariable("id") UUID id) {
         return ok(service.restoreCanceledInvoice(id));
