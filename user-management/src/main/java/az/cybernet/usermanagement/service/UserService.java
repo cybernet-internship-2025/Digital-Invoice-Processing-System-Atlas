@@ -11,4 +11,5 @@ public interface UserService {
     UserResponse insertUser(UserRequest request);
     UserResponse getUserById(UUID id);
     List<UserResponse> getAllUsers();
+    UserResponse getUserByTaxId(String taxId);
 }
