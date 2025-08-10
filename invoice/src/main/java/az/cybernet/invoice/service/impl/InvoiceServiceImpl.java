@@ -1,6 +1,7 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.client.UserClient;
+import az.cybernet.invoice.constant.InvoiceExportHeaders;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
@@ -44,7 +45,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final ExcelFileExporter<Invoice> excelFileExporter;
+    private final ExcelFileExporter excelFileExporter;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
@@ -55,7 +56,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
-                              ExcelFileExporter<Invoice> excelFileExporter,
+                              ExcelFileExporter excelFileExporter,
                               InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
@@ -213,7 +214,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public byte[] exportInvoice(UUID id) {
-        String[] headers = {"Qaimə ID", "Seriya", "Qaimə nömrəsi", "Göndərənin ID", "Müştəri ID", "Status", "Ümumi məbləğ", "Yaranma tarixi", "Dəyişdirilmə tarixi", "Rəy"};
+        String[] headers = InvoiceExportHeaders.HEADERS;
         Invoice invoice = mapper.findInvoiceById(id).orElseThrow(() ->
                 new InvoiceNotFoundException("Invoice not found"));
 
