@@ -6,6 +6,7 @@ import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -32,4 +33,6 @@ public interface InvoiceService {
     void cancelExpiredPendingInvoices();
 
     byte[] exportInvoice(UUID id);
+
+    void importInvoicesFromExcel(MultipartFile file);
 }

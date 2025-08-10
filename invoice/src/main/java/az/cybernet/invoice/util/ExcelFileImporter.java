@@ -3,21 +3,26 @@ package az.cybernet.invoice.util;
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.ProductQuantityRequest;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class ExcelFileImporter {
-    public List<CreateInvoiceRequest> exportCreateRequests(byte[] bytes) {
+
+    public List<CreateInvoiceRequest> getCreateRequests(byte[] bytes) {
         try (ByteArrayInputStream input = new ByteArrayInputStream(bytes); Workbook workbook = WorkbookFactory.create(input)) {
-            Sheet invoiceSheet = workbook.getSheet("Invoices");
-            Sheet productSheet = workbook.getSheet("Products");
+            Sheet invoiceSheet = workbook.getSheetAt(0);
+            Sheet productSheet = workbook.getSheetAt(1);
 
             List<CreateInvoiceRequest> createRequests = new ArrayList<>();
 
             for(Row row : invoiceSheet) {
+                if(row.getCell(0).getCellType() != CellType.NUMERIC) continue;
+
                 int invoiceNumber = (int) row.getCell(0).getNumericCellValue();
 
                 CreateInvoiceRequest createInvoiceRequest = CreateInvoiceRequest.builder()
@@ -27,6 +32,8 @@ public class ExcelFileImporter {
                         .productQuantityRequests(
                                 getProductQuantityRequests(productSheet, invoiceNumber)
                         ).build();
+
+                createRequests.add(createInvoiceRequest);
             }
             return createRequests;
         } catch (Exception e) {
@@ -40,7 +47,7 @@ public class ExcelFileImporter {
         for(Row row : productSheet) {
             Cell indexCell = row.getCell(0);
 
-            if(indexCell == null) continue;
+            if(indexCell.getCellType() != CellType.NUMERIC) continue;
 
             if((int) indexCell.getNumericCellValue() == invoiceNumber) {
                 ProductQuantityRequest productQuantityRequest = ProductQuantityRequest.builder()

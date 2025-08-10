@@ -19,11 +19,14 @@ import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.ExcelFileExporter;
+import az.cybernet.invoice.util.ExcelFileImporter;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,6 +48,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
     private final ExcelFileExporter<Invoice> excelFileExporter;
+    private final ExcelFileImporter excelFileImporter;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
@@ -55,7 +59,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
-                              ExcelFileExporter<Invoice> excelFileExporter,
+                              ExcelFileExporter<Invoice> excelFileExporter, ExcelFileImporter excelFileImporter,
                               InvoiceHtmlGenerator invoiceHtmlGenerator) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
@@ -66,6 +70,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.excelFileExporter = excelFileExporter;
+        this.excelFileImporter = excelFileImporter;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
     }
 
@@ -218,6 +223,28 @@ public class InvoiceServiceImpl implements InvoiceService {
                 new InvoiceNotFoundException("Invoice not found"));
 
         return excelFileExporter.createExcelForEntity(List.of(invoice), headers);
+    }
+
+    @Override
+    public void importInvoicesFromExcel(MultipartFile file) {
+        try {
+            String fileType = file.getContentType();
+            if(file.isEmpty() ||
+                    (!fileType.equals("application/vnd.ms-excel") &&
+                     !fileType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            ) {
+                throw new IOException();
+            }
+
+            byte[] bytes = file.getBytes();
+            List<CreateInvoiceRequest> createInvoiceRequests = excelFileImporter.getCreateRequests(bytes);
+
+            for (CreateInvoiceRequest request : createInvoiceRequests) {
+                createInvoice(request);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void validateUser(String role, UUID id) {
