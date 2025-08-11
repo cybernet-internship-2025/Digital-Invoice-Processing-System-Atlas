@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 202508070001
-      author: invoice
+      author: tamilla
       changes:
         - addColumn:
             tableName: invoice
@@ -10,3 +10,5 @@ databaseChangeLog:
               - column:
                   name: type
                   type: VARCHAR(25)
+                  constraints:
+                    nullable: false

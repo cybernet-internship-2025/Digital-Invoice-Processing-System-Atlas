@@ -2,7 +2,6 @@ package az.cybernet.invoice.dto.response;
 
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,10 +11,6 @@ import java.util.UUID;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FilteredInvoiceResp {
-    @JsonIgnore
-    String series;
-    @JsonIgnore
-    Integer invoiceNumber;
     String fullInvoiceNumber;
     UUID senderId;
     UUID customerId;

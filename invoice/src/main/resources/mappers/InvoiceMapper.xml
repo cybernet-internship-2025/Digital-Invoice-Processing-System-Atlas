@@ -120,20 +120,22 @@
     </select>
 
     <select id="filterInvoices" resultType="az.cybernet.invoice.dto.response.FilteredInvoiceResp">
-        SELECT *
+        SELECT
+        series || invoice_number::text AS fullInvoiceNumber,
+        invoice.*
         FROM invoice.invoice
         <where>
-            <if test="year != null">
-                AND EXTRACT(YEAR FROM created_at) = #{year}
+            <if test="req.year != null">
+                AND EXTRACT(YEAR FROM created_at) = #{req.year}
             </if>
-            <if test="fromDate != null">
-                AND created_at &gt;= #{fromDate}
+            <if test="req.fromDate != null">
+                AND created_at &gt;= #{req.fromDate}
             </if>
-            <if test="toDate != null">
-                AND created_at &lt;= #{toDate}
+            <if test="req.toDate != null">
+                AND created_at &lt;= #{req.toDate}
             </if>
-            <if test="status != null">
-                AND status = #{status}
+            <if test="req.status != null">
+                AND status = #{req.status}
             </if>
             <if test="series != null and series != ''">
                 AND series = #{series}
@@ -141,8 +143,11 @@
             <if test="invoiceNumber != null">
                 AND invoice_number = #{invoiceNumber}
             </if>
-            <if test="type != null">
-                AND type = #{type}
+            <if test="req.type != null">
+                AND type = #{req.type}
+            </if>
+            <if test="req.customerId != null">
+                AND customer_id = #{req.customerId}
             </if>
         </where>
     </select>

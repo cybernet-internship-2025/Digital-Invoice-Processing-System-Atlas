@@ -8,7 +8,6 @@ import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
-import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
@@ -25,7 +24,6 @@ import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
@@ -180,26 +178,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<FilteredInvoiceResp> filterInvoices(Integer year, LocalDate fromDate
-            , LocalDate toDate, Status status, String fullInvoiceNumber, InvoiceType type) {
+    public List<FilteredInvoiceResp> filterInvoices(InvoiceFilterRequest invoiceFilterRequest) {
         String series = null;
         Integer invoiceNumber = null;
-        if (StringUtils.hasText(fullInvoiceNumber)) {
-            series = fullInvoiceNumber.replaceAll("\\d", "");
-            invoiceNumber = Integer.parseInt(fullInvoiceNumber.replaceAll("\\D", ""));
+        if (StringUtils.hasText(invoiceFilterRequest.getFullInvoiceNumber())) {
+            series = invoiceFilterRequest.getFullInvoiceNumber().replaceAll("\\d", "");
+            invoiceNumber = Integer.parseInt(invoiceFilterRequest.getFullInvoiceNumber().replaceAll("\\D", ""));
         }
 
-        var result = mapper.filterInvoices(year, fromDate
-                , toDate, status, series, invoiceNumber, type);
-
-        result.forEach(resp -> {
-            if (StringUtils.hasText(resp.getSeries()) &&
-                    StringUtils.hasText(String.valueOf(resp.getInvoiceNumber()))) {
-                resp.setFullInvoiceNumber(resp.getSeries() + resp.getInvoiceNumber());
-            }
-        });
-
-        return result;
+        return mapper.filterInvoices(invoiceFilterRequest, series, invoiceNumber);
     }
 
     @Override
