@@ -19,6 +19,7 @@ import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.ExcelFileExporter;
+import az.cybernet.invoice.util.HtmlToPdfConverter;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -231,6 +232,12 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
         return invoiceHtmlGenerator.generate(invoiceDetailed);
+    }
+
+    @Override
+    public byte[] generateInvoicePdf(UUID id){
+        String html = generateInvoiceHtml(id);
+        return HtmlToPdfConverter.generatePdfFromHtml(html);
     }
 
     @Override

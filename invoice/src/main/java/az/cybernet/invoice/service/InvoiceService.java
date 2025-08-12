@@ -27,7 +27,9 @@ public interface InvoiceService {
 
     InvoiceResponse approveInvoice(UUID id);
 
-     String generateInvoiceHtml(UUID invoiceId);
+    String generateInvoiceHtml(UUID invoiceId);
+
+    byte[] generateInvoicePdf(UUID id);
 
     void cancelExpiredPendingInvoices();
 
