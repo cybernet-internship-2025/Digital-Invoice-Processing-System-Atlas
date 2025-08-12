@@ -181,7 +181,7 @@ class InvoiceServiceImplTest {
 
         assertNotNull(response.getId());
         assertEquals(350.0, response.getTotal());
-        assertEquals(Status.PENDING, response.getStatus());
+        assertEquals(Status.SENT_TO_RECEIVER, response.getStatus());
         assertEquals("INVD", response.getSeries());
         assertEquals(expectedNumber, response.getInvoiceNumber());
 
@@ -199,11 +199,11 @@ class InvoiceServiceImplTest {
 
         Invoice cancelledInvoice = new Invoice();
         cancelledInvoice.setId(invoiceId);
-        cancelledInvoice.setStatus(Status.CANCELLED);
+        cancelledInvoice.setStatus(Status.CANCELLED_BY_SENDER);
 
         InvoiceResponse expectedResponse = new InvoiceResponse();
         expectedResponse.setId(invoiceId);
-        expectedResponse.setStatus(Status.CANCELLED);
+        expectedResponse.setStatus(Status.CANCELLED_BY_SENDER);
 
         when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(foundInvoice));
         when(mapper.cancelInvoice(invoiceId)).thenReturn(cancelledInvoice);
@@ -213,7 +213,7 @@ class InvoiceServiceImplTest {
 
         assertNotNull(response);
         assertEquals(invoiceId, response.getId());
-        assertEquals(Status.CANCELLED, response.getStatus());
+        assertEquals(Status.CANCELLED_BY_SENDER, response.getStatus());
 
         verify(mapper).cancelInvoice(invoiceId);
         verify(mapstruct).toDto(cancelledInvoice);
@@ -235,7 +235,7 @@ class InvoiceServiceImplTest {
         UUID invoiceId = UUID.randomUUID();
         Invoice invoice = new Invoice();
         invoice.setId(invoiceId);
-        invoice.setStatus(Status.PENDING);
+        invoice.setStatus(Status.SENT_TO_RECEIVER);
 
         InvoiceResponse expectedResponse = new InvoiceResponse();
 
