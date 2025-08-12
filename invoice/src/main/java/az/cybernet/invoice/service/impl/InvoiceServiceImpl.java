@@ -95,12 +95,12 @@ public class InvoiceServiceImpl implements InvoiceService {
             log.info("generated series manually");
         }
 
-        invoice.setStatus(Status.PENDING);
+        invoice.setStatus(Status.SENT_TO_RECEIVER);
         invoice.setTotal(request.getProductQuantityRequests()
-                                .stream()
-                                .map(productQuantityRequest ->
-                                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                                .reduce(0.0, Double::sum));
+                .stream()
+                .map(productQuantityRequest ->
+                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
@@ -149,9 +149,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
         return mapper.getDetailedInvoice(invoiceId)
-                     .map(mapstruct::toDetailDto)
-                     .orElseThrow(() ->
-                             new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+                .map(mapstruct::toDetailDto)
+                .orElseThrow(() ->
+                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
     @Override
@@ -167,8 +167,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse approveInvoice(UUID id) {
         Invoice invoice = mapper.findInvoiceById(id)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
-        if (!invoice.getStatus().equals(Status.PENDING))
-            throw new IllegalStateException("Only PENDING invoices can be APPROVED");
+        if (!invoice.getStatus().equals(Status.SENT_TO_RECEIVER))
+            throw new IllegalStateException("Only invoices with SENT_TO_RECEIVER status can be APPROVED");
         invoice.setUpdatedAt(LocalDateTime.now());
         mapper.approveInvoice(invoice);
 
@@ -185,10 +185,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getStatus(),
                 request.getComment(),
                 request.getProductQuantityRequests()
-                       .stream()
-                       .map(productQuantityRequest ->
-                               productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                       .reduce(0.0, Double::sum),
+                        .stream()
+                        .map(productQuantityRequest ->
+                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                        .reduce(0.0, Double::sum),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
@@ -255,9 +255,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         log.info("Found {} expired pending invoices to cancel.", oldInvoices.size());
 
         for (Invoice invoice : oldInvoices) {
-            invoice.setStatus(Status.CANCELLED);
+            invoice.setStatus(Status.CANCELLED_DUE_TO_TIMEOUT);
             invoice.setUpdatedAt(LocalDateTime.now());
-            invoice.setComment("Automatically cancelled due to being in PENDING status for over a month.");
+            invoice.setComment("Automatically cancelled due to being in SENT_TO_RECEIVER status for over a month.");
 
             mapper.updateInvoice(
                     invoice.getId(),
@@ -278,8 +278,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = mapper
                 .findInvoiceById(id)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
-        if (invoice.getStatus().equals(Status.CANCELLED))
-            throw new InvoiceNotFoundException("Invoice is not canceled");
+        if (!(invoice.getStatus().equals(Status.CANCELLED_BY_SENDER) ||
+                invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
+            throw new InvoiceNotFoundException("Invoice is not cancelled");
 
         Status status = invoiceOperationMapper.previousStatusFor(invoice);
         invoice.setStatus(status);
