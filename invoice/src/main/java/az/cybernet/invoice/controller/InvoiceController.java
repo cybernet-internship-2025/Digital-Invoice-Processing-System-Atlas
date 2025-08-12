@@ -76,12 +76,14 @@ public class InvoiceController {
         return ok(service.approveInvoice(id));
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}/html", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> getInvoiceHtml(@PathVariable("id") UUID id) {
         String html = service.generateInvoiceHtml(id);
         return ResponseEntity.ok(html);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
         byte[] pdf = service.generateInvoicePdf(id);
