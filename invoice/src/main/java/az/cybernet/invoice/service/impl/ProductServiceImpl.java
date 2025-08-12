@@ -15,7 +15,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final ProductMapstruct mapstruct;
 
-    public ProductServiceImpl(ProductMapper mapper, @Qualifier("productMapstruct") ProductMapstruct mapstruct) {
+    public ProductServiceImpl(ProductMapper mapper, ProductMapstruct mapstruct) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
     }

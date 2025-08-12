@@ -2,6 +2,12 @@ databaseChangeLog:
   - changeSet:
       id: create-return-type-invoice-table
       author: fuad
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: return_invoice
+              schemaName: invoice
       changes:
         - createTable:
             schemaName: invoice
