@@ -13,7 +13,7 @@
     <select id="sendBackForCorrection" resultType="az.cybernet.invoice.entity.Invoice">
         WITH cancelled AS (
             UPDATE invoice.invoice
-                SET status = 'CHANGES_REQUESTED',
+                SET status = 'CORRECTION_REQUESTED',
                     comment = #{comment},
                     updated_at = #{updatedAt}
                 WHERE id = #{id}
@@ -33,7 +33,7 @@
     <select id="cancelInvoice" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Invoice">
         WITH cancelled AS (
             UPDATE invoice.invoice
-                SET status = 'CANCELLED',
+                SET status = 'CANCELLED_BY_SENDER',
                     updated_at = now()
                 WHERE id = #{id}
                 RETURNING * )
@@ -116,7 +116,7 @@
     <select id="findPendingInvoicesUntil" resultType="az.cybernet.invoice.entity.Invoice">
         SELECT *
         FROM invoice.invoice
-        WHERE status = 'PENDING' AND updated_at &lt;= #{date}
+        WHERE (status = 'SENT_TO_RECEIVER' OR status = 'SENT_TO_RECEIVER_AFTER_CORRECTION') AND updated_at &lt;= #{date}
     </select>
 
 </mapper>
