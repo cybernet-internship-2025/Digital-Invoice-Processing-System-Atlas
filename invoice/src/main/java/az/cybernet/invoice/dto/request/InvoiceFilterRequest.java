@@ -34,6 +34,6 @@ public class InvoiceFilterRequest {
 
     InvoiceType type;
 
-    @NotNull(message = "CustomerId cannot be null")
-    UUID customerId;
+    @NotNull(message = "TaxId cannot be null")
+    String taxId;
 }

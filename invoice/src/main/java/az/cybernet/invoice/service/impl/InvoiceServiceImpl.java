@@ -5,6 +5,7 @@ import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
@@ -179,6 +180,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public List<FilteredInvoiceResp> filterInvoices(InvoiceFilterRequest invoiceFilterRequest) {
+        UserResponse userResponse = userClient.getUserByTaxId(invoiceFilterRequest.getTaxId());
         String series = null;
         Integer invoiceNumber = null;
         if (StringUtils.hasText(invoiceFilterRequest.getFullInvoiceNumber())) {
@@ -186,7 +188,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceNumber = Integer.parseInt(invoiceFilterRequest.getFullInvoiceNumber().replaceAll("\\D", ""));
         }
 
-        return mapper.filterInvoices(invoiceFilterRequest, series, invoiceNumber);
+        return mapper.filterInvoices(invoiceFilterRequest, series, invoiceNumber, userResponse.getId());
     }
 
     @Override

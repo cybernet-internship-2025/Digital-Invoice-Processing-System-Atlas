@@ -146,9 +146,7 @@
             <if test="req.type != null">
                 AND type = #{req.type}
             </if>
-            <if test="req.customerId != null">
-                AND customer_id = #{req.customerId}
-            </if>
+            AND (sender_id = #{userId} OR customer_id = #{userId})
         </where>
     </select>
 

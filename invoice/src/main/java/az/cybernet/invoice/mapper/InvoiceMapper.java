@@ -43,7 +43,7 @@ public interface InvoiceMapper {
 
     List<FilteredInvoiceResp> filterInvoices(@Param("req") InvoiceFilterRequest request
             , @Param("series") String series
-            , @Param("invoiceNumber") Integer invoiceNumber);
+            , @Param("invoiceNumber") Integer invoiceNumber, @Param("userId") UUID userId);
 
     List<Invoice> findPendingInvoicesUntil(@Param("date") LocalDateTime date);
 }
