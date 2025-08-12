@@ -97,10 +97,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setStatus(Status.SENT_TO_RECEIVER);
         invoice.setTotal(request.getProductQuantityRequests()
-                .stream()
-                .map(productQuantityRequest ->
-                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                .reduce(0.0, Double::sum));
+                                .stream()
+                                .map(productQuantityRequest ->
+                                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                                .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
@@ -149,9 +149,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
         return mapper.getDetailedInvoice(invoiceId)
-                .map(mapstruct::toDetailDto)
-                .orElseThrow(() ->
-                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+                     .map(mapstruct::toDetailDto)
+                     .orElseThrow(() ->
+                             new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
     @Override
@@ -185,10 +185,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getStatus(),
                 request.getComment(),
                 request.getProductQuantityRequests()
-                        .stream()
-                        .map(productQuantityRequest ->
-                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                        .reduce(0.0, Double::sum),
+                       .stream()
+                       .map(productQuantityRequest ->
+                               productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                       .reduce(0.0, Double::sum),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
@@ -279,7 +279,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .findInvoiceById(id)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         if (!(invoice.getStatus().equals(Status.CANCELLED_BY_SENDER) ||
-                invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
+               invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
             throw new InvoiceNotFoundException("Invoice is not cancelled");
 
         Status status = invoiceOperationMapper.previousStatusFor(invoice);
