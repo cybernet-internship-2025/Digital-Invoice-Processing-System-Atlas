@@ -3,13 +3,9 @@ databaseChangeLog:
       id: create-return-type-invoice-table
       author: fuad
       changes:
-  - changeSet:
-      id: create-return-type-invoice-table
-      author: fuad
-      changes:
         - createTable:
             schemaName: invoice
-            tableName: return_type_invoice
+            tableName: return_invoice
             columns:
               - column:
                   name: id

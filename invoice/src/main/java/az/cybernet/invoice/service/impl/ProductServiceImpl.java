@@ -6,6 +6,7 @@ import az.cybernet.invoice.entity.Product;
 import az.cybernet.invoice.mapper.ProductMapper;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.ProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,7 +15,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final ProductMapstruct mapstruct;
 
-    public ProductServiceImpl(ProductMapper mapper, ProductMapstruct mapstruct) {
+    public ProductServiceImpl(ProductMapper mapper, @Qualifier("productMapstruct") ProductMapstruct mapstruct) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
     }

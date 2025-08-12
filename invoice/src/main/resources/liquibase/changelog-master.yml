@@ -42,6 +42,7 @@ databaseChangeLog:
   - include:
       file: v-1/invoice/202508070001-create-table-shedlock.yml
       relativeToChangelogFile: true
+
   - include:
       file: v-1/invoice/create-table-return-type-invoice.yml
       relativeToChangelogFile: true
