@@ -30,7 +30,7 @@ public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
-    private final ExcelFileExporter<Invoice> excelFileExporter;
+    private final ExcelFileExporter excelFileExporter;
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
