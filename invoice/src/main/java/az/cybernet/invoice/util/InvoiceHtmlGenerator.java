@@ -28,9 +28,10 @@ public class InvoiceHtmlGenerator {
                             <td>%s</td>
                             <td>%.2f</td>
                             <td>%.2f</td>
+                            <td>%.2f</td>
                     
                         </tr>
-                    """.formatted(index++, productName, unit, quantity, price * quantity));
+                    """.formatted(index++, productName, unit, quantity, price, price * quantity));
         }
 
         String productTable = productRows.length() > 0 ? productRows.toString()
@@ -123,6 +124,7 @@ public class InvoiceHtmlGenerator {
                                                    <th>Məhsulun adı</th>
                                                    <th>Ölçü vahidi</th>
                                                    <th>Say</th>
+                                                   <th>Qiymət</th>
                                                    <th>Məbləğ</th>
                                                </tr>
                                                %s
