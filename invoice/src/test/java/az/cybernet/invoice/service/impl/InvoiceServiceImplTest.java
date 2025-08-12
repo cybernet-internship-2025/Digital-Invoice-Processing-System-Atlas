@@ -1,9 +1,11 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceProductResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.dto.response.ProductResponse;
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
@@ -53,6 +55,9 @@ class InvoiceServiceImplTest {
 
     @Mock
     private InvoiceProductService invoiceProductService;
+
+    @Mock
+    private UserClient userClient;
 
     @InjectMocks
     private InvoiceServiceImpl service;
@@ -143,6 +148,7 @@ class InvoiceServiceImplTest {
         when(mapstruct.toEntity(expectedRequest)).thenReturn(new Invoice());
 
         when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(null);
+        when(userClient.getUserById(any())).thenReturn(new UserResponse());
 
         List<InvoiceProductRequest> invoiceProductRequestList = List.of(
                 new InvoiceProductRequest(), new InvoiceProductRequest());
