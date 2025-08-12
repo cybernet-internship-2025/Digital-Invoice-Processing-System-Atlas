@@ -2,6 +2,12 @@ databaseChangeLog:
   - changeSet:
       id: 20250807-1
       author: agasi
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: shedlock
+              schemaName: invoice
       changes:
         - createTable:
             tableName: shedlock
