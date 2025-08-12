@@ -6,6 +6,10 @@ import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.mapper.InvoiceViewMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,28 +17,16 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class InvoiceViewServiceTest {
-
-    private InvoiceViewService invoiceViewService;
+    @Mock
     private UserClient userClient;
+
+    @Mock
     private InvoiceViewMapper invoiceViewMapper;
 
-    @BeforeEach
-    void setUp() {
-        userClient = new UserClient() {
-            @Override
-            public UserResponse getUserById(UUID id) {
-                return new UserResponse(id, "Mock User", "mock-tax");
-            }
-
-            @Override
-            public UserResponse getUserByTaxId(String taxId) {
-                return new UserResponse(UUID.randomUUID(), "Mock User", taxId);
-            }
-        };
-        invoiceViewMapper = mock(InvoiceViewMapper.class);
-        invoiceViewService = new InvoiceViewService(userClient, invoiceViewMapper);
-    }
+    @InjectMocks
+    private InvoiceViewService invoiceViewService;
 
     @Test
     void testGetSentInvoicesByTaxId() {

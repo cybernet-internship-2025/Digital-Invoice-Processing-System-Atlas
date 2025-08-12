@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ExcelFileExporter<T> {
+public class ExcelFileExporter {
 
-    public byte[] createExcelForEntity(List<T> entityList, String[] headers) {
+    public <T> byte[] createExcelForEntity(List<T> entityList, String[] headers) {
         try(SXSSFWorkbook workbook = new SXSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Report");
 
@@ -48,7 +48,7 @@ public class ExcelFileExporter<T> {
         }
     }
 
-    private void fillRow(Row row, T entity) {
+    private <T> void fillRow(Row row, T entity) {
         Field[] fields = entity.getClass().getDeclaredFields();
         int cellNum = 0;
 

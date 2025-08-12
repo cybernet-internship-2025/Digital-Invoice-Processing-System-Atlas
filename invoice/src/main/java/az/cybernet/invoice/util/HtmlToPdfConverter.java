@@ -1,13 +1,11 @@
 package az.cybernet.invoice.util;
 
-import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 
 
-public class HtmltoPdfConverter {
+public class HtmlToPdfConverter {
     public static byte[] generatePdfFromHtml(String htmlContent) {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
@@ -16,7 +14,7 @@ public class HtmltoPdfConverter {
             builder.toStream(outputStream);
 
             builder.useFont(
-                    () -> HtmltoPdfConverter.class.getResourceAsStream("/fonts/DejaVuSans.ttf"),
+                    () -> HtmlToPdfConverter.class.getResourceAsStream("/fonts/DejaVuSans.ttf"),
                     "DejaVu Sans"
             );
 

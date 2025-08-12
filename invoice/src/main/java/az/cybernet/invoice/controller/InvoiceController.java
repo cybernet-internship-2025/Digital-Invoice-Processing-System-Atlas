@@ -9,7 +9,6 @@ import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
-import az.cybernet.invoice.util.HtmltoPdfConverter;
 import az.cybernet.invoice.util.ExcelFileExporter;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
@@ -30,7 +29,7 @@ public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
-    private final ExcelFileExporter<Invoice> excelFileExporter;
+    private final ExcelFileExporter excelFileExporter;
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
@@ -67,7 +66,7 @@ public class InvoiceController {
 
     @GetMapping("/{id}/export-to-excel")
     public ResponseEntity<byte[]> exportInvoiceToExcel(
-            @PathVariable ("id") UUID id,
+            @PathVariable("id") UUID id,
             @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
         return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
     }
@@ -77,22 +76,23 @@ public class InvoiceController {
         return ok(service.approveInvoice(id));
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{id}/html", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> getInvoiceHtml(@PathVariable("id") UUID id) {
         String html = service.generateInvoiceHtml(id);
         return ResponseEntity.ok(html);
     }
 
-    @GetMapping("/{id}/pdf")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
-        String html = service.generateInvoiceHtml(id);
-        byte[] pdfBytes = HtmltoPdfConverter.generatePdfFromHtml(html);
+        byte[] pdf = service.generateInvoicePdf(id);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDisposition(ContentDisposition.inline().filename("invoice.pdf").build());
-
-        return ResponseEntity.ok().headers(headers).body(pdfBytes);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + "invoice_" + id + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 
     @PatchMapping("/restore/{id}")

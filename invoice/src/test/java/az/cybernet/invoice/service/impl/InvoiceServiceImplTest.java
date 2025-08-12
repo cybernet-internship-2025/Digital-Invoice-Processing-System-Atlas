@@ -1,9 +1,11 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceProductResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.dto.response.ProductResponse;
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
@@ -53,6 +55,9 @@ class InvoiceServiceImplTest {
 
     @Mock
     private InvoiceProductService invoiceProductService;
+
+    @Mock
+    private UserClient userClient;
 
     @InjectMocks
     private InvoiceServiceImpl service;
@@ -143,6 +148,7 @@ class InvoiceServiceImplTest {
         when(mapstruct.toEntity(expectedRequest)).thenReturn(new Invoice());
 
         when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(null);
+        when(userClient.getUserById(any())).thenReturn(new UserResponse());
 
         List<InvoiceProductRequest> invoiceProductRequestList = List.of(
                 new InvoiceProductRequest(), new InvoiceProductRequest());
@@ -175,7 +181,7 @@ class InvoiceServiceImplTest {
 
         assertNotNull(response.getId());
         assertEquals(350.0, response.getTotal());
-        assertEquals(Status.PENDING, response.getStatus());
+        assertEquals(Status.SENT_TO_RECEIVER, response.getStatus());
         assertEquals("INVD", response.getSeries());
         assertEquals(expectedNumber, response.getInvoiceNumber());
 
@@ -193,11 +199,11 @@ class InvoiceServiceImplTest {
 
         Invoice cancelledInvoice = new Invoice();
         cancelledInvoice.setId(invoiceId);
-        cancelledInvoice.setStatus(Status.CANCELLED);
+        cancelledInvoice.setStatus(Status.CANCELLED_BY_SENDER);
 
         InvoiceResponse expectedResponse = new InvoiceResponse();
         expectedResponse.setId(invoiceId);
-        expectedResponse.setStatus(Status.CANCELLED);
+        expectedResponse.setStatus(Status.CANCELLED_BY_SENDER);
 
         when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(foundInvoice));
         when(mapper.cancelInvoice(invoiceId)).thenReturn(cancelledInvoice);
@@ -207,7 +213,7 @@ class InvoiceServiceImplTest {
 
         assertNotNull(response);
         assertEquals(invoiceId, response.getId());
-        assertEquals(Status.CANCELLED, response.getStatus());
+        assertEquals(Status.CANCELLED_BY_SENDER, response.getStatus());
 
         verify(mapper).cancelInvoice(invoiceId);
         verify(mapstruct).toDto(cancelledInvoice);
@@ -229,7 +235,7 @@ class InvoiceServiceImplTest {
         UUID invoiceId = UUID.randomUUID();
         Invoice invoice = new Invoice();
         invoice.setId(invoiceId);
-        invoice.setStatus(Status.PENDING);
+        invoice.setStatus(Status.SENT_TO_RECEIVER);
 
         InvoiceResponse expectedResponse = new InvoiceResponse();
 
