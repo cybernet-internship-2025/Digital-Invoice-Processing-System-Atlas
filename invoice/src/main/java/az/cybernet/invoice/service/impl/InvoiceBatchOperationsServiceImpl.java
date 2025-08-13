@@ -37,14 +37,6 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
             throw new IllegalInvoiceException("Not all invoices have the same status");
         }
         changePreviousStatus(invoices, newStatus);
-        for (Invoice invoice : invoices) {
-            InvoiceOperationRequest req = new InvoiceOperationRequest(UUID.randomUUID(),
-                    invoice.getId(),
-                    invoice.getStatus(),
-                    invoice.getTotal(),
-                    invoice.getComment());
-            invoiceOperationService.insertInvoiceOperation(req);
-        }
     }
 
     private boolean areAllStatusesSame(List<Invoice> invoices) {
