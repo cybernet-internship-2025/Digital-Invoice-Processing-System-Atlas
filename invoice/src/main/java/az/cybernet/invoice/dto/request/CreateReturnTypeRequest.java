@@ -16,8 +16,6 @@ import java.util.UUID;
 public class CreateReturnTypeRequest {
     UUID initialInvoiceId;
     String initialInvoiceSeries;
-    UUID senderId;
-    UUID customerId;
     String comment;
     @Valid
     List<ProductDetailResponse> productQuantityRequests;

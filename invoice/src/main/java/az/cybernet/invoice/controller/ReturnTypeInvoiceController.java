@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/invoices")
+@RequestMapping("/v1/invoices/returns")
 public class ReturnTypeInvoiceController {
     ReturnTypeInvoiceServiceImpl returnTypeInvoiceService;
-    @PostMapping("/return-type/create")
+    @PostMapping
     public ResponseEntity<ReturnTypeInvoice> createReturnTypeInvoice(@RequestBody @Valid CreateReturnTypeRequest returnTypeInvoice) {
         return new ResponseEntity<>(returnTypeInvoiceService.createReturnTypeInvoice(returnTypeInvoice), HttpStatus.CREATED);
     }
