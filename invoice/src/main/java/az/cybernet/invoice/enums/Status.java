@@ -12,15 +12,7 @@ public enum Status {
     CORRECTION_REQUESTED_AFTER_APPROVAL, // invoice is sent back for correction after approval
     SENT_TO_RECEIVER_AFTER_CORRECTION, // invoice is corrected and sent to receiver again
     CANCELLED_BY_SENDER, // invoice is cancelled after rejection or approval by sender
-    CANCELLED_DUE_TO_TIMEOUT, // invoice is not approved by receiver before deadline
-
-
-    //Previous statuses which will be deleted later
-    CLOSED, //the invoice was fulfilled
-    CHANGES_REQUESTED, //user requested changes
-    DELETED, //invoice itself doesn't have is_active field so this may be used
-    PENDING, //the invoice is awaiting approval/rejection/rfc
-    CANCELLED;
+    CANCELLED_DUE_TO_TIMEOUT; // invoice is not approved by receiver before deadline
 
     private static final Map<Status, Set<Status>> STATUS_TRANSITIONS = Map.of(
             DRAFT, Set.of(SENT_TO_RECEIVER, CANCELLED_BY_SENDER),
@@ -32,7 +24,6 @@ public enum Status {
             CORRECTION_REQUESTED, Set.of(SENT_TO_RECEIVER_AFTER_CORRECTION, CANCELLED_BY_SENDER),
             CORRECTION_REQUESTED_AFTER_APPROVAL, Set.of(SENT_TO_RECEIVER_AFTER_CORRECTION, CANCELLED_BY_SENDER)
     );
-
 
     public boolean canBeChangedTo(Status newStatus) {
         return STATUS_TRANSITIONS.getOrDefault(this, Set.of()).contains(newStatus);

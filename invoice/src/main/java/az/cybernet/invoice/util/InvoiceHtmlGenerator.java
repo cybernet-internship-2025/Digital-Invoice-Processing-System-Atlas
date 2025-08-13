@@ -28,9 +28,10 @@ public class InvoiceHtmlGenerator {
                             <td>%s</td>
                             <td>%.2f</td>
                             <td>%.2f</td>
-                   
+                            <td>%.2f</td>
+                    
                         </tr>
-                    """.formatted(index++, productName, unit, quantity, price*quantity));
+                    """.formatted(index++, productName, unit, quantity, price, price * quantity));
         }
 
         String productTable = productRows.length() > 0 ? productRows.toString()
@@ -44,7 +45,7 @@ public class InvoiceHtmlGenerator {
                                                <title>Elektron Qaimə-Faktura</title>
                                                <style>
                                                    @page {
-                                                       size: A4 landscape;
+                                                       size: A4;
                                                        margin: 1cm;
                                                    }
                                                    body {
@@ -67,24 +68,20 @@ public class InvoiceHtmlGenerator {
                                                    .no-border {
                                                        border: none;
                                                    }
-                                                   .signature {
-                                                        margin-top: 40px;
-                                                        display: flex;
-                                                        justify-content: space-between;
-                                                        align-items: flex-start;
+                                                    .block {
+                                                          display: inline-block;
+                                                          vertical-align: top;
                                                     }
-                                                    .signature .block {
-                                                        width: 45%%;
+                                                    .signature {
+                                                          display: flex;
+                                                          justify-content: space-between;
+                                                          margin-top: 40px;
+                                                          align-items: flex-start;
+                                                          flex-wrap: nowrap;
                                                     }
-                                                    .signature .right {
-                                                        text-align: right;
-                                                        margin-left: auto;
-                                                    }
-                                                   .signature div {
-                                                       width: 45%%;
-                                                   }
                                                    .bold {
                                                        font-weight: bold;
+                                                       margin-bottom: 15px;
                                                    }
                                                    .header {
                                                        text-align: center;
@@ -127,6 +124,7 @@ public class InvoiceHtmlGenerator {
                                                    <th>Məhsulun adı</th>
                                                    <th>Ölçü vahidi</th>
                                                    <th>Say</th>
+                                                   <th>Qiymət</th>
                                                    <th>Məbləğ</th>
                                                </tr>
                                                %s
@@ -139,7 +137,7 @@ public class InvoiceHtmlGenerator {
                                                          <br/><br/>
                                                          İmza ___________________________
                                                      </div>
-                                                     <div class="block right">
+                                                     <div class="block">
                                                          <div class="bold">MÜŞTƏRİ:</div>
                                                          <br/><br/>
                                                          İmza ___________________________
