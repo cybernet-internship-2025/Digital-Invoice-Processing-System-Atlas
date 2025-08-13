@@ -2,18 +2,20 @@ package az.cybernet.invoice.dto.request;
 
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class InvoiceFilterRequest {
 
     Integer year;
@@ -33,7 +35,4 @@ public class InvoiceFilterRequest {
     String fullInvoiceNumber;
 
     InvoiceType type;
-
-    @NotNull(message = "TaxId cannot be null")
-    String taxId;
 }

@@ -10,6 +10,9 @@ import java.util.UUID;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FilteredInvoiceResp {
     String fullInvoiceNumber;
     UUID senderId;

@@ -119,35 +119,4 @@
         WHERE status = 'PENDING' AND updated_at &lt;= #{date}
     </select>
 
-    <select id="filterInvoices" resultType="az.cybernet.invoice.dto.response.FilteredInvoiceResp">
-        SELECT
-        series || invoice_number::text AS fullInvoiceNumber,
-        invoice.*
-        FROM invoice.invoice
-        <where>
-            <if test="req.year != null">
-                AND EXTRACT(YEAR FROM created_at) = #{req.year}
-            </if>
-            <if test="req.fromDate != null">
-                AND created_at &gt;= #{req.fromDate}
-            </if>
-            <if test="req.toDate != null">
-                AND created_at &lt;= #{req.toDate}
-            </if>
-            <if test="req.status != null">
-                AND status = #{req.status}
-            </if>
-            <if test="series != null and series != ''">
-                AND series = #{series}
-            </if>
-            <if test="invoiceNumber != null">
-                AND invoice_number = #{invoiceNumber}
-            </if>
-            <if test="req.type != null">
-                AND type = #{req.type}
-            </if>
-            AND (sender_id = #{userId} OR customer_id = #{userId})
-        </where>
-    </select>
-
 </mapper>

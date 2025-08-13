@@ -179,19 +179,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<FilteredInvoiceResp> filterInvoices(InvoiceFilterRequest invoiceFilterRequest) {
-        UserResponse userResponse = userClient.getUserByTaxId(invoiceFilterRequest.getTaxId());
-        String series = null;
-        Integer invoiceNumber = null;
-        if (StringUtils.hasText(invoiceFilterRequest.getFullInvoiceNumber())) {
-            series = invoiceFilterRequest.getFullInvoiceNumber().replaceAll("\\d", "");
-            invoiceNumber = Integer.parseInt(invoiceFilterRequest.getFullInvoiceNumber().replaceAll("\\D", ""));
-        }
-
-        return mapper.filterInvoices(invoiceFilterRequest, series, invoiceNumber, userResponse.getId());
-    }
-
-    @Override
     @Transactional
     public InvoiceResponse updateInvoice(UpdateInvoiceRequest request) {
         Invoice invoice = Optional.ofNullable(mapper.updateInvoice(

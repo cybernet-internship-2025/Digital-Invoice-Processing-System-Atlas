@@ -32,8 +32,6 @@ public interface InvoiceService {
 
      String generateInvoiceHtml(UUID invoiceId);
 
-    List<FilteredInvoiceResp> filterInvoices(InvoiceFilterRequest invoiceFilterRequest);
-  
     void cancelExpiredPendingInvoices();
 
     byte[] exportInvoice(UUID id);

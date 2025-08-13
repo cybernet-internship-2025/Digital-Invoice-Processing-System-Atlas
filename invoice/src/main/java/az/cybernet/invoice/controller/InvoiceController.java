@@ -95,14 +95,6 @@ public class InvoiceController {
         return ResponseEntity.ok().headers(headers).body(pdfBytes);
     }
 
-    @PostMapping("/filter")
-    public ResponseEntity<List<FilteredInvoiceResp>> filterInvoices(
-            @RequestBody @Valid InvoiceFilterRequest invoiceFilterRequest
-    ) {
-        List<FilteredInvoiceResp> result = service.filterInvoices(invoiceFilterRequest);
-        return ResponseEntity.ok(result);
-    }
-
     @PatchMapping("/restore/{id}")
     public ResponseEntity<InvoiceResponse> restoreInvoice(@PathVariable("id") UUID id) {
         return ok(service.restoreCanceledInvoice(id));

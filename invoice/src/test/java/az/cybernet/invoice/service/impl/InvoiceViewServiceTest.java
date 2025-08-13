@@ -1,6 +1,7 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.client.UserClient;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.mapper.InvoiceViewMapper;
@@ -41,19 +42,19 @@ class InvoiceViewServiceTest {
         String taxId = "tax-123";
         UUID userId = UUID.randomUUID();
         UserResponse userResponse = new UserResponse(userId, "Fuad", taxId);
-        List<Invoice> mockInvoices = List.of(Invoice.builder().id(UUID.randomUUID()).senderId(userId).total(100.0).build());
+        List<FilteredInvoiceResp> mockInvoices = List.of(FilteredInvoiceResp.builder().senderId(userId).total(100.0).build());
 
         when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
-        when(invoiceViewMapper.getSentInvoicesById(userId)).thenReturn(mockInvoices);
+        when(invoiceViewMapper.getSentInvoicesById(userId, any(), any(), any())).thenReturn(mockInvoices);
 
-        List<Invoice> result = invoiceViewService.getSentInvoicesByTaxId(taxId);
+        List<FilteredInvoiceResp> result = invoiceViewService.getSentInvoicesByTaxId(taxId, any());
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(userId, result.get(0).getSenderId());
 
         verify(userClient).getUserByTaxId(taxId);
-        verify(invoiceViewMapper).getSentInvoicesById(userId);
+        verify(invoiceViewMapper).getSentInvoicesById(userId, any(), any(), any());
     }
 
     @Test
@@ -61,19 +62,19 @@ class InvoiceViewServiceTest {
         String taxId = "tax-456";
         UUID userId = UUID.randomUUID();
         UserResponse userResponse = new UserResponse(userId, "Fuad", taxId);
-        List<Invoice> mockInvoices = List.of(Invoice.builder().id(UUID.randomUUID()).customerId(userId).total(200.0).build());
+        List<FilteredInvoiceResp> mockInvoices = List.of(FilteredInvoiceResp.builder().customerId(userId).total(200.0).build());
 
         when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
-        when(invoiceViewMapper.getReceivedInvoicesById(userId)).thenReturn(mockInvoices);
+        when(invoiceViewMapper.getReceivedInvoicesById(userId, any(), any(), any())).thenReturn(mockInvoices);
 
-        List<Invoice> result = invoiceViewService.getReceivedInvoicesByTaxId(taxId);
+        List<FilteredInvoiceResp> result = invoiceViewService.getReceivedInvoicesByTaxId(taxId, any());
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(userId, result.get(0).getCustomerId());
 
         verify(userClient).getUserByTaxId(taxId);
-        verify(invoiceViewMapper).getReceivedInvoicesById(userId);
+        verify(invoiceViewMapper).getReceivedInvoicesById(userId, any(), any(), any());
     }
 
     @Test
