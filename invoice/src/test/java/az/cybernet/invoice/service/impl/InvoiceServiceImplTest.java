@@ -272,4 +272,89 @@ class InvoiceServiceImplTest {
 
         assertThrows(IllegalStateException.class, () -> service.approveInvoice(invoiceId));
     }
+
+    @Test
+    void cancelExpiredPendingInvoices_shouldCancelOldInvoicesWhenFound() {
+        // Arrange
+        Invoice oldInvoice = Invoice.builder().id(UUID.randomUUID()).status(Status.SENT_TO_RECEIVER).total(100.0).build();
+        when(mapper.findPendingInvoicesUntil(any(LocalDateTime.class))).thenReturn(List.of(oldInvoice));
+        when(mapstruct.invoiceToInvcOper(any(Invoice.class))).thenReturn(new InvoiceOperation());
+
+        // Act
+        service.cancelExpiredPendingInvoices();
+
+        // Assert
+        verify(mapper, times(1)).updateInvoice(
+                eq(oldInvoice.getId()),
+                eq(Status.CANCELLED_DUE_TO_TIMEOUT), // Verify correct status
+                anyString(),
+                eq(oldInvoice.getTotal()),
+                any(LocalDateTime.class)
+        );
+        verify(invoiceOperationMapper, times(1)).insertInvoiceOperation(any(InvoiceOperation.class));
+    }
+
+    @Test
+    void cancelExpiredPendingInvoices_shouldDoNothingWhenNoOldInvoicesFound() {
+        // Arrange
+        when(mapper.findPendingInvoicesUntil(any(LocalDateTime.class))).thenReturn(Collections.emptyList());
+
+        // Act
+        service.cancelExpiredPendingInvoices();
+
+        // Assert
+        verify(mapper, never()).updateInvoice(any(), any(), any(), any(), any());
+        verify(invoiceOperationMapper, never()).insertInvoiceOperation(any());
+    }
+
+    //--- Tests for restoreCanceledInvoice ---
+
+    @Test
+    void restoreCanceledInvoice_shouldRestoreInvoiceToPreviousStatus() {
+        // Arrange
+        UUID invoiceId = UUID.randomUUID();
+        Invoice canceledInvoice = Invoice.builder().id(invoiceId).status(Status.CANCELLED_DUE_TO_TIMEOUT).build();
+        Status previousStatus = Status.SENT_TO_RECEIVER;
+
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(canceledInvoice));
+        when(invoiceOperationMapper.previousStatusFor(canceledInvoice)).thenReturn(previousStatus);
+        when(mapstruct.invoiceToInvcOper(any(Invoice.class))).thenReturn(new InvoiceOperation());
+
+        // Act
+        service.restoreCanceledInvoice(invoiceId);
+
+        // Assert
+        // This is a bit tricky to verify directly on the object, but we can verify the mappers were called correctly
+        // and infer the object was updated before being passed. The important thing is that `previousStatusFor` was called.
+        verify(invoiceOperationMapper, times(1)).previousStatusFor(canceledInvoice);
+        verify(invoiceOperationMapper, times(1)).insertInvoiceOperation(any(InvoiceOperation.class));
+        verify(mapstruct, times(1)).toDto(any(Invoice.class));
+    }
+
+    @Test
+    void restoreCanceledInvoice_shouldThrowIllegalStateException_whenInvoiceIsNotCancelled() {
+        // Arrange
+        UUID invoiceId = UUID.randomUUID();
+        Invoice approvedInvoice = Invoice.builder().id(invoiceId).status(Status.APPROVED).build();
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.of(approvedInvoice));
+
+        // Act & Assert
+        assertThrows(IllegalStateException.class, () -> {
+            service.restoreCanceledInvoice(invoiceId);
+        });
+
+        verify(invoiceOperationMapper, never()).previousStatusFor(any());
+    }
+
+    @Test
+    void restoreCanceledInvoice_shouldThrowInvoiceNotFoundException_whenInvoiceDoesNotExist() {
+        // Arrange
+        UUID invoiceId = UUID.randomUUID();
+        when(mapper.findInvoiceById(invoiceId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(InvoiceNotFoundException.class, () -> {
+            service.restoreCanceledInvoice(invoiceId);
+        });
+    }
 }
