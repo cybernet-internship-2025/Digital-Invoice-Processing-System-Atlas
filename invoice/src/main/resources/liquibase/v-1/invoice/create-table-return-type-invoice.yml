@@ -46,7 +46,7 @@ databaseChangeLog:
 
               - column:
                   name: total
-                  type: DECIMAL(15, 2)
+                  type: INTEGER
 
 
               - column:

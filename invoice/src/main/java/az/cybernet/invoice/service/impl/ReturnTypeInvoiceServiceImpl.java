@@ -1,6 +1,7 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.dto.request.CreateReturnTypeRequest;
+import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
@@ -47,9 +48,11 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         }
         returnType.setSeries(generateInvoiceSeriesNumber(dateTime) + String.format("%04d", invoiceNumber));
 
-        // Save the return type invoice to the database (repository save logic would go here)
-        // For example: returnTypeRepository.save(returnType);
+        Invoice invoice = createReturnTypeToInvoice(returnType); // Create an invoice from the return type
+
         returnTypeInvoiceMapper.insertReturnTypeInvoice(returnType); // Save the return type invoice using mapper
+        returnTypeInvoiceMapper.insertReturnTypeToInvoice(invoice); // Save the invoice created from return type
+
         return returnType; // Return the saved entity
     }
     String generateInvoiceSeriesNumber(LocalDateTime dateTime){
@@ -57,5 +60,18 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         String year = String.format("%02d", dateTime1.getYear() % 2000);
         String month = String.format("%02d", dateTime1.getMonthValue());
         return INR + year + month;
+    }
+    Invoice createReturnTypeToInvoice(ReturnTypeInvoice returnType) {
+        Invoice invoice = new Invoice();
+        invoice.setId(returnType.getId());
+        invoice.setSeries(returnType.getSeries());
+        invoice.setInvoiceNumber(returnType.getInvoiceNumber());
+        invoice.setSenderId(returnType.getSenderId());
+        invoice.setCustomerId(returnType.getCustomerId());
+        invoice.setStatus(returnType.getStatus());
+        invoice.setCreatedAt(returnType.getReturnDate());
+        invoice.setComment(returnType.getComment());
+        returnTypeInvoiceMapper.insertReturnTypeToInvoice(invoice);
+        return invoice;
     }
 }

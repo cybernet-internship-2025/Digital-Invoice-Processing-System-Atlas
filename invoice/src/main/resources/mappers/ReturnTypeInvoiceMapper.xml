@@ -22,9 +22,15 @@
         FROM invoice.invoice
         WHERE id = #{id}
     </select>
+
     <select id="getCustomerId" parameterType="java.util.UUID" resultType="java.util.UUID">
         SELECT customer_id
         FROM invoice.invoice
         WHERE id = #{id}
     </select>
+
+    <insert id="insertReturnTypeToInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
+        INSERT INTO invoice.invoice ("id", "series", "invoice_number" , "sender_id", "customer_id", "status", "total", "comment", "created_at", "updated_at")
+        VALUES (#{id} , #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{comment}, #{createdAt}, #{updatedAt})
+    </insert>
 </mapper>
