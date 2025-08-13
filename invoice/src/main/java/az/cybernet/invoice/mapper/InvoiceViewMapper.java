@@ -1,6 +1,7 @@
 package az.cybernet.invoice.mapper;
 
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,4 +14,5 @@ public interface InvoiceViewMapper {
     List<Invoice> getReceivedInvoicesById(@Param("id") UUID id);
     List<Invoice> getAllDraftsById(@Param("id") UUID id);
     List<Invoice> getAllInvoicesById(@Param("id") UUID id);
+    List<ReturnTypeInvoice> getReturnTypeInvoicesById(@Param("id") UUID id);
 }

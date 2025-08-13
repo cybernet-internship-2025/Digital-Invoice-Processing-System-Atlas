@@ -1,6 +1,7 @@
 package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.service.impl.InvoiceViewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,5 +39,10 @@ public class InvoiceViewController {
     public ResponseEntity<List<Invoice>> getAllInvoicesByTaxId(@PathVariable("taxId") String taxId) {
         List<Invoice> invoices = invoiceViewService.getAllInvoicesByTaxId(taxId);
         return ResponseEntity.ok(invoices);
+    }
+    @GetMapping("/returns/{taxId}")
+    public ResponseEntity<List<ReturnTypeInvoice>> getReturnTypeInvoicesByTaxId(@PathVariable("taxId") String taxId) {
+        List<ReturnTypeInvoice> returnTypeInvoices = invoiceViewService.getReturnTypeInvoicesByTaxId(taxId);
+        return ResponseEntity.ok(returnTypeInvoices);
     }
 }

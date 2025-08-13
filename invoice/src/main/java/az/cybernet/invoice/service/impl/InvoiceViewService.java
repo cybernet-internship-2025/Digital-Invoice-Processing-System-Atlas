@@ -3,6 +3,7 @@ package az.cybernet.invoice.service.impl;
 import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.mapper.InvoiceViewMapper;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +32,9 @@ public class InvoiceViewService {
     public List<Invoice> getAllInvoicesByTaxId(String taxId) {
         UserResponse userResponse = userClient.getUserByTaxId(taxId);
         return invoiceViewMapper.getAllInvoicesById(userResponse.getId());
+    }
+    public List<ReturnTypeInvoice> getReturnTypeInvoicesByTaxId(String taxId) {
+        UserResponse userResponse = userClient.getUserByTaxId(taxId);
+        return invoiceViewMapper.getReturnTypeInvoicesById(userResponse.getId());
     }
 }
