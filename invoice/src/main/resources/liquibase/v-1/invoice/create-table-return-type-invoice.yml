@@ -62,9 +62,6 @@ databaseChangeLog:
               - column:
                   name: original_invoice_id
                   type: UUID
-              - column:
-                  name: original_invoice_series
-                  type: VARCHAR(50)
 
               - column:
                   name: return_date

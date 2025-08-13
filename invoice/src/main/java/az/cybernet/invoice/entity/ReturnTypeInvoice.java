@@ -26,6 +26,5 @@ public class ReturnTypeInvoice {
     List<ProductDetailResponse> products;
 
     UUID originalInvoiceId; // Reference to the original invoice being returned
-    String originalInvoiceSeries; // Series of the original invoice
     LocalDateTime returnDate; // Date of the return operation
 }

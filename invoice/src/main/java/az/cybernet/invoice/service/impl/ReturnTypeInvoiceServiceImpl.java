@@ -35,8 +35,6 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         Integer invoiceNumber = returnTypeInvoiceMapper.findLastReturnTypeInvoiceNumber(Month, NextMonth);;
         returnType.setReturnDate(dateTime);
         returnType.setStatus(Status.SENT_TO_RECEIVER);
-        returnType.setInvoiceNumber(invoiceNumber);
-        returnType.setOriginalInvoiceSeries(returnTypeInvoiceRequest.getInitialInvoiceSeries());
 
         returnType.setSenderId(returnTypeInvoiceMapper.getSenderId(returnTypeInvoiceRequest.getInitialInvoiceId()));
         returnType.setCustomerId(returnTypeInvoiceMapper.getCustomerId(returnTypeInvoiceRequest.getInitialInvoiceId()));
@@ -46,6 +44,8 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         } else {
             invoiceNumber++; // Increment the last invoice number
         }
+        returnType.setInvoiceNumber(invoiceNumber);
+
         returnType.setSeries(generateInvoiceSeriesNumber(dateTime) + String.format("%04d", invoiceNumber));
 
         Invoice invoice = createReturnTypeToInvoice(returnType); // Create an invoice from the return type
