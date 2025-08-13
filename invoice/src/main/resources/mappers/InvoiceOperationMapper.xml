@@ -14,8 +14,9 @@
             resultType="az.cybernet.invoice.enums.Status">
         SELECT status
         FROM invoice.invoice_operation
-        WHERE invoiceId = #{id} AND status != 'CANCELED' AND timestamp &lt; #{date}
-        ORDER BY timestamp DESC
+        WHERE invoiceId = #{id}
+          AND status NOT IN ('CANCELLED_BY_SENDER', 'CANCELLED_DUE_TO_TIMEOUT')
+        ORDER BY "timestamp" DESC
         LIMIT 1
     </select>
 
