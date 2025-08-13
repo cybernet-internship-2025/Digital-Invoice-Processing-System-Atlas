@@ -1,4 +1,4 @@
-package az.cybernet.invoice.entity;
+package az.cybernet.invoice.dto.response;
 
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
@@ -9,14 +9,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class Invoice {
-    UUID id;
-    String series;
-    Integer invoiceNumber;
+@AllArgsConstructor
+@NoArgsConstructor
+public class FilteredInvoiceResp {
+    String fullInvoiceNumber;
     UUID senderId;
     UUID customerId;
     Status status;
@@ -24,5 +22,5 @@ public class Invoice {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     String comment;
-    InvoiceType invoiceType;
+    InvoiceType type;
 }

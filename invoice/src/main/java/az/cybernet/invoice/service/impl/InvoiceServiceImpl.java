@@ -3,8 +3,10 @@ package az.cybernet.invoice.service.impl;
 import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.constant.InvoiceExportHeaders;
 import az.cybernet.invoice.dto.request.*;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
@@ -25,6 +27,7 @@ import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -97,10 +100,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setStatus(Status.SENT_TO_RECEIVER);
         invoice.setTotal(request.getProductQuantityRequests()
-                                .stream()
-                                .map(productQuantityRequest ->
-                                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                                .reduce(0.0, Double::sum));
+                .stream()
+                .map(productQuantityRequest ->
+                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
@@ -149,9 +152,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDetailResponse getInvoiceDetails(UUID invoiceId) {
         return mapper.getDetailedInvoice(invoiceId)
-                     .map(mapstruct::toDetailDto)
-                     .orElseThrow(() ->
-                             new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
+                .map(mapstruct::toDetailDto)
+                .orElseThrow(() ->
+                        new InvoiceNotFoundException("Invoice not found by id (" + invoiceId + ")"));
     }
 
     @Override
@@ -185,10 +188,10 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getStatus(),
                 request.getComment(),
                 request.getProductQuantityRequests()
-                       .stream()
-                       .map(productQuantityRequest ->
-                               productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                       .reduce(0.0, Double::sum),
+                        .stream()
+                        .map(productQuantityRequest ->
+                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
+                        .reduce(0.0, Double::sum),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 
@@ -279,7 +282,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .findInvoiceById(id)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         if (!(invoice.getStatus().equals(Status.CANCELLED_BY_SENDER) ||
-               invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
+                invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
             throw new InvoiceNotFoundException("Invoice is not cancelled");
 
         Status status = invoiceOperationMapper.previousStatusFor(invoice);

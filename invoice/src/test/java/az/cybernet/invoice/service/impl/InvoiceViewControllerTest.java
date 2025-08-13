@@ -1,8 +1,8 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.controller.InvoiceViewController;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.entity.Invoice;
-import az.cybernet.invoice.service.impl.InvoiceViewService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,11 +32,11 @@ public class InvoiceViewControllerTest {
         String taxId = "tax-123";
         UUID senderId = UUID.randomUUID();
 
-        List<Invoice> mockInvoices = List.of(
-                Invoice.builder().id(UUID.randomUUID()).senderId(senderId).total(100.0).build()
+        List<FilteredInvoiceResp> mockInvoices = List.of(
+                FilteredInvoiceResp.builder().senderId(senderId).total(100.0).build()
         );
 
-        when(invoiceViewService.getSentInvoicesByTaxId(taxId)).thenReturn(mockInvoices);
+        when(invoiceViewService.getSentInvoicesByTaxId(taxId, any())).thenReturn(mockInvoices);
 
         mockMvc.perform(get("http://localhost:8080/api/invoice/view/sent/{taxId}", taxId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -49,11 +50,11 @@ public class InvoiceViewControllerTest {
         String taxId = "tax-456";
         UUID customerId = UUID.randomUUID();
 
-        List<Invoice> mockInvoices = List.of(
-                Invoice.builder().id(UUID.randomUUID()).customerId(customerId).total(200.0).build()
+        List<FilteredInvoiceResp> mockInvoices = List.of(
+                FilteredInvoiceResp.builder().customerId(customerId).total(200.0).build()
         );
 
-        when(invoiceViewService.getReceivedInvoicesByTaxId(taxId)).thenReturn(mockInvoices);
+        when(invoiceViewService.getReceivedInvoicesByTaxId(taxId, any())).thenReturn(mockInvoices);
 
         mockMvc.perform(get("/http://localhost:8080/api/invoice/view/received/{taxId}", taxId)
                         .contentType(MediaType.APPLICATION_JSON))
