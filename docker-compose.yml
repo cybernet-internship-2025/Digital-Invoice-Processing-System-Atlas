@@ -85,6 +85,17 @@ services:
       - postgres-db
     restart: always
 
+  integration-service:
+    #    build: ./notification
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: integration/Dockerfile
+    container_name: integration-service-container
+    environment:
+      TZ: Asia/Baku
+    restart: always
+
   user-service:
 #    build: ./user-management
     platform: linux/arm64
