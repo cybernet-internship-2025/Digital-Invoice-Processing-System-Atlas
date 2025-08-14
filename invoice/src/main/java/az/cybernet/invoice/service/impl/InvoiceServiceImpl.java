@@ -10,6 +10,7 @@ import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvalidExcelFileException;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
@@ -111,6 +112,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(productQuantityRequest ->
                         productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
                 .reduce(0.0, Double::sum));
+        invoice.setInvoiceType(InvoiceType.STANDARD);
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
