@@ -14,7 +14,7 @@ services:
       - user-service
 
   postgres-db:
-#    image: postgres:16-alpine
+    #    image: postgres:16-alpine
     platform: linux/arm64
     build:
       context: ./postgres-init
@@ -22,7 +22,7 @@ services:
     container_name: postgres-db-container
     ports:
       - "5432:5432" # əgər daha əvvəl postgres quraşdırılıbsa, local üçün expose portu dəyişin e.g : "5433:5432"
-                    # və application.yml - da nəzərə alın
+      # və application.yml - da nəzərə alın
     environment:
       TZ: Asia/Baku
 
@@ -48,11 +48,11 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
       # db container initialization
-#      - ./postgres-init:/docker-entrypoint-initdb.d
+    #      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
 
   invoice-service:
-#    build: ./invoice
+    #    build: ./invoice
     platform: linux/arm64
     build:
       context: .
@@ -69,7 +69,7 @@ services:
     restart: always
 
   notification-service:
-#    build: ./notification
+    #    build: ./notification
     platform: linux/arm64
     build:
       context: .
@@ -85,8 +85,19 @@ services:
       - postgres-db
     restart: always
 
+  integration-service:
+    #    build: ./integration
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: integration/Dockerfile
+    container_name: integration-service-container
+    environment:
+      TZ: Asia/Baku
+    restart: always
+
   user-service:
-#    build: ./user-management
+    #    build: ./user-management
     platform: linux/arm64
     build:
       context: .
