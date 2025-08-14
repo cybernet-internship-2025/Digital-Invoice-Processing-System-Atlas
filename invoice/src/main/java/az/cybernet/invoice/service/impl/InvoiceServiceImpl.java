@@ -3,8 +3,10 @@ package az.cybernet.invoice.service.impl;
 import az.cybernet.invoice.client.UserClient;
 import az.cybernet.invoice.constant.InvoiceExportHeaders;
 import az.cybernet.invoice.dto.request.*;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
+import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
@@ -26,6 +28,7 @@ import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -49,7 +52,6 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final ExcelFileExporter excelFileExporter;
     private final ExcelFileImporter excelFileImporter;
     private final ExcelFileExporter excelFileExporter;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;

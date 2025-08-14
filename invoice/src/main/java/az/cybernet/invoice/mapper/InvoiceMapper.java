@@ -1,5 +1,7 @@
 package az.cybernet.invoice.mapper;
 
+import az.cybernet.invoice.dto.request.InvoiceFilterRequest;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.enums.Status;
@@ -32,10 +34,16 @@ public interface InvoiceMapper {
     void approveInvoice(Invoice invoice);
 
     Invoice updateInvoice(@Param("id") UUID id,
-                      @Param("status") Status status,
-                      @Param("comment") String comment,
-                      @Param("total") Double total,
-                      @Param("updatedAt") LocalDateTime updatedAt);
+                          @Param("status") Status status,
+                          @Param("comment") String comment,
+                          @Param("total") Double total,
+                          @Param("updatedAt") LocalDateTime updatedAt);
+
+    List<Invoice> findOldPendingInvoices(@Param("date") LocalDateTime date);
+
+    List<FilteredInvoiceResp> filterInvoices(@Param("req") InvoiceFilterRequest request
+            , @Param("series") String series
+            , @Param("invoiceNumber") Integer invoiceNumber, @Param("userId") UUID userId);
 
     List<Invoice> findPendingInvoicesUntil(@Param("date") LocalDateTime date);
 }
