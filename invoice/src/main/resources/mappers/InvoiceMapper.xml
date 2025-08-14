@@ -9,15 +9,11 @@
         INSERT INTO invoice.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
         VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
     </insert>
-    
-    <select id="getNextInvoiceNum" resultType="int">
-        SELECT nextval('invoice.invoice_num_seq')
-    </select>
 
     <select id="sendBackForCorrection" resultType="az.cybernet.invoice.entity.Invoice">
         WITH cancelled AS (
             UPDATE invoice.invoice
-                SET status = 'CHANGES_REQUESTED',
+                SET status = 'CORRECTION_REQUESTED',
                     comment = #{comment},
                     updated_at = #{updatedAt}
                 WHERE id = #{id}
@@ -37,10 +33,26 @@
     <select id="cancelInvoice" parameterType="java.util.UUID" resultType="az.cybernet.invoice.entity.Invoice">
         WITH cancelled AS (
             UPDATE invoice.invoice
-                SET status = 'CANCELLED'
+                SET status = 'CANCELLED_BY_SENDER',
+                    updated_at = now()
                 WHERE id = #{id}
                 RETURNING * )
         SELECT * FROM cancelled
+    </select>
+
+    <select id="updateInvoice" resultType="az.cybernet.invoice.entity.Invoice">
+        WITH updated AS (
+        UPDATE invoice.invoice
+            SET
+            <if test="status != null">
+                status = #{status},
+            </if>
+            comment = #{comment},
+            total = #{total},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+        RETURNING * )
+        SELECT * FROM updated
     </select>
 
     <resultMap id="InvoiceDetailedResultMap" type="az.cybernet.invoice.entity.InvoiceDetailed">
@@ -100,5 +112,11 @@
             updated_at = #{updatedAt}
         WHERE id = #{id}
     </update>
+
+    <select id="findPendingInvoicesUntil" resultType="az.cybernet.invoice.entity.Invoice">
+        SELECT *
+        FROM invoice.invoice
+        WHERE (status = 'SENT_TO_RECEIVER' OR status = 'SENT_TO_RECEIVER_AFTER_CORRECTION') AND updated_at &lt;= #{date}
+    </select>
 
 </mapper>

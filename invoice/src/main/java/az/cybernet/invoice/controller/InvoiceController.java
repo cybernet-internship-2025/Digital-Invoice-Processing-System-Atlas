@@ -1,19 +1,22 @@
 package az.cybernet.invoice.controller;
 
-import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
+import az.cybernet.invoice.dto.request.*;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
+import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
-import az.cybernet.invoice.dto.request.InvoiceBatchStatusUpdateRequest;
-import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
+import az.cybernet.invoice.util.ExcelFileExporter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -26,6 +29,7 @@ public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
+    private final ExcelFileExporter excelFileExporter;
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {
@@ -49,14 +53,50 @@ public class InvoiceController {
         return ok(service.cancelInvoice(id));
     }
 
+    @PatchMapping("/update")
+    public ResponseEntity<InvoiceResponse> updateInvoice(@RequestBody UpdateInvoiceRequest req) {
+        return ok(service.updateInvoice(req));
+    }
+
     @GetMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable ("invoiceId") UUID invoiceId) {
+    public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable("invoiceId") UUID invoiceId) {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
+    }
+
+    @GetMapping("/{id}/export-to-excel")
+    public ResponseEntity<byte[]> exportInvoiceToExcel(
+            @PathVariable("id") UUID id,
+            @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
+        return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
     }
 
     @PatchMapping("/approve/{id}")
     public ResponseEntity<InvoiceResponse> approveInvoice(@PathVariable("id") UUID id) {
         return ok(service.approveInvoice(id));
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}/html", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> getInvoiceHtml(@PathVariable("id") UUID id) {
+        String html = service.generateInvoiceHtml(id);
+        return ResponseEntity.ok(html);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> getInvoicePdf(@PathVariable("id") UUID id) {
+        byte[] pdf = service.generateInvoicePdf(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + "invoice_" + id + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @PatchMapping("/restore/{id}")
+    public ResponseEntity<InvoiceResponse> restoreInvoice(@PathVariable("id") UUID id) {
+        return ok(service.restoreCanceledInvoice(id));
     }
 }

@@ -58,39 +58,12 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
 
     private void changePreviousStatus(List<Invoice> invoices, Status newStatus) {
         Status currentStatus = invoices.getFirst().getStatus();
-        if (currentStatus == Status.DRAFT) {
-            if (newStatus == Status.PENDING) {
-                updateStatus(invoices, Status.PENDING);
-                return;
-            } else if (newStatus == Status.CLOSED) {
-                updateStatus(invoices, Status.CLOSED);
-                return;
-            } else {
-                throw new IllegalInvoiceException("DRAFT status can not be changed to: " + newStatus);
-            }
-        }
 
-        if (currentStatus == Status.PENDING) {
-            if (newStatus == Status.APPROVED) {
-                updateStatus(invoices, Status.APPROVED);
-                return;
-            } else if (newStatus == Status.REJECTED) {
-                updateStatus(invoices, Status.REJECTED);
-                return;
-            } else {
-                throw new IllegalInvoiceException("PENDING status can not be changed to: " + newStatus);
-            }
+        if (currentStatus.canBeChangedTo(newStatus)) {
+            updateStatus(invoices, newStatus);
+        } else {
+            throw new IllegalInvoiceException(currentStatus + " status cannot be changed to: " + newStatus);
         }
-
-        if (currentStatus == Status.CHANGES_REQUESTED) {
-            if (newStatus == Status.PENDING) {
-                updateStatus(invoices, Status.PENDING);
-                return;
-            } else {
-                throw new IllegalInvoiceException("CHANGES_REQUESTED status can not be changed to: " + newStatus);
-            }
-        }
-        throw new IllegalInvoiceException(currentStatus + " status can not be changed to: " + newStatus);
     }
 
     private void updateStatus(List<Invoice> invoices, Status newStatus) {

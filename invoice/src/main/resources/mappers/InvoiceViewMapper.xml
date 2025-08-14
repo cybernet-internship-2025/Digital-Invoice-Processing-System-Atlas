@@ -4,48 +4,75 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceViewMapper">
-    <select id="getSentInvoicesByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
-        SELECT *
+    <select id="getSentInvoicesById" resultType="az.cybernet.invoice.dto.response.FilteredInvoiceResp">
+        SELECT series || invoice_number::text AS fullInvoiceNumber,
+                invoice.*
         FROM invoice.invoice
-        WHERE sender_id IN (
-            SELECT id
-            FROM users.users
-            WHERE tax_id = #{taxId}
-        ) AND status != 'DRAFT'
+        <where>
+            <if test="req.year != null">
+                AND EXTRACT(YEAR FROM created_at) = #{req.year}
+            </if>
+            <if test="req.fromDate != null">
+                AND created_at &gt;= #{req.fromDate}
+            </if>
+            <if test="req.toDate != null">
+                AND created_at &lt;= #{req.toDate}
+            </if>
+            <if test="req.status != null">
+                AND status = #{req.status}
+            </if>
+            <if test="series != null and series != ''">
+                AND series = #{series}
+            </if>
+            <if test="invoiceNumber != null">
+                AND invoice_number = #{invoiceNumber}
+            </if>
+            <if test="req.type != null">
+                AND type = #{req.type}
+            </if>
+            AND sender_id = #{id} AND status != 'DRAFT'
+        </where>
     </select>
 
-    <select id="getReceivedInvoicesByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
-        SELECT *
+    <select id="getReceivedInvoicesById" resultType="az.cybernet.invoice.dto.response.FilteredInvoiceResp" parameterType="java.util.UUID">
+        SELECT series || invoice_number::text AS fullInvoiceNumber,
+        invoice.*
         FROM invoice.invoice
-        WHERE customer_id IN (
-            SELECT id
-            FROM users.users
-            WHERE tax_id = #{taxId}
-        ) AND status != 'DRAFT'
+        <where>
+            <if test="req.year != null">
+                AND EXTRACT(YEAR FROM created_at) = #{req.year}
+            </if>
+            <if test="req.fromDate != null">
+                AND created_at &gt;= #{req.fromDate}
+            </if>
+            <if test="req.toDate != null">
+                AND created_at &lt;= #{req.toDate}
+            </if>
+            <if test="req.status != null">
+                AND status = #{req.status}
+            </if>
+            <if test="series != null and series != ''">
+                AND series = #{series}
+            </if>
+            <if test="invoiceNumber != null">
+                AND invoice_number = #{invoiceNumber}
+            </if>
+            <if test="req.type != null">
+                AND type = #{req.type}
+            </if>
+            AND customer_id = #{id} AND status != 'DRAFT'
+        </where>
     </select>
 
-    <select id="getAllDraftsByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
+    <select id="getAllDraftsById" resultType="az.cybernet.invoice.entity.Invoice" parameterType="java.util.UUID">
         SELECT *
         FROM invoice.invoice
-        WHERE invoice.sender_id IN (
-            SELECT id
-            FROM users.users
-            WHERE tax_id = #{taxId}
-        ) AND status = 'DRAFT'
+        WHERE sender_id = #{id} AND status = 'DRAFT'
     </select>
 
-    <select id="getAllInvoicesByTaxId" resultType="az.cybernet.invoice.entity.Invoice" parameterType="string">
+    <select id="getAllInvoicesById" resultType="az.cybernet.invoice.entity.Invoice" parameterType="java.util.UUID">
         SELECT *
         FROM invoice.invoice
-        WHERE status != 'DRAFT' AND
-              (sender_id IN (
-                  SELECT id
-                  FROM users.users
-                  WHERE tax_id = #{taxId}
-              ) OR customer_id IN (
-                  SELECT id
-                  FROM users.users
-                  WHERE tax_id = #{taxId}
-              ))
+        WHERE status != 'DRAFT' AND (sender_id = #{id} OR customer_id = #{id})
     </select>
 </mapper>

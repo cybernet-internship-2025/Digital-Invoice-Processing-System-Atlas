@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250807-01
+      author: tamilla
+      changes:
+        - addColumn:
+            tableName: invoice
+            schemaName: invoice
+            columns:
+              - column:
+                  name: type
+                  type: VARCHAR(25)
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 20250807-02
+      author: tamilla
+      changes:
+        - update:
+            tableName: invoice
+            schemaName: invoice
+            columns:
+              - column:
+                  name: type
+                  value: 'STANDARD'
+            where: series LIKE 'INVD%'
+
+        - update:
+            tableName: invoice
+            schemaName: invoice
+            columns:
+              - column:
+                  name: type
+                  value: 'RETURN'
+            where: series LIKE 'INR%'
+
+  - changeSet:
+      id: 20250807-03
+      author: tamilla
+      changes:
+        - addNotNullConstraint:
+            tableName: invoice
+            schemaName: invoice
+            columnName: type
+            columnDataType: VARCHAR(25)
