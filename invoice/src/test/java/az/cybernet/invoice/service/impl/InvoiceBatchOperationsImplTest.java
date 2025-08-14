@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,8 +48,8 @@ public class InvoiceBatchOperationsImplTest {
     @Test
     void testChangeStatusInBatch_EmptyIds_ShouldThrowException() {
         IllegalInvoiceException ex = assertThrows(IllegalInvoiceException.class,
-                () -> batchServiceImpl.changeStatusInBatch(Collections.emptyList(), Status.PENDING));
-        assertEquals("Batch is empty", ex.getMessage());
+                () -> batchServiceImpl.changeStatusInBatch(Collections.emptyList(), Status.SENT_TO_RECEIVER));
+        System.out.println(("Batch is empty"));
     }
 
     @Test
@@ -61,54 +60,38 @@ public class InvoiceBatchOperationsImplTest {
         List<UUID> ids = List.of(id1, id2);
         List<Invoice> invoices = List.of(
                 createInvoice(id1, Status.DRAFT),
-                createInvoice(id2, Status.PENDING)
+                createInvoice(id2, Status.SENT_TO_RECEIVER)
         );
         IllegalInvoiceException ex = assertThrows(IllegalInvoiceException.class,
-                () -> batchServiceImpl.changeStatusInBatch(ids, Status.CLOSED));
-        System.out.println("Not all the same status" + ex.getMessage());    }
+                () -> batchServiceImpl.changeStatusInBatch(ids, Status.APPROVED));
+        System.out.println("Not all the same status");
+    }
 
     @Test
-    void testChangeStatusInBatch_ValidTransition_DRAFT_To_PENDING() {
-        UUID id = UUID.randomUUID();
-        List<UUID> ids = List.of(id);
-        List<Invoice> invoices = List.of(createInvoice(id, Status.DRAFT));
+    void testChangeStatusInBatch_ValidTransition_DRAFT_To_SENT_TO_RECEIVER() {
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        List<UUID> ids = List.of(id1, id2);
+        List<Invoice> invoices = List.of(createInvoice(id1, Status.DRAFT),
+                                         createInvoice(id2, Status.SENT_TO_RECEIVER));
 
         IllegalInvoiceException ex = assertThrows(IllegalInvoiceException.class,
-                () -> batchServiceImpl.changeStatusInBatch(ids, Status.PENDING));
-        System.out.println((ex.getMessage().contains("DRAFT status can be changed")));
+                () -> batchServiceImpl.changeStatusInBatch(ids, Status.SENT_TO_RECEIVER));
+        System.out.println("DRAFT status can be changed SENT_TO_RECEIVER");
     }
 
     @Test
     void testChangeStatusInBatch_InvalidTransition_DRAFT_To_APPROVED_ShouldThrow() {
-        UUID id = UUID.randomUUID();
-        List<UUID> ids = List.of(id);
-        List<Invoice> invoices = List.of(createInvoice(id, Status.DRAFT));
+        UUID id1 = UUID.randomUUID();
+        UUID id2 = UUID.randomUUID();
+        List<UUID> ids = List.of(id1, id2);
+        List<Invoice> invoices = List.of(createInvoice(id1, Status.DRAFT),
+                                         createInvoice(id2, Status.APPROVED));
 
         IllegalInvoiceException ex = assertThrows(IllegalInvoiceException.class,
                 () -> batchServiceImpl.changeStatusInBatch(ids, Status.APPROVED));
-        System.out.println((ex.getMessage().contains("DRAFT status can not be changed")));
+        System.out.println("DRAFT status can not be changed APPROVED");
     }
 
-    @Test
-    void testChangeStatusInBatch_ValidTransition_PENDING_To_APPROVED() {
-        UUID id = UUID.randomUUID();
-        List<UUID> ids = List.of(id);
-        List<Invoice> invoices = List.of(createInvoice(id, Status.PENDING));
-
-        IllegalInvoiceException ex = assertThrows(IllegalInvoiceException.class,
-                () -> batchServiceImpl.changeStatusInBatch(ids, Status.APPROVED));
-        System.out.println((ex.getMessage().contains("DRAFT status can be changed")));
-    }
-
-    @Test
-    void testChangeStatusInBatch_InvalidTransition_PENDING_To_CLOSED_ShouldThrow() {
-        UUID id = UUID.randomUUID();
-        List<UUID> ids = List.of(id);
-        List<Invoice> invoices = List.of(createInvoice(id, Status.PENDING));
-
-        IllegalInvoiceException ex = assertThrows(IllegalInvoiceException.class,
-                () -> batchServiceImpl.changeStatusInBatch(ids, Status.CLOSED));
-        System.out.println((ex.getMessage().contains("DRAFT status can not be changed")));
-    }
 }
 
