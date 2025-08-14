@@ -75,10 +75,4 @@
         FROM invoice.invoice
         WHERE status != 'DRAFT' AND (sender_id = #{id} OR customer_id = #{id})
     </select>
-
-    <select id="getReturnTypeInvoicesById" resultType="az.cybernet.invoice.entity.ReturnTypeInvoice" parameterType="java.util.UUID">
-        SELECT *
-        FROM invoice.return_invoice
-        WHERE sender_id = #{id} OR customer_id = #{id}
-    </select>
 </mapper>
