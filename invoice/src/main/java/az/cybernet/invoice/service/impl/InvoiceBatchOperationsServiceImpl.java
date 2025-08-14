@@ -1,5 +1,6 @@
 package az.cybernet.invoice.service.impl;
 
+import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.service.InvoiceOperationService;
 import az.cybernet.invoice.dto.request.InvoiceOperationRequest;
 import az.cybernet.invoice.entity.Invoice;
@@ -22,6 +23,7 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
 
     private final InvoiceBatchOperationsMapper mapper;
     private final InvoiceOperationService invoiceOperationService;
+    private final InvoiceMapper invoiceMapper;
 
     @Override
     @Transactional
