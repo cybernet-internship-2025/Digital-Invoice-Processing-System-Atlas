@@ -17,7 +17,7 @@ spring:
       client:
         config:
           user-management:
-            url: http://user-service
+            url: http://user-service:8080
 
           default:
             connectTimeout: 5000
@@ -37,7 +37,3 @@ logging:
   level:
     org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration: DEBUG
     liquibase: DEBUG
-
-user:
-  service:
-    url: http://localhost:8081
