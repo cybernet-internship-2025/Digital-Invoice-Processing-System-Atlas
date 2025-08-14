@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/iamas")
+@RequestMapping("/v1/iamas")
 public class IAMASController {
 
     private final IAMASService iamasService;
