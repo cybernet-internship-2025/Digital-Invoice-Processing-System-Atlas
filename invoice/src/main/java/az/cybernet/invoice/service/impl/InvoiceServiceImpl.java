@@ -11,6 +11,7 @@ import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.Status;
+import az.cybernet.invoice.exceptions.InvalidExcelFileException;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -249,7 +250,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 createInvoice(request);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new InvalidExcelFileException(e.getMessage());
         }
     }
 

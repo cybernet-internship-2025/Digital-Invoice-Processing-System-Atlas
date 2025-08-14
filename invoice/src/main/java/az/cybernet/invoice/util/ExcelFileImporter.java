@@ -2,10 +2,12 @@ package az.cybernet.invoice.util;
 
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.ProductQuantityRequest;
+import az.cybernet.invoice.exceptions.ExcelFileParseException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -36,8 +38,8 @@ public class ExcelFileImporter {
                 createRequests.add(createInvoiceRequest);
             }
             return createRequests;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new ExcelFileParseException(e.getMessage());
         }
     }
 
