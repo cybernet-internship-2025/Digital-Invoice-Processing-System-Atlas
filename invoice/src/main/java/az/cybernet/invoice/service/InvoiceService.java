@@ -2,11 +2,14 @@ package az.cybernet.invoice.service;
 
 import az.cybernet.invoice.dto.request.CreateInvoiceRequest;
 import az.cybernet.invoice.dto.request.InvoiceCorrectionReq;
+import az.cybernet.invoice.dto.request.InvoiceFilterRequest;
 import az.cybernet.invoice.dto.request.UpdateInvoiceRequest;
+import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import jakarta.validation.Valid;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface InvoiceService {
