@@ -30,7 +30,7 @@
     </select>
 
     <insert id="insertReturnTypeToInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
-        INSERT INTO invoice.invoice ("id", "series", "invoice_number" , "sender_id", "customer_id", "status", "total", "comment", "created_at", "updated_at")
-        VALUES (#{id} , #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{comment}, #{createdAt}, #{updatedAt})
+        INSERT INTO invoice.invoice ("id", "series", "invoice_number" , "sender_id", "customer_id", "status", "total", "comment", "created_at", "updated_at", "type")
+        VALUES (#{id} , #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{comment}, #{createdAt}, #{updatedAt}, #{invoiceType})
     </insert>
 </mapper>

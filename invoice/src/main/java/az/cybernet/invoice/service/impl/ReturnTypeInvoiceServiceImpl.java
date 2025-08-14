@@ -5,6 +5,7 @@ import az.cybernet.invoice.dto.request.InvoiceProductRequest;
 import az.cybernet.invoice.dto.request.ProductQuantityRequest;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.ReturnTypeInvoice;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -77,6 +78,8 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
                 .map(productQuantityRequest ->
                         productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
                 .reduce(0.0, Double::sum));
+
+        invoice.setInvoiceType(InvoiceType.RETURN);
 
         List<ProductQuantityRequest> productQuantityList = returnTypeInvoiceRequest.getProductQuantityRequests();
         productQuantityList.forEach(productQuantity -> productQuantity.setId(UUID.randomUUID()));
