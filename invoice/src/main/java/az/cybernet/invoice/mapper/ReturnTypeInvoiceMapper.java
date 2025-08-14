@@ -11,7 +11,7 @@ import java.util.UUID;
 @Mapper
 public interface ReturnTypeInvoiceMapper {
     Integer findLastReturnTypeInvoiceNumber(@Param("startOfMonth")LocalDateTime Month, @Param("startOfNextMonth")LocalDateTime nextMonth);
-    void insertReturnTypeInvoice(ReturnTypeInvoice returnTypeInvoice);
+    void insertReturnTypeInvoice(@Param("id") UUID id, @Param("parentId") UUID originalInvoiceId);
     UUID getSenderId(@Param("id") UUID id);
     UUID getCustomerId(@Param("id") UUID id);
     void insertReturnTypeToInvoice(Invoice invoice);

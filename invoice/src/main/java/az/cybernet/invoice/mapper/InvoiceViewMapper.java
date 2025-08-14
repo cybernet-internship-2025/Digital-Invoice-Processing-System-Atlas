@@ -14,5 +14,4 @@ public interface InvoiceViewMapper {
     List<Invoice> getReceivedInvoicesById(@Param("id") UUID id);
     List<Invoice> getAllDraftsById(@Param("id") UUID id);
     List<Invoice> getAllInvoicesById(@Param("id") UUID id);
-    List<ReturnTypeInvoice> getReturnTypeInvoicesById(@Param("id") UUID id);
 }

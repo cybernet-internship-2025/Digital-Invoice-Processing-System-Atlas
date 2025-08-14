@@ -21,48 +21,8 @@ databaseChangeLog:
                     nullable: false
 
               - column:
-                  name: series
-                  type: VARCHAR(50)
-
-
-              - column:
-                  name: invoice_number
-                  type: INT
-
-
-              - column:
-                  name: sender_id
+                  name: parent_id
                   type: UUID
-
-
-              - column:
-                  name: customer_id
-                  type: UUID
-
-              - column:
-                  name: status
-                  type: VARCHAR(30)
-
-
-              - column:
-                  name: total
-                  type: INTEGER
-
-
-              - column:
-                  name: updated_at
-                  type: TIMESTAMP
-
-
-              - column:
-                  name: comment
-                  type: VARCHAR(255)
-
-              # original invoice references
-              - column:
-                  name: original_invoice_id
-                  type: UUID
-
-              - column:
-                  name: return_date
-                  type: TIMESTAMP
+                  constraints:
+                    primaryKey: true
+                    nullable: false

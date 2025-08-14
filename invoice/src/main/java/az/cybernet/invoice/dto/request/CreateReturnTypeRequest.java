@@ -17,5 +17,5 @@ public class CreateReturnTypeRequest {
     UUID initialInvoiceId;
     String comment;
     @Valid
-    List<ProductDetailResponse> productQuantityRequests;
+    List<ProductQuantityRequest> productQuantityRequests;
 }

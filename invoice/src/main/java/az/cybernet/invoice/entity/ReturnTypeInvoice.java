@@ -15,16 +15,5 @@ import java.util.UUID;
 @Builder
 public class ReturnTypeInvoice {
     UUID id;
-    String series;
-    Integer invoiceNumber;
-    UUID senderId;
-    UUID customerId;
-    Status status;
-    Double total;
-    LocalDateTime updatedAt;
-    String comment;
-    List<ProductDetailResponse> products;
-
     UUID originalInvoiceId; // Reference to the original invoice being returned
-    LocalDateTime returnDate; // Date of the return operation
 }

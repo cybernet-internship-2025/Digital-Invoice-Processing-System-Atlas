@@ -12,9 +12,9 @@
         ]]>
     </select>
 
-    <insert id="insertReturnTypeInvoice" parameterType="az.cybernet.invoice.entity.ReturnTypeInvoice">
-        INSERT INTO invoice.return_invoice ("id","series",  "invoice_number", "sender_id", "customer_id", "status", "total", "updated_at", "comment", "original_invoice_id", "return_date")
-        VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{updatedAt}, #{comment}, #{originalInvoiceId}, #{returnDate})
+    <insert id="insertReturnTypeInvoice">
+        INSERT INTO invoice.return_invoice ("id", "parent_id")
+        VALUES (#{id}, #{parentId})
     </insert>
 
     <select id="getSenderId" parameterType="java.util.UUID" resultType="java.util.UUID">

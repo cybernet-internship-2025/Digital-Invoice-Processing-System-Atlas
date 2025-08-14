@@ -40,9 +40,4 @@ public class InvoiceViewController {
         List<Invoice> invoices = invoiceViewService.getAllInvoicesByTaxId(taxId);
         return ResponseEntity.ok(invoices);
     }
-    @GetMapping("/returns/{taxId}")
-    public ResponseEntity<List<ReturnTypeInvoice>> getReturnTypeInvoicesByTaxId(@PathVariable("taxId") String taxId) {
-        List<ReturnTypeInvoice> returnTypeInvoices = invoiceViewService.getReturnTypeInvoicesByTaxId(taxId);
-        return ResponseEntity.ok(returnTypeInvoices);
-    }
 }

@@ -33,8 +33,4 @@ public class InvoiceViewService {
         UserResponse userResponse = userClient.getUserByTaxId(taxId);
         return invoiceViewMapper.getAllInvoicesById(userResponse.getId());
     }
-    public List<ReturnTypeInvoice> getReturnTypeInvoicesByTaxId(String taxId) {
-        UserResponse userResponse = userClient.getUserByTaxId(taxId);
-        return invoiceViewMapper.getReturnTypeInvoicesById(userResponse.getId());
-    }
 }
