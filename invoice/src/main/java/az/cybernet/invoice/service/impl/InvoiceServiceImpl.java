@@ -280,10 +280,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse restoreCanceledInvoice(UUID id) {
         Invoice invoice = mapper
                 .findInvoiceById(id)
-                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found by id: " + id));
         if (!(invoice.getStatus().equals(Status.CANCELLED_BY_SENDER) ||
                 invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
-            throw new InvoiceNotFoundException("Invoice is not cancelled");
+            throw new IllegalStateException("Invoice cannot be restored because it is not in a cancelled state. Current status: " + invoice.getStatus());
 
         Status status = invoiceOperationMapper.previousStatusFor(invoice);
         invoice.setStatus(status);
