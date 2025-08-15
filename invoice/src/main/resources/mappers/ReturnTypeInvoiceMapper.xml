@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.invoice.mapper.ReturnTypeInvoiceMapper">
+    <select id="findLastReturnTypeInvoiceMapper" resultType="Integer" parameterType="map">
+        <![CDATA[
+        SELECT MAX(invoice_number)
+        FROM invoice.return_invoice
+        WHERE return_date >= #{startOfMonth} AND return_date < #{startOfNextMonth} AND series LIKE 'INR%'
+        ]]>
+    </select>
+
+    <insert id="insertReturnTypeInvoice">
+        INSERT INTO invoice.return_invoice ("id", "parent_id")
+        VALUES (#{id}, #{parentId})
+    </insert>
+
+    <select id="getSenderId" parameterType="java.util.UUID" resultType="java.util.UUID">
+        SELECT sender_id
+        FROM invoice.invoice
+        WHERE id = #{id}
+    </select>
+
+    <select id="getCustomerId" parameterType="java.util.UUID" resultType="java.util.UUID">
+        SELECT customer_id
+        FROM invoice.invoice
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertReturnTypeToInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
+        INSERT INTO invoice.invoice ("id", "series", "invoice_number" , "sender_id", "customer_id", "status", "total", "comment", "created_at", "updated_at", "type")
+        VALUES (#{id} , #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{comment}, #{createdAt}, #{updatedAt}, #{invoiceType})
+    </insert>
+</mapper>

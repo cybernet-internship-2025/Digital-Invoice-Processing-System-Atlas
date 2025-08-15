@@ -6,4 +6,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
     public static final String INVD = "INVD";
+    public static final String INR = "INR";
 }
