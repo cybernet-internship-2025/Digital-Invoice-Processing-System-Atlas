@@ -1,6 +1,8 @@
 package az.cybernet.invoice.exceptions.handler;
 
+import az.cybernet.invoice.exceptions.ExcelFileParseException;
 import az.cybernet.invoice.exceptions.IllegalInvoiceException;
+import az.cybernet.invoice.exceptions.InvalidExcelFileException;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.dto.ExceptionDto;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.PARTIAL_CONTENT)
+    public ExceptionDto handleExcelFileParseException(ExcelFileParseException e) {
+        log.info(e.getMessage());
+        return new ExceptionDto(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionDto handleInvalidExcelFileException(InvalidExcelFileException e) {
+        log.info(e.getMessage());
+        return new ExceptionDto(e.getMessage());
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

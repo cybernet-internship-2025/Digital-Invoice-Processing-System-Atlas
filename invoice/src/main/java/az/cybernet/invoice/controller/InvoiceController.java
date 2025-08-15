@@ -15,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -64,11 +64,10 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceDetails);
     }
 
-    @GetMapping("/{id}/export-to-excel")
-    public ResponseEntity<byte[]> exportInvoiceToExcel(
-            @PathVariable("id") UUID id,
-            @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
-        return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
+    @PostMapping("/import-from-excel")
+    public ResponseEntity<Void> importInvoiceToExcel(@RequestParam("file") MultipartFile file) {
+        service.importInvoicesFromExcel(file);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/approve/{id}")

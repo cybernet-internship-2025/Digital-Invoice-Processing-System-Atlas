@@ -1,16 +1,15 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.client.UserClient;
-import az.cybernet.invoice.constant.InvoiceExportHeaders;
 import az.cybernet.invoice.dto.request.*;
-import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
-import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
+import az.cybernet.invoice.exceptions.InvalidExcelFileException;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -21,14 +20,15 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
-import az.cybernet.invoice.util.ExcelFileExporter;
 import az.cybernet.invoice.util.HtmlToPdfConverter;
+import az.cybernet.invoice.util.ExcelFileImporter;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,8 +49,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductService productService;
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
-    private final ExcelFileExporter excelFileExporter;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
+    private final ExcelFileImporter excelFileImporter;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -60,8 +60,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                               UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
-                              ExcelFileExporter excelFileExporter,
-                              InvoiceHtmlGenerator invoiceHtmlGenerator) {
+                              InvoiceHtmlGenerator invoiceHtmlGenerator,
+                              ExcelFileImporter excelFileImporter) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -70,8 +70,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.userClient = userClient;
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
-        this.excelFileExporter = excelFileExporter;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
+        this.excelFileImporter = excelFileImporter;
     }
 
     @Override
@@ -104,6 +104,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(productQuantityRequest ->
                         productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
                 .reduce(0.0, Double::sum));
+        invoice.setInvoiceType(InvoiceType.STANDARD);
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
 
@@ -217,12 +218,25 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public byte[] exportInvoice(UUID id) {
-        String[] headers = InvoiceExportHeaders.HEADERS;
-        Invoice invoice = mapper.findInvoiceById(id).orElseThrow(() ->
-                new InvoiceNotFoundException("Invoice not found"));
+    public void importInvoicesFromExcel(MultipartFile file) {
+        try {
+            String fileType = file.getContentType();
+            if(file.isEmpty() ||
+                    (!fileType.equals("application/vnd.ms-excel") &&
+                     !fileType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            ) {
+                throw new IOException();
+            }
 
-        return excelFileExporter.createExcelForEntity(List.of(invoice), headers);
+            byte[] bytes = file.getBytes();
+            List<CreateInvoiceRequest> createInvoiceRequests = excelFileImporter.getCreateRequests(bytes);
+
+            for (CreateInvoiceRequest request : createInvoiceRequests) {
+                createInvoice(request);
+            }
+        } catch (IOException e) {
+            throw new InvalidExcelFileException(e.getMessage());
+        }
     }
 
     private void validateUser(String role, UUID id) {
@@ -280,10 +294,10 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse restoreCanceledInvoice(UUID id) {
         Invoice invoice = mapper
                 .findInvoiceById(id)
-                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
+                .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found by id: " + id));
         if (!(invoice.getStatus().equals(Status.CANCELLED_BY_SENDER) ||
                 invoice.getStatus().equals(Status.CANCELLED_DUE_TO_TIMEOUT)))
-            throw new InvoiceNotFoundException("Invoice is not cancelled");
+            throw new IllegalStateException("Invoice cannot be restored because it is not in a cancelled state. Current status: " + invoice.getStatus());
 
         Status status = invoiceOperationMapper.previousStatusFor(invoice);
         invoice.setStatus(status);

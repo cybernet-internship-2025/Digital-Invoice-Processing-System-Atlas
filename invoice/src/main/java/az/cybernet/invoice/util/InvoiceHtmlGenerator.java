@@ -4,10 +4,26 @@ import az.cybernet.invoice.dto.response.ProductDetailResponse;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 
 @Component
 public class InvoiceHtmlGenerator {
+
+    private String getLogoBase64() {
+        try (InputStream in = getClass().getResourceAsStream("/logo/Dövlət_Vergi_Xidmətinin_loqosu.png")) {
+            if (in == null) {
+                System.err.println("Logo tapılmadı!");
+                return "";
+            }
+            byte[] bytes = in.readAllBytes();
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
     public String generate(InvoiceDetailed invoice) {
         StringBuilder productRows = new StringBuilder();
@@ -36,6 +52,11 @@ public class InvoiceHtmlGenerator {
 
         String productTable = productRows.length() > 0 ? productRows.toString()
                 : "<tr><td colspan='5' class='center'>Məhsul əlavə edilməyib</td></tr>";
+
+        String logoHtml = "<div class='logo' style='text-align: center; margin-bottom: 20px;'>" +
+                "<img src='data:image/png;base64," + getLogoBase64() + "' alt='Şirkət Logosu' " +
+                "style='max-width: 200px; height: auto;' />" +
+                "</div>";
 
         return String.format("""
                                     <!DOCTYPE html>
@@ -97,6 +118,7 @@ public class InvoiceHtmlGenerator {
                                                </style>
                                            </head>
                                            <body>
+                                           %s
                                            <table>
                                                <tr>
                                                    <td colspan="2" class="header">ELEKTRON QAİMƏ-FAKTURA</td>
@@ -146,6 +168,7 @@ public class InvoiceHtmlGenerator {
                                            </body>
                                            </html>
                         """,
+                logoHtml,
                 invoice.getCreatedAt().toLocalDate(),
                 invoice.getSeries(),
                 invoice.getInvoiceNumber(),
