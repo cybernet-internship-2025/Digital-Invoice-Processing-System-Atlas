@@ -16,7 +16,6 @@ import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -62,13 +61,6 @@ public class InvoiceController {
     public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable("invoiceId") UUID invoiceId) {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
-    }
-
-    @GetMapping("/{id}/export-to-excel")
-    public ResponseEntity<byte[]> exportInvoiceToExcel(
-            @PathVariable("id") UUID id,
-            @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
-        return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
     }
 
     @PatchMapping("/approve/{id}")
