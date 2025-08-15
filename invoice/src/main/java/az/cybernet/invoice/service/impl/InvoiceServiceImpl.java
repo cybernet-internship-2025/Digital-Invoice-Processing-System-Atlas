@@ -7,6 +7,7 @@ import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
@@ -98,6 +99,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .reduce(0.0, Double::sum));
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
+        invoice.setInvoiceType(InvoiceType.STANDARD);
 
         List<ProductQuantityRequest> productQuantityList = request.getProductQuantityRequests();
         productQuantityList.forEach(productQuantity -> productQuantity.setId(UUID.randomUUID()));

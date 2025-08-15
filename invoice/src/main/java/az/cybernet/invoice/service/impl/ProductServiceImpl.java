@@ -6,6 +6,7 @@ import az.cybernet.invoice.entity.Product;
 import az.cybernet.invoice.mapper.ProductMapper;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.ProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service

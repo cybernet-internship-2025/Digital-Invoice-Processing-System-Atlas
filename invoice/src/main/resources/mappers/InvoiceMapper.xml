@@ -6,8 +6,8 @@
 <mapper namespace="az.cybernet.invoice.mapper.InvoiceMapper">
 
     <insert id="insertInvoice" parameterType="az.cybernet.invoice.entity.Invoice">
-        INSERT INTO invoice.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment")
-        VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment})
+        INSERT INTO invoice.invoice ("id", "series", "invoice_number", "sender_id", "customer_id", "status", "total", "created_at", "updated_at", "comment", "type")
+        VALUES (#{id}, #{series}, #{invoiceNumber}, #{senderId}, #{customerId}, #{status}, #{total}, #{createdAt}, #{updatedAt}, #{comment} , #{invoiceType})
     </insert>
 
     <select id="sendBackForCorrection" resultType="az.cybernet.invoice.entity.Invoice">
@@ -26,7 +26,7 @@
         <![CDATA[
         SELECT MAX(invoice_number)
         FROM invoice.invoice
-        WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth}
+        WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth} AND series LIKE 'INVD%'
         ]]>
     </select>
 

@@ -6,6 +6,7 @@ import az.cybernet.invoice.dto.request.InvoiceFilterRequest;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.mapper.InvoiceViewMapper;
 import az.cybernet.invoice.util.ExcelFileExporter;
 import org.springframework.stereotype.Service;

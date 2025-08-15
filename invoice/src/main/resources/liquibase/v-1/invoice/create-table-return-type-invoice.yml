@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-return-type-invoice-table
+      author: fuad
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: return_invoice
+              schemaName: invoice
+      changes:
+        - createTable:
+            schemaName: invoice
+            tableName: return_invoice
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: parent_id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false

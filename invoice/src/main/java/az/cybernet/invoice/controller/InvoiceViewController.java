@@ -3,6 +3,7 @@ package az.cybernet.invoice.controller;
 import az.cybernet.invoice.dto.request.InvoiceFilterRequest;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.entity.Invoice;
+import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.service.impl.InvoiceViewService;
 import az.cybernet.invoice.util.ExcelFileExporter;
 import jakarta.validation.Valid;
