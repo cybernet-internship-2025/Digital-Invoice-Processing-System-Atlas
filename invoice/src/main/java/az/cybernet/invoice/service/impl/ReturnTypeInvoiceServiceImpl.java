@@ -30,14 +30,16 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
     private final InvoiceProductService invoiceProductService;
     private final ProductService productService;
 
-    ReturnTypeInvoiceMapper returnTypeInvoiceMapper;
-    InvoiceMapper invoiceMapper;
+    private final ReturnTypeInvoiceMapper returnTypeInvoiceMapper;
+    private final InvoiceMapper invoiceMapper;
 
-    public ReturnTypeInvoiceServiceImpl(InvoiceProductMapstruct invoiceProductMapstruct, ProductMapstruct productMapstruct, InvoiceProductService invoiceProductService, ProductService productService) {
+    public ReturnTypeInvoiceServiceImpl(InvoiceProductMapstruct invoiceProductMapstruct, ProductMapstruct productMapstruct, InvoiceProductService invoiceProductService, ProductService productService, ReturnTypeInvoiceMapper returnTypeInvoiceMapper, InvoiceMapper invoiceMapper) {
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.invoiceProductService = invoiceProductService;
         this.productService = productService;
+        this.returnTypeInvoiceMapper = returnTypeInvoiceMapper;
+        this.invoiceMapper = invoiceMapper;
     }
 
 
