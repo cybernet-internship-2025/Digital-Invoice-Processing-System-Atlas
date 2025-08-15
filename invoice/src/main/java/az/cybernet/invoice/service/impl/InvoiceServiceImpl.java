@@ -50,6 +50,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
+    private final ExcelFileImporter excelFileImporter;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -59,7 +60,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                               UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
-                              InvoiceHtmlGenerator invoiceHtmlGenerator) {
+                              InvoiceHtmlGenerator invoiceHtmlGenerator,
+                              ExcelFileImporter excelFileImporter) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -69,6 +71,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
+        this.excelFileImporter = excelFileImporter;
     }
 
     @Override

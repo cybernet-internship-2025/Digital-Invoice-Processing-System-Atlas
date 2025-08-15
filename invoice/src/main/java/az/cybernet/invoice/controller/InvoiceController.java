@@ -64,13 +64,6 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceDetails);
     }
 
-    @GetMapping("/{id}/export-to-excel")
-    public ResponseEntity<byte[]> exportInvoiceToExcel(
-            @PathVariable("id") UUID id,
-            @RequestParam(value = "fileName", defaultValue = "Invoice") String fileName) {
-        return excelFileExporter.buildExcelResponse(service.exportInvoice(id), fileName);
-    }
-
     @PostMapping("/import-from-excel")
     public ResponseEntity<Void> importInvoiceToExcel(@RequestParam("file") MultipartFile file) {
         service.importInvoicesFromExcel(file);

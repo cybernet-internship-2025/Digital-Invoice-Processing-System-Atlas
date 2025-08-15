@@ -37,7 +37,5 @@ public interface InvoiceService {
 
     void cancelExpiredPendingInvoices();
 
-    byte[] exportInvoice(UUID id);
-
     void importInvoicesFromExcel(MultipartFile file);
 }
