@@ -2,6 +2,13 @@ databaseChangeLog:
   - changeSet:
       id: 20250807-01
       author: tamilla
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - columnExists:
+              tableName: invoice
+              schemaName: invoice
+              columnName: type
       changes:
         - addColumn:
             tableName: invoice
@@ -16,6 +23,13 @@ databaseChangeLog:
   - changeSet:
       id: 20250807-02
       author: tamilla
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - columnExists:
+              tableName: invoice
+              schemaName: invoice
+              columnName: type
       changes:
         - update:
             tableName: invoice
@@ -38,6 +52,13 @@ databaseChangeLog:
   - changeSet:
       id: 20250807-03
       author: tamilla
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - columnExists:
+              tableName: invoice
+              schemaName: invoice
+              columnName: type
       changes:
         - addNotNullConstraint:
             tableName: invoice
