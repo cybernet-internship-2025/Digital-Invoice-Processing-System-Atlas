@@ -35,6 +35,4 @@ public interface InvoiceService {
     byte[] generateInvoicePdf(UUID id);
 
     void cancelExpiredPendingInvoices();
-
-    byte[] exportInvoice(UUID id);
 }
