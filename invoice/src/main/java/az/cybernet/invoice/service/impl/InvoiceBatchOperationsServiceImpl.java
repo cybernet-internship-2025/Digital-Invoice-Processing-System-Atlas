@@ -31,7 +31,7 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
         if (isBatchIdsEmpty(invoiceIds)) {
             throw new IllegalInvoiceException("Batch is empty");
         }
-        List<Invoice> invoices = mapper.findAllByIds(invoiceIds);
+        List<Invoice> invoices = (List<Invoice>) mapper.findAllByIds(invoiceIds);
 
         if (!areAllStatusesSame(invoices)) {
             throw new IllegalInvoiceException("Not all invoices have the same status");
