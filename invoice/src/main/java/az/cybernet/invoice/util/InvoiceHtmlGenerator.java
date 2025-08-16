@@ -51,7 +51,7 @@ public class InvoiceHtmlGenerator {
         }
 
         String productTable = productRows.length() > 0 ? productRows.toString()
-                : "<tr><td colspan='5' class='center'>Məhsul əlavə edilməyib</td></tr>";
+                : "<tr><td colspan='6' class='center'>Məhsul əlavə edilməyib</td></tr>";
 
         String logoHtml = "<div class='logo' style='text-align: center; margin-bottom: 20px;'>" +
                 "<img src='data:image/png;base64," + getLogoBase64() + "' alt='Şirkət Logosu' " +
