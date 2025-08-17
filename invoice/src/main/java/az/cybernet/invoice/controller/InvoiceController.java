@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -61,6 +62,12 @@ public class InvoiceController {
     public ResponseEntity<InvoiceDetailResponse> getInvoiceById(@PathVariable("invoiceId") UUID invoiceId) {
         InvoiceDetailResponse invoiceDetails = service.getInvoiceDetails(invoiceId);
         return ResponseEntity.ok(invoiceDetails);
+    }
+
+    @PostMapping("/import-from-excel")
+    public ResponseEntity<Void> importInvoiceToExcel(@RequestParam("file") MultipartFile file) {
+        service.importInvoicesFromExcel(file);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PatchMapping("/approve/{id}")

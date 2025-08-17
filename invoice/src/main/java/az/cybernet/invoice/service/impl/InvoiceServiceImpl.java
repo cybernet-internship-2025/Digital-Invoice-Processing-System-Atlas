@@ -9,6 +9,7 @@ import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
+import az.cybernet.invoice.exceptions.InvalidExcelFileException;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -20,11 +21,14 @@ import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.HtmlToPdfConverter;
+import az.cybernet.invoice.util.ExcelFileImporter;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,6 +50,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceProductMapstruct invoiceProductMapstruct;
     private final ProductMapstruct productMapstruct;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
+    private final ExcelFileImporter excelFileImporter;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -55,7 +60,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                               UserClient userClient,
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
-                              InvoiceHtmlGenerator invoiceHtmlGenerator) {
+                              InvoiceHtmlGenerator invoiceHtmlGenerator,
+                              ExcelFileImporter excelFileImporter) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -65,6 +71,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceProductMapstruct = invoiceProductMapstruct;
         this.productMapstruct = productMapstruct;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
+        this.excelFileImporter = excelFileImporter;
     }
 
     @Override
@@ -97,9 +104,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(productQuantityRequest ->
                         productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
                 .reduce(0.0, Double::sum));
+        invoice.setInvoiceType(InvoiceType.STANDARD);
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
-        invoice.setInvoiceType(InvoiceType.STANDARD);
 
         List<ProductQuantityRequest> productQuantityList = request.getProductQuantityRequests();
         productQuantityList.forEach(productQuantity -> productQuantity.setId(UUID.randomUUID()));
@@ -208,6 +215,28 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
         return mapstruct.toDto(invoice);
+    }
+
+    @Override
+    public void importInvoicesFromExcel(MultipartFile file) {
+        try {
+            String fileType = file.getContentType();
+            if(file.isEmpty() ||
+                    (!fileType.equals("application/vnd.ms-excel") &&
+                     !fileType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            ) {
+                throw new IOException();
+            }
+
+            byte[] bytes = file.getBytes();
+            List<CreateInvoiceRequest> createInvoiceRequests = excelFileImporter.getCreateRequests(bytes);
+
+            for (CreateInvoiceRequest request : createInvoiceRequests) {
+                createInvoice(request);
+            }
+        } catch (IOException e) {
+            throw new InvalidExcelFileException(e.getMessage());
+        }
     }
 
     private void validateUser(String role, UUID id) {
