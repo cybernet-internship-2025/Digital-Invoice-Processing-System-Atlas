@@ -1,11 +1,13 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.client.UserClient;
+import az.cybernet.invoice.constant.InvoiceExportHeaders;
+import az.cybernet.invoice.dto.request.InvoiceFilterRequest;
 import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
 import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.mapper.InvoiceViewMapper;
-import org.junit.jupiter.api.BeforeEach;
+import az.cybernet.invoice.util.ExcelFileExporter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,44 +31,67 @@ class InvoiceViewServiceTest {
     @InjectMocks
     private InvoiceViewService invoiceViewService;
 
+    @Mock
+    private ExcelFileExporter excelFileExporter;
+
     @Test
     void testGetSentInvoicesByTaxId() {
-        String taxId = "tax-123";
+        String taxId = "1000000000";
+        InvoiceFilterRequest filterRequest = new InvoiceFilterRequest();
+        filterRequest.setFullInvoiceNumber("INVD25080001");
+
         UUID userId = UUID.randomUUID();
         UserResponse userResponse = new UserResponse(userId, "Fuad", taxId);
-        List<FilteredInvoiceResp> mockInvoices = List.of(FilteredInvoiceResp.builder().senderId(userId).total(100.0).build());
+        when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
+
+        List<FilteredInvoiceResp> expected = List.of(
+                FilteredInvoiceResp.builder().fullInvoiceNumber("INVD25080001")
+                        .senderId(userId).build()
+        );
 
         when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
-        when(invoiceViewMapper.getSentInvoicesById(userId, any(), any(), any())).thenReturn(mockInvoices);
+        when(invoiceViewMapper.getSentInvoicesById(userId, filterRequest, "INVD", 25080001))
+                .thenReturn(expected);
 
-        List<FilteredInvoiceResp> result = invoiceViewService.getSentInvoicesByTaxId(taxId, any());
+        List<FilteredInvoiceResp> result = invoiceViewService.getSentInvoicesByTaxId(taxId, filterRequest);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(userId, result.get(0).getSenderId());
+        assertEquals("INVD25080001", result.getFirst().getFullInvoiceNumber());
+        assertEquals(userId, result.getFirst().getSenderId());
 
         verify(userClient).getUserByTaxId(taxId);
-        verify(invoiceViewMapper).getSentInvoicesById(userId, any(), any(), any());
+        verify(invoiceViewMapper).getSentInvoicesById(userId, filterRequest, "INVD", 25080001);
     }
 
     @Test
     void testGetReceivedInvoicesByTaxId() {
-        String taxId = "tax-456";
+        String taxId = "1000000000";
+        InvoiceFilterRequest filterRequest = new InvoiceFilterRequest();
+        filterRequest.setFullInvoiceNumber("INVD25080001");
+
         UUID userId = UUID.randomUUID();
         UserResponse userResponse = new UserResponse(userId, "Fuad", taxId);
-        List<FilteredInvoiceResp> mockInvoices = List.of(FilteredInvoiceResp.builder().customerId(userId).total(200.0).build());
+        when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
+
+        List<FilteredInvoiceResp> expected = List.of(
+                FilteredInvoiceResp.builder().fullInvoiceNumber("INVD25080001")
+                        .customerId(userId).build()
+        );
 
         when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
-        when(invoiceViewMapper.getReceivedInvoicesById(userId, any(), any(), any())).thenReturn(mockInvoices);
+        when(invoiceViewMapper.getSentInvoicesById(userId, filterRequest, "INVD", 25080001))
+                .thenReturn(expected);
 
-        List<FilteredInvoiceResp> result = invoiceViewService.getReceivedInvoicesByTaxId(taxId, any());
+        List<FilteredInvoiceResp> result = invoiceViewService.getSentInvoicesByTaxId(taxId, filterRequest);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(userId, result.get(0).getCustomerId());
+        assertEquals("INVD25080001", result.getFirst().getFullInvoiceNumber());
+        assertEquals(userId, result.getFirst().getCustomerId());
 
         verify(userClient).getUserByTaxId(taxId);
-        verify(invoiceViewMapper).getReceivedInvoicesById(userId, any(), any(), any());
+        verify(invoiceViewMapper).getSentInvoicesById(userId, filterRequest, "INVD", 25080001);
     }
 
     @Test
@@ -107,5 +132,49 @@ class InvoiceViewServiceTest {
 
         verify(userClient).getUserByTaxId(taxId);
         verify(invoiceViewMapper).getAllInvoicesById(userId);
+    }
+
+    @Test
+    void testExportSentInvoice() {
+        String taxId = "1000000000";
+        InvoiceFilterRequest filterRequest = new InvoiceFilterRequest();
+        filterRequest.setFullInvoiceNumber("INVD25080001");
+
+        UUID userId = UUID.randomUUID();
+
+        when(userClient.getUserByTaxId(taxId))
+                .thenReturn(new UserResponse(userId, "Test Sent User", taxId));
+
+        byte[] expectedBytes = new byte[]{1, 2, 3};
+        when(excelFileExporter.createExcelForEntity(anyList(), eq(InvoiceExportHeaders.HEADERS)))
+                .thenReturn(expectedBytes);
+
+        byte[] result = invoiceViewService.exportSentInvoice(taxId, filterRequest);
+
+        assertArrayEquals(expectedBytes, result);
+        verify(userClient).getUserByTaxId(taxId);
+        verify(excelFileExporter).createExcelForEntity(anyList(), eq(InvoiceExportHeaders.HEADERS));
+    }
+
+    @Test
+    void testExportReceivedInvoice() {
+        String taxId = "1000000000";
+        InvoiceFilterRequest filterRequest = new InvoiceFilterRequest();
+        filterRequest.setFullInvoiceNumber("INVD25080001");
+
+        UUID userId = UUID.randomUUID();
+
+        when(userClient.getUserByTaxId(taxId))
+                .thenReturn(new UserResponse(userId, "Test Received User", taxId));
+
+        byte[] expectedBytes = new byte[]{1, 2, 3};
+        when(excelFileExporter.createExcelForEntity(anyList(), eq(InvoiceExportHeaders.HEADERS)))
+                .thenReturn(expectedBytes);
+
+        byte[] result = invoiceViewService.exportSentInvoice(taxId, filterRequest);
+
+        assertArrayEquals(expectedBytes, result);
+        verify(userClient).getUserByTaxId(taxId);
+        verify(excelFileExporter).createExcelForEntity(anyList(), eq(InvoiceExportHeaders.HEADERS));
     }
 }
