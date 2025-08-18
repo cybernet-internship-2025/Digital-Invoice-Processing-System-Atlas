@@ -70,5 +70,5 @@ public class InvoiceViewService {
         return new Parts(userResponse.getId(), series, invoiceNumber);
     }
 
-    private record Parts(UUID id, String series, Integer number) {}
+    public record Parts(UUID id, String series, Integer number) {}
 }
