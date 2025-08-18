@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Validation error");
 
-        log.info("Validation error: " + errorMessage);
+        log.warn("Validation error: " + errorMessage);
         return new ExceptionDto(errorMessage);
     }
 }
