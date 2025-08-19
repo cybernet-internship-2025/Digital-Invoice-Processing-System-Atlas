@@ -4,14 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.invoice.mapper.ReturnTypeInvoiceMapper">
-    <select id="findLastReturnTypeInvoiceMapper" resultType="Integer" parameterType="map">
-        <![CDATA[
-        SELECT MAX(invoice_number)
-        FROM invoice.return_invoice
-        WHERE return_date >= #{startOfMonth} AND return_date < #{startOfNextMonth} AND series LIKE 'INR%'
-        ]]>
-    </select>
-
     <insert id="insertReturnTypeInvoice">
         INSERT INTO invoice.return_invoice ("id", "parent_id")
         VALUES (#{id}, #{parentId})

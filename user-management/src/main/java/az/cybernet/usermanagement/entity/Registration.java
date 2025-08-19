@@ -8,4 +8,17 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Registration {
+    String legalAddress;
+    String residentialAddress;
+    String phoneNumber;
+
+    public Registration() {
+        // Default constructor
+    }
+
+    public Registration(String legalAddress, String residentialAddress, String phoneNumber) {
+        this.legalAddress = legalAddress;
+        this.residentialAddress = residentialAddress;
+        this.phoneNumber = phoneNumber;
+    }
 }

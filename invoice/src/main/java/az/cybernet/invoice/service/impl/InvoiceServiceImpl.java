@@ -23,6 +23,7 @@ import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.HtmlToPdfConverter;
 import az.cybernet.invoice.util.ExcelFileImporter;
 import az.cybernet.invoice.util.InvoiceHtmlGenerator;
+import az.cybernet.invoice.util.InvoiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,8 +83,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice invoice = mapstruct.toEntity(
                 mapstruct.getInvoiceFromCreateRequest(request));
-        String invdSeries = generateInvoiceNumber();
-
+        String invdSeries = InvoiceUtils.generateSeries(InvoiceType.STANDARD);
         invoice.setId(UUID.randomUUID());
         invoice.setSeries(invdSeries.substring(0, 4));
 
@@ -132,18 +132,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         var invoiceOperation = mapstruct.invoiceToInvcOper(invoice);
         invoiceOperationMapper.insertInvoiceOperation(invoiceOperation);
         return mapstruct.toDto(invoice);
-    }
-
-    @Override
-    public String generateInvoiceNumber() {
-        LocalDate now = LocalDate.now();
-        String year = String.format("%02d", now.getYear() % 100);
-        String month = String.format("%02d", now.getMonthValue());
-        String date = year.concat(month);
-        LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
-        LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
-        Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth);
-        return INVD + date + String.format("%04d", ++lastNumber);
     }
 
     @Override
