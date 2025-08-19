@@ -10,3 +10,7 @@ databaseChangeLog:
   - include:
       file: v-1/user/202507311000-create-sequence.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: v-1/user/20250819001-create-table-registration.yml
+      relativeToChangelogFile: true
