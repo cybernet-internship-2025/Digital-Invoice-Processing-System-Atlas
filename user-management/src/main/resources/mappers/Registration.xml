@@ -4,9 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.usermanagement.mapper.RegistrationMapper">
+    <select id="findById" parameterType="java.util.UUID" resultType="az.cybernet.usermanagement.entity.User">
+        SELECT * FROM users.users WHERE id = #{id}
+    </select>
 
-
-
-
-
+    <update id="updateUser" parameterType="az.cybernet.usermanagement.entity.User">
+        UPDATE users.users
+        SET tax_id = #{taxId},
+            user_id = #{userId},
+            password = #{password},
+            approved = #{approved}
+        WHERE id = #{id}
+    </update>
 </mapper>
