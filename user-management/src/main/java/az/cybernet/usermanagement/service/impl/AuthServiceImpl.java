@@ -4,6 +4,7 @@ import az.cybernet.usermanagement.config.JwtService;
 import az.cybernet.usermanagement.exception.PhoneNumberNotLinkedException;
 import az.cybernet.usermanagement.service.AuthService;
 import az.cybernet.usermanagement.service.IntegrationService;
+import az.cybernet.usermanagement.service.OTPService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
     private final IntegrationService integrationService;
     private final JwtService jwtService;
+    private final OTPService otpService;
 
     public String login(String pin, String phoneNumber) {
         var pinData = integrationService.getPinData(pin);
@@ -28,6 +30,8 @@ public class AuthServiceImpl implements AuthService {
                     "Phone number " + phoneNumber + " is not linked with pin: " + pin
             );
         }
+
+        otpService.sendOTP(phoneNumber);
 
         return jwtService.generateToken(pin, phoneNumber);
     }
