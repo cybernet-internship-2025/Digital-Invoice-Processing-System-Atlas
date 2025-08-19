@@ -110,6 +110,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.15.8</version>
+        </dependency>
+
         <!-- Excel generator -->
         <dependency>
             <groupId>org.apache.poi</groupId>

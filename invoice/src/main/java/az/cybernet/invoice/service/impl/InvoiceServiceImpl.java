@@ -139,15 +139,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         LocalDate now = LocalDate.now();
         String year = String.format("%02d", now.getYear() % 100);
         String month = String.format("%02d", now.getMonthValue());
-        String series = INVD + year + month;
-
+        String date = year.concat(month);
         LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
         LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
-
         Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth);
-        int next = (lastNumber == null) ? 1 : lastNumber + 1;
-
-        return series + String.format("%04d", next);
+        return INVD + date + String.format("%04d", ++lastNumber);
     }
 
     @Override
