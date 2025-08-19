@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +27,8 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
             throw new RuntimeException("User not found");
         }
 
-        String taxId = "VOEN" + Math.abs(new Random().nextInt(99999999));
-
-        String userId = String.format("%06d", new Random().nextInt(999999));
+        String taxId = "VOEN" + Math.abs(ThreadLocalRandom.current().nextInt(99999999));
+        String userId = String.format("%06d", ThreadLocalRandom.current().nextInt(999999));
 
         String rawPassword = user.getDateOfBirth().toString().replace("-", "");
         String hashedPassword = new BCryptPasswordEncoder().encode(rawPassword);
