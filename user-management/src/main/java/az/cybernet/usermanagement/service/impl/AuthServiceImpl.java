@@ -18,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final OTPService otpService;
 
-    public String login(String pin, String phoneNumber) {
+    public String loginSendOTP(String pin, String phoneNumber) {
         var pinData = integrationService.getPinData(pin);
 
         boolean phoneExists = Optional.ofNullable(pinData.getPhoneNumbers())
@@ -33,6 +33,6 @@ public class AuthServiceImpl implements AuthService {
 
         otpService.sendOTP(phoneNumber);
 
-        return jwtService.generateToken(pin, phoneNumber);
+        return "OTP sent to user";
     }
 }

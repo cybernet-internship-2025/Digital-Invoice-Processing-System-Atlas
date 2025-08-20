@@ -20,7 +20,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginWithPinAndPhone(@RequestBody LoginReq request) {
-        var jwtToken = authService.login(request.getPin(), request.getPhoneNumber());
-        return ok(jwtToken);
+        String response = authService.loginSendOTP(request.getPin(), request.getPhoneNumber());
+        return ok(response);
     }
 }
