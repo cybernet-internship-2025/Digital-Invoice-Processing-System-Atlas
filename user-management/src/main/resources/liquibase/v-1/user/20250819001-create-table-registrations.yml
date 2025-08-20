@@ -46,16 +46,20 @@ databaseChangeLog:
                   type: VARCHAR(100)
                   constraints:
                     nullable: false
-                    PrimaryKey: true
+                    primaryKey: true
 
               - column:
                   name: registration_status
                   type: VARCHAR(50)
 
         - addUniqueConstraint:
+            schemaName: users
             tableName: registrations
             columnNames: legal_entity_name
+            constraintName: uk_registrations_legal_entity_name
 
         - addUniqueConstraint:
+            schemaName: users
             tableName: registrations
-            columnNames: id
+            columnNames: registration_number
+            constraintName: uk_registrations_registration_number
