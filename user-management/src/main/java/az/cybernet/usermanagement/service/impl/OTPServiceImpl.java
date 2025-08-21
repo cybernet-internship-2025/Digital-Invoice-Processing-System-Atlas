@@ -19,7 +19,7 @@ public class OTPServiceImpl implements OTPService {
     public void sendOTP(String phone) {
         String otp = String.valueOf(util.generateOTP());
         stringRedisTemplate.opsForValue()
-                .set("otp:login: " + phone,
+                .set("otp:login:" + phone,
                         util.hashOTP(otp),
                         5,
                         TimeUnit.MINUTES);
