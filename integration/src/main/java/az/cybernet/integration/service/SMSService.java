@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 public class SMSService {
 
     public String sendSMS(String phone, String message) {
-        return "Sent SMS message with content \"" +
-                message + "\" to " + phone;
+        return String.format("Sent SMS message with content \"%s\" to  %s", phone, message);
     }
 
 }

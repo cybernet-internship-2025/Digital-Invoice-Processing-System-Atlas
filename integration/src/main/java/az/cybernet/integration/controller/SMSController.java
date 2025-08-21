@@ -14,8 +14,8 @@ public class SMSController {
 
     private final SMSService smsService;
 
-    @PostMapping("/send/{phone}")
-    public ResponseEntity<String> sendSMS(@PathVariable("phone") String phone, @RequestBody String message) {
+    @PostMapping("/send")
+    public ResponseEntity<String> sendSMS(@RequestParam("phone") String phone, @RequestParam("message") String message) {
         return ok(smsService.sendSMS(phone, message));
     }
 }
