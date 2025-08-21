@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250821001
+      author: Fuad
+      changes:
+        - sql:
+            splitStatements: false
+            sql: CREATE TYPE registration_status AS ENUM ('APPROVED', 'WAITING_FOR_APPROVAL', 'REJECTED');
+  - changeSet:
+      id: 20250819001
+      author: Fuad
+      changes:
+        - createTable:
+            tableName: registrations
+            schemaName: users
+            columns:
+              - column:
+                  name: registration_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: registration_status
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: legal_address
+                  type: TEXT
+
+              - column:
+                  name: residential_address
+                  type: TEXT
+
+              - column:
+                  name: phone_number
+                  type: VARCHAR(50)
+
+              - column:
+                  name: legal_entity_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: type_of_registration
+                  type: VARCHAR(100)
+
+              - column:
+                  name: registration_number
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    PrimaryKey: true
+
+              - column:
+                  name: registration_status
+                  type: VARCHAR(50)
+
+        - addUniqueConstraint:
+            tableName: registrations
+            schemaName: users
+            columnNames: legal_entity_name
+
+        - addUniqueConstraint:
+            tableName: registrations
+            schemaName: users
+            columnNames: id
