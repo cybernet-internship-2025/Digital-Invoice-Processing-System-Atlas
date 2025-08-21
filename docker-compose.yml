@@ -51,6 +51,32 @@ services:
     #      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.2.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+    kafka-broker:
+      image: confluentinc/cp-kafka:7.2.1
+      container_name: kafka-broker
+      ports:
+        # Exposes Kafka to your local machine for debugging/management tools
+        - "9092:9092"
+      depends_on:
+        - zookeeper
+      environment:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+        # This is the address other containers will use to connect to Kafka
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka-broker:29092
+        # Required for single-node Kafka setup
+        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+        KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+        KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
   invoice-service:
     #    build: ./invoice
     platform: linux/arm64
@@ -83,6 +109,7 @@ services:
       NOTIFICATION_DB_NAME: ${NOTIFICATION_DB_NAME}
     depends_on:
       - postgres-db
+      - kafka-broker
     restart: always
 
   integration-service:
@@ -111,6 +138,7 @@ services:
       USER_DB_NAME: ${USER_DB_NAME}
     depends_on:
       - postgres-db
+      - kafka-broker
     restart: always
 
 

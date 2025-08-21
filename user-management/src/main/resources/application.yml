@@ -17,7 +17,7 @@ spring:
       client:
         config:
           integration:
-            url: http://localhost:8081/api/integration
+            url: http://integration-service:8080
 
 mybatis:
   mapperLocations: classpath:mappers/*.xml
