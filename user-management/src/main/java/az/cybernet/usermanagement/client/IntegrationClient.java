@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "integration")
 public interface IntegrationClient {
 
-    @GetMapping("/v1/iamas/{pin}")
+    @GetMapping("/api/integration/v1/iamas/{pin}")
     IamasDto getPinData(@PathVariable("pin") String pin);
 }
