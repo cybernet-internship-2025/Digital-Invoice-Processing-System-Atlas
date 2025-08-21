@@ -2,6 +2,7 @@ package az.cybernet.usermanagement.service.impl;
 
 import az.cybernet.usermanagement.client.IntegrationClient;
 import az.cybernet.usermanagement.dto.response.IamasDto;
+import az.cybernet.usermanagement.exception.FailedToSendSMSException;
 import az.cybernet.usermanagement.exception.PinDataNotFoundException;
 import az.cybernet.usermanagement.service.IntegrationService;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +20,11 @@ public class IntegrationServiceImpl implements IntegrationService {
     public IamasDto getPinData(String pin) {
         return Optional.ofNullable(integrationClient.getPinData(pin))
                 .orElseThrow(() -> new PinDataNotFoundException("Data not found for pin: " + pin));
+    }
+
+    @Override
+    public String sendSMS(String phone, String message) {
+        return Optional.ofNullable(integrationClient.sendSMS(phone, message))
+                .orElseThrow(() -> new FailedToSendSMSException("Failed to send sms to " + phone));
     }
 }

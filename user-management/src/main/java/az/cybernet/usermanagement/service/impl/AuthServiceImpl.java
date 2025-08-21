@@ -18,6 +18,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final OTPService otpService;
 
+    @Override
     public String loginSendOTP(String pin, String phoneNumber) {
         var pinData = integrationService.getPinData(pin);
 
