@@ -5,16 +5,11 @@ import az.cybernet.usermanagement.dto.request.LegalEntityRegistrationRequest;
 import az.cybernet.usermanagement.dto.response.IndividualRegistrationResponse;
 import az.cybernet.usermanagement.dto.response.LegalEntityRegistrationResponse;
 import az.cybernet.usermanagement.entity.Registration;
-import az.cybernet.usermanagement.enums.RegistrationStatus;
-import az.cybernet.usermanagement.enums.RegistrationType;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
 import az.cybernet.usermanagement.mapstruct.RegistrationMapstruct;
 import az.cybernet.usermanagement.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +40,6 @@ public class RegistrationServiceImpl implements RegistrationService {
         response.setLegalEntityName(registration.getLegalEntityName());
 
         return response;
-    }
 
+    }
 }
