@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaNotificationProducerServiceImpl implements NotificationProducerService {
 
-    // It's good practice to externalize the topic name to application.yml
     @Value("${kafka.topics.notifications}")
     private String notificationTopic;
 
