@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -22,28 +22,32 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
 
     @Override
     public ApproveUserResponse approveUser(ApproveUserRequest request) {
-        User user = registrationMapper.findById(request.getUserId());
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        return registrationMapper.findById(request.getUserId())
+                .map(user -> {
+                    String taxId = "VOEN" + Math.abs(ThreadLocalRandom.current().nextInt(99999999));
+                    String userId = String.format("%06d", ThreadLocalRandom.current().nextInt(999999));
 
-        String taxId = "VOEN" + Math.abs(ThreadLocalRandom.current().nextInt(99999999));
-        String userId = String.format("%06d", ThreadLocalRandom.current().nextInt(999999));
+                    LocalDate dob = user.getDateOfBirth();
+                    if (dob == null) {
+                        throw new RuntimeException("Date of Birth is missing for user: " + request.getUserId());
+                    }
 
-        String rawPassword = user.getDateOfBirth().toString().replace("-", "");
-        String hashedPassword = new BCryptPasswordEncoder().encode(rawPassword);
+                    String rawPassword = dob.toString().replace("-", "");
+                    String hashedPassword = new BCryptPasswordEncoder().encode(rawPassword);
 
-        user.setTaxId(taxId);
-        user.setUserId(userId);
-        user.setPassword(hashedPassword);
-        user.setApproved(true);
+                    user.setTaxId(taxId);
+                    user.setUserId(userId);
+                    user.setPassword(hashedPassword);
+                    user.setApproved(true);
 
-        registrationMapper.updateUser(user);
+                    registrationMapper.updateUser(user);
 
-        return ApproveUserResponse.builder()
-                .taxId(user.getTaxId())
-                .userId(user.getUserId())
-                .message("Registration approved. You can log in with your credentials.")
-                .build();
+                    return ApproveUserResponse.builder()
+                            .taxId(user.getTaxId())
+                            .userId(user.getUserId())
+                            .message("Registration approved. You can log in with your credentials.")
+                            .build();
+                })
+                .orElseThrow(() -> new RuntimeException("User not found: " + request.getUserId()));
     }
 }
