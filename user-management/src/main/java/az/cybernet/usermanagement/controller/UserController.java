@@ -1,7 +1,7 @@
 package az.cybernet.usermanagement.controller;
 
-import az.cybernet.usermanagement.dto.UserRequest;
-import az.cybernet.usermanagement.dto.UserResponse;
+import az.cybernet.usermanagement.dto.request.UserRequest;
+import az.cybernet.usermanagement.dto.response.UserResponse;
 import az.cybernet.usermanagement.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,5 +1,6 @@
 package az.cybernet.usermanagement.util;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,5 +23,9 @@ public class OTPutil {
 
         public String hashOTP(String otp) {
             return encoder.encode(otp);
+        }
+
+        public boolean verifyHash(String otp, String hashedOTP) {
+            return BCrypt.checkpw(otp, hashedOTP);
         }
 }

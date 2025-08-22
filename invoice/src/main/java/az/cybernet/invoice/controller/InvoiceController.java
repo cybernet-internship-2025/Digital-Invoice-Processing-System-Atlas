@@ -1,13 +1,10 @@
 package az.cybernet.invoice.controller;
 
 import az.cybernet.invoice.dto.request.*;
-import az.cybernet.invoice.dto.response.FilteredInvoiceResp;
-import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
-import az.cybernet.invoice.util.ExcelFileExporter;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +26,6 @@ public class InvoiceController {
 
     private final InvoiceService service;
     private final InvoiceBatchOperationsService batchService;
-    private final ExcelFileExporter excelFileExporter;
 
     @PostMapping
     public ResponseEntity<InvoiceResponse> createInvoice(@RequestBody @Valid CreateInvoiceRequest request) {

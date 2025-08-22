@@ -28,4 +28,17 @@ public class OTPServiceImpl implements OTPService {
 
         return integrationService.sendSMS(phone, otp);
     }
+
+    @Override
+    public boolean verifyOTP(String phone, String otp) {
+        String key = "otp:login:" + phone;
+        String hashedOTP = stringRedisTemplate.opsForValue().get(key);
+
+        if (hashedOTP != null && util.verifyHash(otp, hashedOTP)) {
+            stringRedisTemplate.delete(key);
+            return true;
+        }
+
+        return false;
+    }
 }
