@@ -1,16 +1,4 @@
 databaseChangeLog:
-  - include:
-      file: v-1/user/202507251000-create-schema-user.yml
-      relativeToChangelogFile: true
-
-  - include:
-      file: v-1/user/202507251001-create-table-user.yml
-      relativeToChangelogFile: true
-
-  - include:
-      file: v-1/user/202507311000-create-sequence.yml
-      relativeToChangelogFile: true
-
-  - include:
-      file: v-1/user/20250819001-create-table-registration.yml
+  - includeAll:
+      path: v-1/user
       relativeToChangelogFile: true
