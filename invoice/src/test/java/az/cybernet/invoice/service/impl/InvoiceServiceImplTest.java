@@ -8,6 +8,7 @@ import az.cybernet.invoice.dto.response.ProductResponse;
 import az.cybernet.invoice.dto.response.UserResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.mapper.InvoiceMapper;
@@ -17,6 +18,7 @@ import az.cybernet.invoice.mapstruct.InvoiceProductMapstruct;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.ProductService;
+import az.cybernet.invoice.util.InvoiceUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -105,9 +107,11 @@ class InvoiceServiceImplTest {
         LocalDate now = LocalDate.now();
         String expectedPrefix = INVD + String.format("%02d", now.getYear() % 100) + String.format("%02d"
                 , now.getMonthValue());
-        when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(null);
+        when(mapper.getLastInvoiceNumberOfMonth(any(LocalDateTime.class), any(LocalDateTime.class) , any(InvoiceType.class))).thenReturn(null);
 
-        String invoiceNumber = service.generateInvoiceNumber();
+        InvoiceUtils invoiceUtils = new InvoiceUtils(mapper);
+
+        String invoiceNumber = invoiceUtils.generateSeries(InvoiceType.STANDARD);
 
         assertTrue(invoiceNumber.startsWith(expectedPrefix));
         assertTrue(invoiceNumber.endsWith("0001"));
@@ -118,9 +122,11 @@ class InvoiceServiceImplTest {
         LocalDate now = LocalDate.now();
         String expectedPrefix = INVD + String.format("%02d", now.getYear() % 100) + String.format("%02d"
                 , now.getMonthValue());
-        when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(12);
+        when(mapper.getLastInvoiceNumberOfMonth(any(), any(), any())).thenReturn(12);
 
-        String invoiceNumber = service.generateInvoiceNumber();
+        InvoiceUtils invoiceUtils = new InvoiceUtils(mapper);
+
+        String invoiceNumber = invoiceUtils.generateSeries(InvoiceType.STANDARD);
 
         assertTrue(invoiceNumber.startsWith(expectedPrefix));
         assertTrue(invoiceNumber.endsWith("0013"));
@@ -149,7 +155,7 @@ class InvoiceServiceImplTest {
         when(mapstruct.getInvoiceFromCreateRequest(eq(request))).thenReturn(expectedRequest);
         when(mapstruct.toEntity(expectedRequest)).thenReturn(new Invoice());
 
-        when(mapper.getLastInvoiceNumberOfMonth(any(), any())).thenReturn(null);
+        when(mapper.getLastInvoiceNumberOfMonth(any(), any(), any())).thenReturn(null);
         when(userClient.getUserById(any())).thenReturn(new UserResponse());
 
         List<InvoiceProductRequest> invoiceProductRequestList = List.of(

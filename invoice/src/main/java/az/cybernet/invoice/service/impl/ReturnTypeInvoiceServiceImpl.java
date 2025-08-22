@@ -15,6 +15,7 @@ import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.service.ReturnTypeInvoiceService;
+import az.cybernet.invoice.util.InvoiceUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,21 +60,17 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         LocalDateTime dateTime = LocalDateTime.now();
         LocalDateTime Month = dateTime.withDayOfMonth(1).toLocalDate().atStartOfDay();
         LocalDateTime NextMonth = Month.plusMonths(1).withDayOfMonth(1).toLocalDate().atStartOfDay();
-        Integer invoiceNumber = returnTypeInvoiceMapper.findLastReturnTypeInvoiceNumber(Month, NextMonth);;
         invoice.setCreatedAt(dateTime);
         invoice.setStatus(Status.SENT_TO_RECEIVER);
 
         invoice.setSenderId(returnTypeInvoiceMapper.getSenderId(returnTypeInvoiceRequest.getInitialInvoiceId()));
         invoice.setCustomerId(returnTypeInvoiceMapper.getCustomerId(returnTypeInvoiceRequest.getInitialInvoiceId()));
 
-        if(invoiceNumber == null) {
-            invoiceNumber = 1; // If no previous invoice found, start with 1
-        } else {
-            invoiceNumber++; // Increment the last invoice number
-        }
-        invoice.setInvoiceNumber(invoiceNumber);
+        InvoiceUtils invoiceUtils = new InvoiceUtils(invoiceMapper);
+        String fullSeries = invoiceUtils.generateSeries(InvoiceType.RETURN);
 
-        invoice.setSeries(generateInvoiceSeriesNumber(dateTime) + String.format("%04d", invoiceNumber));
+        invoice.setSeries(fullSeries.substring(0, 3));
+        invoice.setInvoiceNumber(Integer.valueOf(fullSeries.substring(3)));
 
         invoice.setTotal(returnTypeInvoiceRequest.getProductQuantityRequests()
                 .stream()
@@ -99,12 +96,5 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         returnTypeInvoiceMapper.insertReturnTypeToInvoice(invoice); // Save the invoice created from return type
 
         return returnType; // Return the saved entity
-    }
-
-    String generateInvoiceSeriesNumber(LocalDateTime dateTime){
-        LocalDateTime dateTime1 = dateTime;
-        String year = String.format("%02d", dateTime1.getYear() % 2000);
-        String month = String.format("%02d", dateTime1.getMonthValue());
-        return INR + year + month;
     }
 }

@@ -19,6 +19,17 @@ spring:
           integration:
             url: http://integration-service:8080
 
+  kafka:
+    bootstrap-servers: kafka-broker:9092 # Use 'localhost:9092' for local dev without Docker
+    consumer:
+      group-id: notification-group # Default group for consumers
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topics:
+        notifications: notification-events
+
 mybatis:
   mapperLocations: classpath:mappers/*.xml
   config-location: classpath:config/mybatis.xml

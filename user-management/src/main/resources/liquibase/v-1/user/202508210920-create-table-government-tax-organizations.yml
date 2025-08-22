@@ -1,0 +1,177 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508210920-creation
+      author: GoychakAhmadova
+      changes:
+        - createTable:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column:
+                  name: id
+                  type: VARCHAR(40)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: organization_name
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: code
+                  type: INT
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 202508210920-insertion
+      author: GoychakAhmadova
+      changes:
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "5f0c29d4-2f59-4e84-9f2e-1c32f8c2a101" }
+              - column: { name: organization_name, value: "Bakı şəhəri Lokal Gəlirlər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 10 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "6c4b99e0-87f5-4a71-84f1-9c028c8d2c72" }
+              - column: { name: organization_name, value: "Bakı şəhəri Operativ Vergi Nəzarəti və Uçotun Təşkili Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 11 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "f7d6f8c4-5c8a-4a89-bb6d-7a2f4c9d9a03" }
+              - column: { name: organization_name, value: "Vergi Cinayətlərinin İbtidai Araşdırılması Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 12 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "2b1a2a35-6e3a-48b5-bb30-2d2baf59f123" }
+              - column: { name: organization_name, value: "Milli Gəlirlər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 13 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "3c5d7c61-2d7b-4f1c-9180-8c9a7b5e4567" }
+              - column: { name: organization_name, value: "İdxal-İxrac Əməliyyatları üzrə Nəzarət Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 14 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "7e8f3d24-3a9d-44f2-bb01-6a7e8f9a1b45" }
+              - column: { name: organization_name, value: "Öhdəliklərin İdarə Edilməsi Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 15 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "a1f4b5d6-9c23-4c89-8f12-7b4d6f2a0e91" }
+              - column: { name: organization_name, value: "Aksizli və Markalanmalı Malların Dövriyyəsinə Nəzarət Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 16 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "b3d6e7f2-1a34-4d9e-902f-5c1a2d4e7b11" }
+              - column: { name: organization_name, value: "2 saylı Ərazi Vergilər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 17 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "c8e9a1f2-5d78-4a1b-b3d4-6f7e8a9b0c23" }
+              - column: { name: organization_name, value: "3 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 18 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "d9f1b2c3-6e8a-41f2-b4c5-7d8e9a0b1c34" }
+              - column: { name: organization_name, value: "4 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 19 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "e0a1c2d3-7f9b-42a3-b5d6-8e9f0a1b2c45" }
+              - column: { name: organization_name, value: "5 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 20 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "f1b2d3e4-8a0c-43b4-b6e7-9f0a1b2c3d56" }
+              - column: { name: organization_name, value: "6 saylı Ərazi Vergilər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 21 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "0123abcd-4567-89ef-0123-456789abcdef" }
+              - column: { name: organization_name, value: "8 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 22 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "1234bcde-5678-90fa-1234-567890abcdef" }
+              - column: { name: organization_name, value: "9 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 23 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "2345cdef-6789-01ab-2345-678901abcdef" }
+              - column: { name: organization_name, value: "10 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 24 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "3456def0-7890-12bc-3456-789012abcdef" }
+              - column: { name: organization_name, value: "11 saylı Ərazi Vergilər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 25 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "4567ef01-8901-23cd-4567-890123abcdef" }
+              - column: { name: organization_name, value: "12 saylı Ərazi Vergilər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 26 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "5678f012-9012-34de-5678-901234abcdef" }
+              - column: { name: organization_name, value: "13 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 27 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "67890123-a123-45ef-6789-012345abcdef" }
+              - column: { name: organization_name, value: "14 saylı Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 28 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "78901234-b234-5601-7890-123456abcdef" }
+              - column: { name: organization_name, value: "Qarabağ Ərazi Vergilər Baş İdarəsi" }
+              - column: { name: code, valueNumeric: 29 }
+        - insert:
+            tableName: government_tax_organizations
+            schemaName: users
+            columns:
+              - column: { name: id, value: "89012345-c345-6712-8901-234567abcdef" }
+              - column: { name: organization_name, value: "Şərqi Zəngəzur Ərazi Vergilər İdarəsi" }
+              - column: { name: code, valueNumeric: 30 }
