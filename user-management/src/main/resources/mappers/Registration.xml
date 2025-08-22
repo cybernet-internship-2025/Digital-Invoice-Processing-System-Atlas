@@ -8,4 +8,16 @@
             INSERT INTO users.registrations ("status", "legal_adress", "residential_address", "phone_number", "legal_entity_name", "type_of_registration", "registration_number", "registration_status")
             VALUES (#{registrationStatus}, #{legalAddress}, #{residentialAddress}, #{phoneNumber}, #{legalEntityName}, #{typeOfRegistration}, #{registrationNumber}, #{registrationStatus})
     </insert>
+    <select id="findById" parameterType="java.util.UUID" resultType="az.cybernet.usermanagement.entity.User">
+        SELECT * FROM users.users WHERE id = #{id}
+    </select>
+
+    <update id="updateUser" parameterType="az.cybernet.usermanagement.entity.User">
+        UPDATE users.users
+        SET tax_id = #{taxId},
+            user_id = #{userId},
+            password = #{password},
+            approved = #{approved}
+        WHERE id = #{id}
+    </update>
 </mapper>

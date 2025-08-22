@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RegistrationMapstruct {
+    ApproveUserResponse toApprovalResponse(User user);
 
     @Mapping(target = "registrationStatus", constant = "WAITING_FOR_APPROVAL")
     @Mapping(target = "typeOfRegistration", constant = "INDIVIDUAL")
