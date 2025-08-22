@@ -4,6 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="az.cybernet.usermanagement.mapper.RegistrationMapper">
+    <insert id="insertRegistration" parameterType="az.cybernet.usermanagement.entity.Registration">
+            INSERT INTO users.registrations ("status", "legal_adress", "residential_address", "phone_number", "legal_entity_name", "type_of_registration", "registration_number", "registration_status")
+            VALUES (#{registrationStatus}, #{legalAddress}, #{residentialAddress}, #{phoneNumber}, #{legalEntityName}, #{typeOfRegistration}, #{registrationNumber}, #{registrationStatus})
+    </insert>
     <select id="findById" parameterType="java.util.UUID" resultType="az.cybernet.usermanagement.entity.User">
         SELECT * FROM users.users WHERE id = #{id}
     </select>

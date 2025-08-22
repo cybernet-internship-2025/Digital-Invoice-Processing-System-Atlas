@@ -26,7 +26,7 @@
         <![CDATA[
         SELECT COALESCE(MAX(CAST(RIGHT(invoice_number::text, 4) AS INT)), 0)
         FROM invoice.invoice
-        WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth} AND series LIKE 'INVD%'
+        WHERE created_at >= #{startOfMonth} AND created_at < #{startOfNextMonth} AND type = #{invoiceType}
         ]]>
     </select>
 
