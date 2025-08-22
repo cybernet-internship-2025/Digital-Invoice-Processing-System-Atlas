@@ -83,7 +83,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice invoice = mapstruct.toEntity(
                 mapstruct.getInvoiceFromCreateRequest(request));
-        String invdSeries = InvoiceUtils.generateSeries(InvoiceType.STANDARD);
+        InvoiceUtils invoiceUtils = new InvoiceUtils(mapper);
+
+        String invdSeries = invoiceUtils.generateSeries(InvoiceType.STANDARD);
         invoice.setId(UUID.randomUUID());
         invoice.setSeries(invdSeries.substring(0, 4));
 

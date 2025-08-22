@@ -66,7 +66,9 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         invoice.setSenderId(returnTypeInvoiceMapper.getSenderId(returnTypeInvoiceRequest.getInitialInvoiceId()));
         invoice.setCustomerId(returnTypeInvoiceMapper.getCustomerId(returnTypeInvoiceRequest.getInitialInvoiceId()));
 
-        String fullSeries = InvoiceUtils.generateSeries(InvoiceType.RETURN);
+        InvoiceUtils invoiceUtils = new InvoiceUtils(invoiceMapper);
+        String fullSeries = invoiceUtils.generateSeries(InvoiceType.RETURN);
+
         invoice.setSeries(fullSeries.substring(0, 3));
         invoice.setInvoiceNumber(Integer.valueOf(fullSeries.substring(3)));
 

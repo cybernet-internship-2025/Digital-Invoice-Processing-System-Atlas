@@ -2,18 +2,20 @@ package az.cybernet.invoice.util;
 
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.mapper.InvoiceMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class InvoiceUtils {
-    private static InvoiceMapper mapper;
+    private final InvoiceMapper mapper;
 
     public InvoiceUtils(InvoiceMapper mapper) {
         this.mapper = mapper;
     }
 
-    public static String generateSeries(InvoiceType invoiceType) {
+    public String generateSeries(InvoiceType invoiceType) {
         LocalDate now = LocalDate.now();
         String year = String.format("%02d", now.getYear() % 100);
         String month = String.format("%02d", now.getMonthValue());

@@ -109,7 +109,9 @@ class InvoiceServiceImplTest {
                 , now.getMonthValue());
         when(mapper.getLastInvoiceNumberOfMonth(any(LocalDateTime.class), any(LocalDateTime.class) , any(InvoiceType.class))).thenReturn(null);
 
-        String invoiceNumber = InvoiceUtils.generateSeries(InvoiceType.STANDARD);
+        InvoiceUtils invoiceUtils = new InvoiceUtils(mapper);
+
+        String invoiceNumber = invoiceUtils.generateSeries(InvoiceType.STANDARD);
 
         assertTrue(invoiceNumber.startsWith(expectedPrefix));
         assertTrue(invoiceNumber.endsWith("0001"));
@@ -122,7 +124,9 @@ class InvoiceServiceImplTest {
                 , now.getMonthValue());
         when(mapper.getLastInvoiceNumberOfMonth(any(), any(), any())).thenReturn(12);
 
-        String invoiceNumber = InvoiceUtils.generateSeries(InvoiceType.STANDARD);
+        InvoiceUtils invoiceUtils = new InvoiceUtils(mapper);
+
+        String invoiceNumber = invoiceUtils.generateSeries(InvoiceType.STANDARD);
 
         assertTrue(invoiceNumber.startsWith(expectedPrefix));
         assertTrue(invoiceNumber.endsWith("0013"));

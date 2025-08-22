@@ -1,5 +1,12 @@
 databaseChangeLog:
   - changeSet:
+      id: 20250821001
+      author: Fuad
+      changes:
+        - sql:
+            splitStatements: false
+            sql: CREATE TYPE registration_status AS ENUM ('APPROVED', 'WAITING_FOR_APPROVAL', 'REJECTED');
+  - changeSet:
       id: 20250819001
       author: Fuad
       changes:
@@ -15,17 +22,17 @@ databaseChangeLog:
 
               - column:
                   name: status
-                  type: VARCHAR(50)
+                  type: registration_status
                   constraints:
                     nullable: false
 
               - column:
                   name: legal_address
-                  type: VARCHAR(255)
+                  type: TEXT
 
               - column:
                   name: residential_address
-                  type: VARCHAR(255)
+                  type: TEXT
 
               - column:
                   name: phone_number
@@ -53,13 +60,11 @@ databaseChangeLog:
                   type: VARCHAR(50)
 
         - addUniqueConstraint:
-            schemaName: users
             tableName: registrations
+            schemaName: users
             columnNames: legal_entity_name
-            constraintName: uk_registrations_legal_entity_name
 
         - addUniqueConstraint:
-            schemaName: users
             tableName: registrations
+            schemaName: users
             columnNames: registration_number
-            constraintName: uk_registrations_registration_number
