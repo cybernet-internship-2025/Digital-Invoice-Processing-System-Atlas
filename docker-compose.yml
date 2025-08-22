@@ -141,6 +141,20 @@ services:
       - kafka-broker
     restart: always
 
+  redis:
+    platform: linux/arm64
+    image: redis:8.2.0-alpine
+    container_name: redis-container
+    ports:
+      - "6379:6379"
+    depends_on:
+      - integration-service
+    restart: always
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
 volumes:
   postgres-data:
+  redis-data:
