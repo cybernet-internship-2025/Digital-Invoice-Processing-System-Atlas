@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508221001
+      author: balash300
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql:
+              ALTER TABLE invoice.invoice ALTER COLUMN total TYPE NUMERIC(19,2);
+              ALTER TABLE invoice.invoice_operation ALTER COLUMN total TYPE NUMERIC(19,2);

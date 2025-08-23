@@ -30,13 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static az.cybernet.invoice.constant.Constants.INVD;
 
 @Slf4j
 @Service
@@ -104,8 +102,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setTotal(request.getProductQuantityRequests()
                 .stream()
                 .map(productQuantityRequest ->
-                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                .reduce(0.0, Double::sum));
+                        productQuantityRequest.getQuantity().multiply(productQuantityRequest.getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
         invoice.setInvoiceType(InvoiceType.STANDARD);
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
@@ -177,8 +175,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getProductQuantityRequests()
                         .stream()
                         .map(productQuantityRequest ->
-                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                        .reduce(0.0, Double::sum),
+                                productQuantityRequest.getQuantity().multiply(productQuantityRequest.getPrice()))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 

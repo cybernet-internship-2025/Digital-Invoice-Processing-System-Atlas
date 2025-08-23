@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,9 +55,9 @@ public class ExcelFileImporter {
             if((int) indexCell.getNumericCellValue() == invoiceNumber) {
                 ProductQuantityRequest productQuantityRequest = ProductQuantityRequest.builder()
                         .name(row.getCell(1).getStringCellValue())
-                        .price(row.getCell(2).getNumericCellValue())
+                        .price(BigDecimal.valueOf(row.getCell(2).getNumericCellValue()))
                         .measurementId(UUID.fromString(row.getCell(3).getStringCellValue()))
-                        .quantity(row.getCell(4).getNumericCellValue())
+                        .quantity(BigDecimal.valueOf(row.getCell(4).getNumericCellValue()))
                         .build();
                 result.add(productQuantityRequest);
             }

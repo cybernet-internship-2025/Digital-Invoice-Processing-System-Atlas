@@ -5,6 +5,7 @@ import az.cybernet.invoice.entity.InvoiceDetailed;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
 
@@ -34,8 +35,8 @@ public class InvoiceHtmlGenerator {
         for (ProductDetailResponse ip : products) {
             String productName = ip.getProductName();
             String unit = ip.getMeasurementName();
-            double quantity = ip.getQuantity();
-            double price = ip.getPrice();
+            BigDecimal quantity = ip.getQuantity();
+            BigDecimal price = ip.getPrice();
 
             productRows.append("""
                         <tr>
@@ -47,7 +48,7 @@ public class InvoiceHtmlGenerator {
                             <td>%.2f</td>
                     
                         </tr>
-                    """.formatted(index++, productName, unit, quantity, price, price * quantity));
+                    """.formatted(index++, productName, unit, quantity, price, price.multiply(quantity)));
         }
 
         String productTable = productRows.length() > 0 ? productRows.toString()
