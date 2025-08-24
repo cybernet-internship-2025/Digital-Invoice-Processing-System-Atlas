@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 202508221001
+      id: 202508221002
       author: balash300
       changes:
         - sql:
