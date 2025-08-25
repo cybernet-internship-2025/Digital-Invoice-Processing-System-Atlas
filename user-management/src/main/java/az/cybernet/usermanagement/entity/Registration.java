@@ -5,12 +5,16 @@ import az.cybernet.usermanagement.enums.RegistrationType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Registration {
+    private UUID id;
+    private UUID userId;
     String legalAddress;
     String residentialAddress;
     String phoneNumber;

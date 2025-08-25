@@ -21,4 +21,13 @@
     <select id="findAllUsers" resultType="az.cybernet.usermanagement.entity.User">
         SELECT * FROM users.users
     </select>
+
+    <update id="updateUser" parameterType="az.cybernet.usermanagement.entity.User">
+        UPDATE users.users
+        SET tax_id = #{taxId},
+            user_id = #{userId},
+            password = #{password},
+            approved = #{approved}
+        WHERE id = #{id}
+    </update>
 </mapper>
