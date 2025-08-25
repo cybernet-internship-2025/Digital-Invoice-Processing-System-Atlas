@@ -1,14 +1,17 @@
 package az.cybernet.usermanagement.service.impl;
 
+import az.cybernet.usermanagement.dto.event.UserApprovedEvent;
 import az.cybernet.usermanagement.dto.request.ApproveUserRequest;
 import az.cybernet.usermanagement.dto.response.ApproveUserResponse;
 import az.cybernet.usermanagement.entity.User;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
 import az.cybernet.usermanagement.mapstruct.RegistrationMapstruct;
 import az.cybernet.usermanagement.service.RegistrationApprovalService;
+import az.cybernet.usermanagement.service.NotificationProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,8 +22,10 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
 
     private final RegistrationMapper registrationMapper;
     private final RegistrationMapstruct registrationMapstruct;
+    private final NotificationProducerService notificationProducerService;
 
     @Override
+    @Transactional
     public ApproveUserResponse approveUser(ApproveUserRequest request) {
         return registrationMapper.findById(request.getUserId())
                 .map(user -> {
@@ -41,6 +46,15 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
                     user.setApproved(true);
 
                     registrationMapper.updateUser(user);
+
+                    UserApprovedEvent event = UserApprovedEvent.builder()
+                            .recipientUserId(user.getId())
+                            .newUserId(user.getUserId())
+                            .newTaxId(user.getTaxId())
+                            .eventType("USER_REGISTRATION_APPROVED")
+                            .build();
+
+                    notificationProducerService.sendUserApprovedNotification(event);
 
                     return ApproveUserResponse.builder()
                             .taxId(user.getTaxId())
