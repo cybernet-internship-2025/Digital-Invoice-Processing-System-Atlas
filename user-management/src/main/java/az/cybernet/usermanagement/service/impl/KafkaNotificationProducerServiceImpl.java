@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaNotificationProducerServiceImpl implements NotificationProducerService {
 
-    @Value("${kafka.topics.notifications}")
+    @Value("${spring.kafka.topics.notifications}")
     private String notificationTopic;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
