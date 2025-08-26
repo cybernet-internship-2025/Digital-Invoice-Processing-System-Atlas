@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,7 +60,7 @@ public class UserServiceImplTest {
         User user = new User();
         user.setId(id);
 
-        when(mapper.findById(id)).thenReturn(user);
+        when(mapper.findById(id)).thenReturn(Optional.of(user));
         when(mapstruct.toDto(user)).thenReturn(new UserResponse());
 
         UserResponse response = service.getUserById(id);
@@ -71,7 +72,7 @@ public class UserServiceImplTest {
     @Test
     void getUserById_shouldThrowException_whenUserNotFound() {
         UUID id = UUID.randomUUID();
-        when(mapper.findById(id)).thenReturn(null);
+        when(mapper.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> service.getUserById(id));
     }
