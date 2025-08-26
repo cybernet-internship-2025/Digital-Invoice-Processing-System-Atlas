@@ -1,14 +1,36 @@
+server:
+  servlet:
+    context-path: /api/notification
+
 spring:
   datasource:
-    url: jdbc:postgresql://postgres-db:5432/${NOTIFICATION_DB_NAME}
-    username: ${NOTIFICATION_DB_USER}
-    password: ${NOTIFICATION_DB_PASS}
+    url: jdbc:postgresql://postgres-db:5432/${NOTIFICATION_DB_NAME:notification}
+    username: ${NOTIFICATION_DB_USER:notification}
+    password: ${NOTIFICATION_DB_PASS:notification_pass}
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+    enabled: true
 
   kafka:
-    bootstrap-servers: kafka-broker:9092 # Use 'localhost:9092' for local dev without Docker
+    bootstrap-servers: kafka-broker:9092
     consumer:
-      group-id: notification-group # Default group for consumers
+      group-id: notification-group
       auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topics:
+      notifications: invoice-notification
+
+mybatis:
+  mapperLocations: classpath:mappers/*.xml
+  config-location: classpath:config/mybatis.xml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
