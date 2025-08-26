@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508221002
+      author: balash300
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql:
+              ALTER TABLE invoice.product ALTER COLUMN price TYPE NUMERIC(19,2);
+              ALTER TABLE invoice.invoice_product ALTER COLUMN quantity TYPE NUMERIC(19,2);

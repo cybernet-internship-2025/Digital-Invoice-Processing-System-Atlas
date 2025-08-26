@@ -2,8 +2,8 @@ package az.cybernet.invoice.entity;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.Id;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -14,6 +14,6 @@ import java.util.UUID;
 public class Product {
     UUID id;
     String name;
-    Double price;
+    BigDecimal price;
     UUID measurementId;
 }

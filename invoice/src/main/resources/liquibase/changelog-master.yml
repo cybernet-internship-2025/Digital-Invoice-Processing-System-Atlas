@@ -50,3 +50,11 @@ databaseChangeLog:
   - include:
       file: v-1/invoice/202508070006-modify-invoice-table.yml
       relativeToChangelogFile: true
+
+  - include:
+      file: v-1/invoice/202508221001-modify-invoice-tables-columns.yml
+      relativeToChangelogFile: true
+
+  - include:
+      file: v-1/invoice/202508221002-modify-product-tables-columns.yml
+      relativeToChangelogFile: true

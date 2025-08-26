@@ -18,11 +18,10 @@ import az.cybernet.invoice.service.ReturnTypeInvoiceService;
 import az.cybernet.invoice.util.InvoiceUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import static az.cybernet.invoice.constant.Constants.INR;
 
 @Service
 public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
@@ -75,8 +74,8 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         invoice.setTotal(returnTypeInvoiceRequest.getProductQuantityRequests()
                 .stream()
                 .map(productQuantityRequest ->
-                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                .reduce(0.0, Double::sum));
+                        productQuantityRequest.getQuantity().multiply(productQuantityRequest.getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
 
         invoice.setInvoiceType(InvoiceType.RETURN);
 

@@ -9,6 +9,7 @@ import az.cybernet.invoice.enums.Status;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,7 @@ public interface InvoiceMapper {
     Invoice updateInvoice(@Param("id") UUID id,
                           @Param("status") Status status,
                           @Param("comment") String comment,
-                          @Param("total") Double total,
+                          @Param("total") BigDecimal total,
                           @Param("updatedAt") LocalDateTime updatedAt);
 
     List<Invoice> findOldPendingInvoices(@Param("date") LocalDateTime date);

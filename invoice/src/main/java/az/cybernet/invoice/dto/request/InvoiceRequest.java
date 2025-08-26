@@ -4,7 +4,7 @@ import az.cybernet.invoice.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -19,6 +19,6 @@ public class InvoiceRequest {
     UUID senderId;
     UUID customerId;
     Status status;
-    Double total;
+    BigDecimal total;
     String comment;
 }

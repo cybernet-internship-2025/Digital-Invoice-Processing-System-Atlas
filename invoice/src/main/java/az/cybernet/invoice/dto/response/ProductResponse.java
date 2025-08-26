@@ -3,6 +3,7 @@ package az.cybernet.invoice.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -13,6 +14,6 @@ import java.util.UUID;
 public class ProductResponse {
     UUID id;
     String name;
-    Double price;
+    BigDecimal price;
     UUID measurementId;
 }
