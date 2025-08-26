@@ -2,7 +2,9 @@ package az.cybernet.usermanagement.mapstruct;
 
 import az.cybernet.usermanagement.dto.request.IndividualRegistrationRequest;
 import az.cybernet.usermanagement.dto.request.LegalEntityRegistrationRequest;
+import az.cybernet.usermanagement.dto.response.ApproveUserResponse;
 import az.cybernet.usermanagement.entity.Registration;
+import az.cybernet.usermanagement.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -19,6 +19,7 @@ import az.cybernet.invoice.mapstruct.InvoiceProductMapstruct;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
+import az.cybernet.invoice.service.NotificationProducerService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.HtmlToPdfConverter;
 import az.cybernet.invoice.util.ExcelFileImporter;
@@ -52,6 +53,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductMapstruct productMapstruct;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
     private final ExcelFileImporter excelFileImporter;
+    private final NotificationProducerService notificationProducerService;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -62,7 +64,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
                               InvoiceHtmlGenerator invoiceHtmlGenerator,
-                              ExcelFileImporter excelFileImporter) {
+                              ExcelFileImporter excelFileImporter, NotificationProducerService notificationProducerService) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -73,6 +75,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.productMapstruct = productMapstruct;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
         this.excelFileImporter = excelFileImporter;
+        this.notificationProducerService = notificationProducerService;
     }
 
     @Override
@@ -122,6 +125,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         mapper.insertInvoice(invoice);
         productMapstruct.toProductRequestList(productQuantityList).forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
+        notificationProducerService.sendInvoiceCreatedNotification(request.getSenderId().toString());
         return mapstruct.toDto(invoice);
     }
 

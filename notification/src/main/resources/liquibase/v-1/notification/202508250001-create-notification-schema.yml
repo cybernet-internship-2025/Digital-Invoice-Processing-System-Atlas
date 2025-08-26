@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508250001
+      author: tamilla
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql: CREATE SCHEMA IF NOT EXISTS notification;
