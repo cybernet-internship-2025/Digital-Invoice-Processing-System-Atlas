@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class InvoiceViewControllerTest {
         UUID senderId = UUID.randomUUID();
 
         List<FilteredInvoiceResp> mockInvoices = List.of(
-                FilteredInvoiceResp.builder().senderId(senderId).total(100.0).build()
+                FilteredInvoiceResp.builder().senderId(senderId).total(BigDecimal.valueOf(100.0)).build()
         );
 
         when(invoiceViewService.getSentInvoicesByTaxId(taxId, any())).thenReturn(mockInvoices);
@@ -51,7 +52,7 @@ public class InvoiceViewControllerTest {
         UUID customerId = UUID.randomUUID();
 
         List<FilteredInvoiceResp> mockInvoices = List.of(
-                FilteredInvoiceResp.builder().customerId(customerId).total(200.0).build()
+                FilteredInvoiceResp.builder().customerId(customerId).total(BigDecimal.valueOf(200.0)).build()
         );
 
         when(invoiceViewService.getReceivedInvoicesByTaxId(taxId, any())).thenReturn(mockInvoices);
@@ -69,7 +70,7 @@ public class InvoiceViewControllerTest {
         UUID senderId = UUID.randomUUID();
 
         List<Invoice> mockInvoices = List.of(
-                Invoice.builder().id(UUID.randomUUID()).senderId(senderId).total(50.0).build()
+                Invoice.builder().id(UUID.randomUUID()).senderId(senderId).total(BigDecimal.valueOf(50.0)).build()
         );
 
         when(invoiceViewService.getAllDraftsByTaxId(taxId)).thenReturn(mockInvoices);
@@ -87,7 +88,7 @@ public class InvoiceViewControllerTest {
         UUID senderId = UUID.randomUUID();
 
         List<Invoice> mockInvoices = List.of(
-                Invoice.builder().id(UUID.randomUUID()).senderId(senderId).total(150.0).build()
+                Invoice.builder().id(UUID.randomUUID()).senderId(senderId).total(BigDecimal.valueOf(150.0)).build()
         );
 
         when(invoiceViewService.getAllInvoicesByTaxId(taxId)).thenReturn(mockInvoices);

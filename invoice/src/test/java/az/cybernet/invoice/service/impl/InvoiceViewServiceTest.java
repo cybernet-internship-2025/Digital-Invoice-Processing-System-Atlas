@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -99,7 +100,7 @@ class InvoiceViewServiceTest {
         String taxId = "tax-789";
         UUID userId = UUID.randomUUID();
         UserResponse userResponse = new UserResponse(userId, "Fuad", taxId);
-        List<Invoice> mockInvoices = List.of(Invoice.builder().id(UUID.randomUUID()).senderId(userId).status(null).total(50.0).build());
+        List<Invoice> mockInvoices = List.of(Invoice.builder().id(UUID.randomUUID()).senderId(userId).status(null).total(BigDecimal.valueOf(50.0)).build());
 
         when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
         when(invoiceViewMapper.getAllDraftsById(userId)).thenReturn(mockInvoices);
@@ -119,7 +120,7 @@ class InvoiceViewServiceTest {
         String taxId = "tax-101";
         UUID userId = UUID.randomUUID();
         UserResponse userResponse = new UserResponse(userId, "Fuad", taxId);
-        List<Invoice> mockInvoices = List.of(Invoice.builder().id(UUID.randomUUID()).senderId(userId).total(150.0).build());
+        List<Invoice> mockInvoices = List.of(Invoice.builder().id(UUID.randomUUID()).senderId(userId).total(BigDecimal.valueOf(150.0)).build());
 
         when(userClient.getUserByTaxId(taxId)).thenReturn(userResponse);
         when(invoiceViewMapper.getAllInvoicesById(userId)).thenReturn(mockInvoices);

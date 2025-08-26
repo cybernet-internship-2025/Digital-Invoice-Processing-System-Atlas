@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class InvoiceUtils {
     private final InvoiceMapper mapper;
@@ -29,7 +30,8 @@ public class InvoiceUtils {
         else if(invoiceType == InvoiceType.RETURN){
             start = "INR";
         }
-        Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth, invoiceType);
+        Integer lastNumber = Optional.ofNullable(mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth, invoiceType))
+                .orElse(0);
         return start + date + String.format("%04d", lastNumber + 1);
     }
 }
