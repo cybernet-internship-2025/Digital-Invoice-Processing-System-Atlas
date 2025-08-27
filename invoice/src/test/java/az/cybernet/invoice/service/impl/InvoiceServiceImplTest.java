@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -141,12 +142,12 @@ class InvoiceServiceImplTest {
                 * 10000 + 1;
 
         ProductQuantityRequest product1 = new ProductQuantityRequest();
-        product1.setQuantity(2.0);
-        product1.setPrice(100.0);
+        product1.setQuantity(BigDecimal.valueOf(2.0));
+        product1.setPrice(BigDecimal.valueOf(100.0));
 
         ProductQuantityRequest product2 = new ProductQuantityRequest();
-        product2.setQuantity(1.0);
-        product2.setPrice(150.0);
+        product2.setQuantity(BigDecimal.valueOf(1.0));
+        product2.setPrice(BigDecimal.valueOf(150.0));
 
         List<ProductQuantityRequest> productQuantityList = List.of(product1, product2);
         request.setProductQuantityRequests(productQuantityList);
@@ -188,7 +189,7 @@ class InvoiceServiceImplTest {
         assertNotNull(response);
 
         assertNotNull(response.getId());
-        assertEquals(350.0, response.getTotal());
+        assertEquals(BigDecimal.valueOf(350.0), response.getTotal());
         assertEquals(Status.SENT_TO_RECEIVER, response.getStatus());
         assertEquals("INVD", response.getSeries());
         assertEquals(expectedNumber, response.getInvoiceNumber());
@@ -282,7 +283,7 @@ class InvoiceServiceImplTest {
     @Test
     void cancelExpiredPendingInvoices_shouldCancelOldInvoicesWhenFound() {
         // Arrange
-        Invoice oldInvoice = Invoice.builder().id(UUID.randomUUID()).status(Status.SENT_TO_RECEIVER).total(100.0).build();
+        Invoice oldInvoice = Invoice.builder().id(UUID.randomUUID()).status(Status.SENT_TO_RECEIVER).total(BigDecimal.valueOf(100.0)).build();
         when(mapper.findPendingInvoicesUntil(any(LocalDateTime.class))).thenReturn(List.of(oldInvoice));
         when(mapstruct.invoiceToInvcOper(any(Invoice.class))).thenReturn(new InvoiceOperation());
 
