@@ -23,7 +23,7 @@ public class NotificationConsumerServiceImpl implements NotificationConsumerServ
         try {
             notificationService.insert(UUID.fromString(userId));
         } catch (Exception e) {
-            log.error("Failed to receive message from Kafka topic '{}' ", e);
+            log.error("Failed to receive message from Kafka topic '{}' ", e.getMessage());
         }
     }
 }
