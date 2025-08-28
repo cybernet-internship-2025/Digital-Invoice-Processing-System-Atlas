@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -42,7 +43,7 @@ class InvoiceTest {
                 .senderId(UUID.randomUUID())
                 .customerId(UUID.randomUUID())
                 .status(Status.DRAFT)
-                .total(100.0)
+                .total(BigDecimal.valueOf(100))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .comment("Test invoice")
