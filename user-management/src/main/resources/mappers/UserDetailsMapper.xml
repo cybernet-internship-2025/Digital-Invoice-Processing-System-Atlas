@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.usermanagement.mapper.UserMapper">
+    <insert id="saveUserDetails" parameterType="az.cybernet.usermanagement.entity.UserDetails">
+        INSERT INTO users.user_details ("id", "phoneNumber", "userId", "residentialAddress", "legalAddress",
+                                        "legalEntityName", "registrationDate", "registrationType",
+                                        "dateOfBirth", "organizationId")
+        VALUES (#{id},
+                #{phoneNumber},
+                #{userId},
+                #{residentialAddress},
+                #{legalAddress},
+                #{legalEntityName},
+                #{registrationDate},
+                #{registrationType},
+                #{dateOfBirth},
+                #{organizationId})
+    </insert>
+
+</mapper>

@@ -5,8 +5,8 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/${USER_DB_NAME:users}
-    username: ${USER_DB_USER:user_db_user}
-    password: ${USER_DB_PASS:user_pass}
+    username: ${USER_DB_USER:users}
+    password: ${USER_DB_PASS:users_pass}
 
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml

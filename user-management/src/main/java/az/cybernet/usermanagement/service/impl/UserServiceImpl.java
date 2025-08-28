@@ -36,10 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(UUID id) {
-        User user = mapper.findById(id);
-        if (user == null) {
-            throw new UserNotFoundException("User not found");
-        }
+        User user = mapper.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         return mapstruct.toDto(user);
     }
 

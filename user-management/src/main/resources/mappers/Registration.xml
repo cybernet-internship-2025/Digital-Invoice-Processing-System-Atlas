@@ -8,16 +8,21 @@
             INSERT INTO users.registrations ("status", "legal_adress", "residential_address", "phone_number", "legal_entity_name", "type_of_registration", "registration_number", "registration_status")
             VALUES (#{registrationStatus}, #{legalAddress}, #{residentialAddress}, #{phoneNumber}, #{legalEntityName}, #{typeOfRegistration}, #{registrationNumber}, #{registrationStatus})
     </insert>
-    <select id="findById" parameterType="java.util.UUID" resultType="az.cybernet.usermanagement.entity.User">
-        SELECT * FROM users.users WHERE id = #{id}
+
+    <select id="findPendingRegistrationByUserId" resultType="az.cybernet.usermanagement.entity.Registration">
+        SELECT *
+        FROM users.registrations
+        WHERE user_id = #{userId} AND registration_status = 'PENDING_APPROVAL'
+        ORDER BY created_at DESC
+            LIMIT 1
     </select>
 
-    <update id="updateUser" parameterType="az.cybernet.usermanagement.entity.User">
-        UPDATE users.users
-        SET tax_id = #{taxId},
-            user_id = #{userId},
-            password = #{password},
-            approved = #{approved}
-        WHERE id = #{id}
+    <update id="updateStatus">
+        UPDATE users.registrations
+        SET
+            registration_status = #{status},
+            updated_at = now()
+        WHERE id = #{registrationId}
     </update>
 </mapper>
+

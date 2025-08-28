@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Null;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -15,7 +16,7 @@ public class ProductQuantityRequest {
     @Null
     UUID id;
     String name;
-    Double price;
+    BigDecimal price;
     UUID measurementId;
-    Double quantity;
+    BigDecimal quantity;
 }

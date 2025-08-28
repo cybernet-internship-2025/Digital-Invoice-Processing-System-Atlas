@@ -1,6 +1,5 @@
 package az.cybernet.invoice.util;
 
-import az.cybernet.invoice.enums.Status;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -63,13 +63,13 @@ public class ExcelFileExporter {
                         cell.setCellValue(value.toString());
                     } else if (value instanceof Integer) {
                         cell.setCellValue((Integer) value);
-                    } else if (value instanceof Double) {
-                        cell.setCellValue((Double) value);
+                    } else if (value instanceof BigDecimal) {
+                        cell.setCellValue(((BigDecimal) value).doubleValue());
                     } else if (value instanceof Boolean) {
                         cell.setCellValue((Boolean) value);
                     } else if (value instanceof LocalDateTime) {
                         cell.setCellValue(value.toString());
-                    } else if (value instanceof Status) {
+                    } else if (value instanceof Enum<?>) {
                         cell.setCellValue(value.toString());
                     } else {
                         cell.setCellValue(value.toString());

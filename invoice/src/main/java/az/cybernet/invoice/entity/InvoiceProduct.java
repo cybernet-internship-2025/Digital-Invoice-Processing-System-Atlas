@@ -3,6 +3,7 @@ package az.cybernet.invoice.entity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -13,6 +14,6 @@ import java.util.UUID;
 public class InvoiceProduct {
     UUID invoiceId;
     UUID productId;
-    Double quantity;
+    BigDecimal quantity;
     boolean active;
 }

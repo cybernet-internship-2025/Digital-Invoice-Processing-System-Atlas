@@ -3,6 +3,8 @@ package az.cybernet.invoice.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -10,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class ProductDetailResponse {
     String productName;
-    Double quantity;
-    Double price;
+    BigDecimal quantity;
+    BigDecimal price;
     String measurementName;
 }

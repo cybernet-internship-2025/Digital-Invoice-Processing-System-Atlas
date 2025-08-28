@@ -19,6 +19,7 @@ import az.cybernet.invoice.mapstruct.InvoiceProductMapstruct;
 import az.cybernet.invoice.mapstruct.ProductMapstruct;
 import az.cybernet.invoice.service.InvoiceProductService;
 import az.cybernet.invoice.service.InvoiceService;
+import az.cybernet.invoice.service.NotificationProducerService;
 import az.cybernet.invoice.service.ProductService;
 import az.cybernet.invoice.util.HtmlToPdfConverter;
 import az.cybernet.invoice.util.ExcelFileImporter;
@@ -30,13 +31,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static az.cybernet.invoice.constant.Constants.INVD;
 
 @Slf4j
 @Service
@@ -52,6 +51,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final ProductMapstruct productMapstruct;
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
     private final ExcelFileImporter excelFileImporter;
+    private final NotificationProducerService notificationProducerService;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -62,7 +62,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
                               InvoiceHtmlGenerator invoiceHtmlGenerator,
-                              ExcelFileImporter excelFileImporter) {
+                              ExcelFileImporter excelFileImporter, NotificationProducerService notificationProducerService) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -73,6 +73,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.productMapstruct = productMapstruct;
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
         this.excelFileImporter = excelFileImporter;
+        this.notificationProducerService = notificationProducerService;
     }
 
     @Override
@@ -104,8 +105,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setTotal(request.getProductQuantityRequests()
                 .stream()
                 .map(productQuantityRequest ->
-                        productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                .reduce(0.0, Double::sum));
+                        productQuantityRequest.getQuantity().multiply(productQuantityRequest.getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
         invoice.setInvoiceType(InvoiceType.STANDARD);
         invoice.setCreatedAt(LocalDateTime.now());
         invoice.setUpdatedAt(LocalDateTime.now());
@@ -122,6 +123,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         mapper.insertInvoice(invoice);
         productMapstruct.toProductRequestList(productQuantityList).forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
+        notificationProducerService.sendInvoiceCreatedNotification(request.getSenderId().toString());
         return mapstruct.toDto(invoice);
     }
 
@@ -177,8 +179,8 @@ public class InvoiceServiceImpl implements InvoiceService {
                 request.getProductQuantityRequests()
                         .stream()
                         .map(productQuantityRequest ->
-                                productQuantityRequest.getQuantity() * productQuantityRequest.getPrice())
-                        .reduce(0.0, Double::sum),
+                                productQuantityRequest.getQuantity().multiply(productQuantityRequest.getPrice()))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add),
                 LocalDateTime.now())
         ).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
 

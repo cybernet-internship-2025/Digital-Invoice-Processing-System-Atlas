@@ -15,8 +15,6 @@ public class User {
     UUID id;
     String name;
     String taxId;
-    String userId;
     String password;
-    LocalDate dateOfBirth;
     Boolean approved;
 }

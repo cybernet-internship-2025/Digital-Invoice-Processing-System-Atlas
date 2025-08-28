@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508250002-01
+      author: tamilla
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - sqlCheck:
+              expectedResult: 1
+              sql: "SELECT COUNT(*) FROM pg_extension WHERE extname = 'uuid-ossp'"
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+  - changeSet:
+      id: 202508250002-02
+      author: tamilla
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: notification
+              schemaName: notification
+      changes:
+        - createTable:
+            tableName: notification
+            schemaName: notification
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: uuid_generate_v4()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: text
+              - column:
+                  name: status
+                  type: varchar(6)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()

@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508271030
+      author: GoychakAhmadova
+      changes:
+        - renameColumn:
+            schemaName: users
+            tableName: registrations
+            oldColumnName: registration_number
+            newColumnName: id
+            columnDataType: VARCHAR(100)
+
+        - addColumn:
+            schemaName: users
+            tableName: registrations
+            columns:
+              - column:
+                  name: organization_id
+                  type: VARCHAR2(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: users
+            baseTableName: registrations
+            baseColumnNames: organization_id
+            referencedTableSchemaName: users
+            referencedTableName: government_tax_organizations
+            referencedColumnNames: id
+            constraintName: fk_registrations_government_tax_organizations
+
+        - addForeignKeyConstraint:
+            baseTableSchemaName: users
+            baseTableName: registrations
+            baseColumnNames: user_id
+            referencedTableSchemaName: users
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_registrations_users

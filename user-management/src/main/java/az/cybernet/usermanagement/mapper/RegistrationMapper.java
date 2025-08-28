@@ -1,7 +1,7 @@
 package az.cybernet.usermanagement.mapper;
 
-import az.cybernet.usermanagement.entity.User;
 import az.cybernet.usermanagement.entity.Registration;
+import az.cybernet.usermanagement.enums.RegistrationStatus;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -10,7 +10,9 @@ import java.util.UUID;
 
 @Mapper
 public interface RegistrationMapper {
-    Optional<User> findById(@Param("id") UUID id);
-    void updateUser(User user);
     void insertRegistration(Registration registration);
+
+    Optional<Registration> findPendingRegistrationByUserId(@Param("userId") UUID userId);
+
+    void updateStatus(@Param("registrationId") UUID registrationId, @Param("status") RegistrationStatus status);
 }
