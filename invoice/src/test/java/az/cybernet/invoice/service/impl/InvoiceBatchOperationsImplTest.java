@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class InvoiceBatchOperationsImplTest {
         Invoice invoice = new Invoice();
         invoice.setId(id);
         invoice.setStatus(status);
-        invoice.setTotal(100.5);
+        invoice.setTotal(BigDecimal.ONE);
         invoice.setComment("Test comment");
         return invoice;
     }
