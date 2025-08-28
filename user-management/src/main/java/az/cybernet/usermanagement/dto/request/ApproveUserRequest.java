@@ -11,5 +11,5 @@ import java.util.UUID;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ApproveUserRequest {
-    UUID userId;
+    private UUID id;
 }

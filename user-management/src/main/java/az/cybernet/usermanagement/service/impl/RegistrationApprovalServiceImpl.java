@@ -3,11 +3,13 @@ package az.cybernet.usermanagement.service.impl;
 import az.cybernet.usermanagement.dto.event.UserApprovedEvent;
 import az.cybernet.usermanagement.dto.request.ApproveUserRequest;
 import az.cybernet.usermanagement.dto.response.ApproveUserResponse;
+import az.cybernet.usermanagement.entity.GovernmentTaxOrganization;
 import az.cybernet.usermanagement.entity.Registration;
 import az.cybernet.usermanagement.entity.User;
 import az.cybernet.usermanagement.enums.RegistrationStatus;
 import az.cybernet.usermanagement.exception.RegistrationNotFoundException;
 import az.cybernet.usermanagement.exception.UserNotFoundException;
+import az.cybernet.usermanagement.mapper.GovernmentTaxOrganizationMapper;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
 import az.cybernet.usermanagement.mapper.UserMapper;
 import az.cybernet.usermanagement.service.RegistrationApprovalService;
@@ -32,16 +34,19 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
 
     private static final int MAX_USER_ID_GENERATION_ATTEMPTS = 10;
     private static final DateTimeFormatter PASSWORD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private static final String ORGANIZATION_CODE = "10";// placeholder
+    private final GovernmentTaxOrganizationMapper organizationMapper;
 
     @Override
     @Transactional
     public ApproveUserResponse approveUser(ApproveUserRequest request) {
-        User user = userMapper.findById(request.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found for approval: " + request.getUserId()));
+        User user = userMapper.findById(request.getId())
+                .orElseThrow(() -> new UserNotFoundException("User not found for approval: " + request.getId()));
 
         Registration registration = registrationMapper.findPendingRegistrationByUserId(user.getId())
                 .orElseThrow(() -> new RegistrationNotFoundException("No pending registration found for user: " + user.getId()));
+
+        GovernmentTaxOrganization org = organizationMapper.findById(registration.getGovernmentTaxOrganizationId())
+                .orElseThrow(() -> new IllegalStateException("Tax organization not found for ID: " + registration.getGovernmentTaxOrganizationId()));
 
         if (Boolean.TRUE.equals(user.getApproved())) {
             throw new IllegalStateException("User with ID " + user.getId() + " has already been approved.");
@@ -52,7 +57,7 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
             throw new IllegalStateException("Cannot approve user. Date of Birth is missing for user: " + user.getId());
         }
 
-        String taxId = generateVoen(registration);
+        String taxId = generateVoen(registration, org.getCode());
         String userId = generateUniqueUserId();
 
         String rawPassword = dob.format(PASSWORD_DATE_FORMAT);
@@ -83,7 +88,8 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
                 .message("Registration approved. You can log in with your credentials.")
                 .build();
     }
-    private String generateVoen(Registration registration) {
+
+    private String generateVoen(Registration registration, Integer organizationCode) {
         if (registration.getTypeOfRegistration() == null) {
             throw new IllegalStateException("Cannot generate VOEN. RegistrationType is missing for registration: " + registration.getId());
         }
@@ -95,7 +101,7 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
             case LEGAL_ENTITY -> "1";
         };
 
-        return ORGANIZATION_CODE + randomPart + typeSuffix;
+        return organizationCode.toString() + randomPart + typeSuffix;
     }
 
     private String generateUniqueUserId() {

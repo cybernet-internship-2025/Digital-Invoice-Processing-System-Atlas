@@ -15,6 +15,7 @@ import java.util.UUID;
 public class Registration {
     private UUID id;
     private UUID userId;
+    private UUID governmentTaxOrganizationId;
     String legalAddress;
     String residentialAddress;
     String phoneNumber;

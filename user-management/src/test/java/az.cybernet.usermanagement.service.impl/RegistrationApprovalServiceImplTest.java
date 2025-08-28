@@ -3,11 +3,13 @@ package az.cybernet.usermanagement.service.impl;
 import az.cybernet.usermanagement.dto.event.UserApprovedEvent;
 import az.cybernet.usermanagement.dto.request.ApproveUserRequest;
 import az.cybernet.usermanagement.dto.response.ApproveUserResponse;
+import az.cybernet.usermanagement.entity.GovernmentTaxOrganization;
 import az.cybernet.usermanagement.entity.Registration;
 import az.cybernet.usermanagement.entity.User;
 import az.cybernet.usermanagement.enums.RegistrationStatus;
 import az.cybernet.usermanagement.enums.RegistrationType;
 import az.cybernet.usermanagement.exception.RegistrationNotFoundException;
+import az.cybernet.usermanagement.mapper.GovernmentTaxOrganizationMapper;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
 import az.cybernet.usermanagement.mapper.UserMapper;
 import az.cybernet.usermanagement.service.NotificationProducerService;
@@ -41,14 +43,18 @@ class RegistrationApprovalServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private GovernmentTaxOrganizationMapper organizationMapper;
+
     @InjectMocks
     private RegistrationApprovalServiceImpl approvalService;
 
     @Test
     void approveUser_shouldSucceed_whenUserAndRegistrationAreValid() {
         UUID userId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
         ApproveUserRequest request = new ApproveUserRequest();
-        request.setUserId(userId);
+        request.setId(userId);
 
         User pendingUser = User.builder()
                 .id(userId)
@@ -60,9 +66,14 @@ class RegistrationApprovalServiceImplTest {
         pendingRegistration.setId(UUID.randomUUID());
         pendingRegistration.setTypeOfRegistration(RegistrationType.LEGAL_ENTITY);
         pendingRegistration.setLegalEntityName("Test Corp");
+        pendingRegistration.setGovernmentTaxOrganizationId(orgId);
+
+        GovernmentTaxOrganization mockOrg = new GovernmentTaxOrganization(orgId, "Test Org", 10);
+
 
         when(userMapper.findById(userId)).thenReturn(Optional.of(pendingUser));
         when(registrationMapper.findPendingRegistrationByUserId(userId)).thenReturn(Optional.of(pendingRegistration));
+        when(organizationMapper.findById(orgId)).thenReturn(Optional.of(mockOrg));
         when(passwordEncoder.encode(anyString())).thenReturn("hashedPassword123");
         when(userMapper.findByUserId(anyString())).thenReturn(Optional.empty()); // For unique ID generation
 
@@ -82,7 +93,7 @@ class RegistrationApprovalServiceImplTest {
     void approveUser_shouldThrowException_whenUserIsAlreadyApproved() {
         UUID userId = UUID.randomUUID();
         ApproveUserRequest request = new ApproveUserRequest();
-        request.setUserId(userId);
+        request.setId(userId);
 
         User approvedUser = User.builder().id(userId).approved(true).build();
 
@@ -99,7 +110,7 @@ class RegistrationApprovalServiceImplTest {
     void approveUser_shouldThrowException_whenPendingRegistrationIsNotFound() {
         UUID userId = UUID.randomUUID();
         ApproveUserRequest request = new ApproveUserRequest();
-        request.setUserId(userId);
+        request.setId(userId);
 
         User pendingUser = User.builder().id(userId).approved(false).build();
 
@@ -113,7 +124,7 @@ class RegistrationApprovalServiceImplTest {
     void approveUser_shouldThrowException_whenDateOfBirthIsNull() {
         UUID userId = UUID.randomUUID();
         ApproveUserRequest request = new ApproveUserRequest();
-        request.setUserId(userId);
+        request.setId(userId);
 
         User userWithoutDob = User.builder().id(userId).approved(false).dateOfBirth(null).build();
 
@@ -126,14 +137,19 @@ class RegistrationApprovalServiceImplTest {
     @Test
     void generateUniqueUserId_shouldThrowException_afterMaxAttempts() {
         UUID userId = UUID.randomUUID();
+        UUID orgId = UUID.randomUUID();
         ApproveUserRequest request = new ApproveUserRequest();
-        request.setUserId(userId);
+        request.setId(userId);
         User pendingUser = User.builder().id(userId).approved(false).dateOfBirth(LocalDate.now()).build();
         Registration pendingRegistration = new Registration();
         pendingRegistration.setTypeOfRegistration(RegistrationType.INDIVIDUAL);
+        pendingRegistration.setGovernmentTaxOrganizationId(orgId);
+
+        GovernmentTaxOrganization mockOrg = new GovernmentTaxOrganization(orgId, "Test Org", 10);
 
         when(userMapper.findById(userId)).thenReturn(Optional.of(pendingUser));
         when(registrationMapper.findPendingRegistrationByUserId(userId)).thenReturn(Optional.of(pendingRegistration));
+        when(organizationMapper.findById(orgId)).thenReturn(Optional.of(mockOrg));
 
         when(userMapper.findByUserId(anyString())).thenReturn(Optional.of(new User()));
 
