@@ -11,6 +11,7 @@ import java.util.UUID;
 @Mapper
 public interface RegistrationMapper {
     void insertRegistration(Registration registration);
+
     Optional<Registration> findPendingRegistrationByUserId(@Param("userId") UUID userId);
 
     void updateStatus(@Param("registrationId") UUID registrationId, @Param("status") RegistrationStatus status);

@@ -5,11 +5,14 @@ import az.cybernet.usermanagement.dto.request.ApproveUserRequest;
 import az.cybernet.usermanagement.dto.response.ApproveUserResponse;
 import az.cybernet.usermanagement.entity.Registration;
 import az.cybernet.usermanagement.entity.User;
+import az.cybernet.usermanagement.entity.UserDetails;
 import az.cybernet.usermanagement.enums.RegistrationStatus;
 import az.cybernet.usermanagement.exception.RegistrationNotFoundException;
 import az.cybernet.usermanagement.exception.UserNotFoundException;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
+import az.cybernet.usermanagement.mapper.UserDetailsMapper;
 import az.cybernet.usermanagement.mapper.UserMapper;
+import az.cybernet.usermanagement.mapstruct.UserDetailsMapstruct;
 import az.cybernet.usermanagement.service.RegistrationApprovalService;
 import az.cybernet.usermanagement.service.NotificationProducerService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +30,14 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
 
     private final RegistrationMapper registrationMapper;
     private final UserMapper userMapper;
+    private final UserDetailsMapstruct userDetailsMapstruct;
     private final NotificationProducerService notificationProducerService;
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_USER_ID_GENERATION_ATTEMPTS = 10;
     private static final DateTimeFormatter PASSWORD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final String ORGANIZATION_CODE = "10";// placeholder
+    private final UserDetailsMapper userDetailsMapper;
 
     @Override
     @Transactional
@@ -43,11 +48,7 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
         Registration registration = registrationMapper.findPendingRegistrationByUserId(user.getId())
                 .orElseThrow(() -> new RegistrationNotFoundException("No pending registration found for user: " + user.getId()));
 
-        if (Boolean.TRUE.equals(user.getApproved())) {
-            throw new IllegalStateException("User with ID " + user.getId() + " has already been approved.");
-        }
-
-        LocalDate dob = user.getDateOfBirth();
+        LocalDate dob = request.getDateOfBirth();
         if (dob == null) {
             throw new IllegalStateException("Cannot approve user. Date of Birth is missing for user: " + user.getId());
         }
@@ -58,19 +59,23 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
         String rawPassword = dob.format(PASSWORD_DATE_FORMAT);
         String hashedPassword = passwordEncoder.encode(rawPassword);
 
-
         user.setTaxId(taxId);
-        user.setUserId(userId);
-        user.setPassword(hashedPassword);
-        user.setApproved(true);
         user.setName(registration.getLegalEntityName());
+        user.setPassword(hashedPassword);
 
         userMapper.updateUser(user);
         registrationMapper.updateStatus(registration.getId(), RegistrationStatus.APPROVED);
 
+        UserDetails userDetails = userDetailsMapstruct.userToUserDetails(user, registration);
+
+        userDetails.setUserId(userId);
+        userDetails.setDateOfBirth(request.getDateOfBirth());
+
+        userDetailsMapper.saveUserDetails(userDetails);
+
         UserApprovedEvent event = UserApprovedEvent.builder()
                 .recipientUserId(user.getId())
-                .newUserId(user.getUserId())
+                .newUserId(userDetails.getUserId())
                 .newTaxId(user.getTaxId())
                 .eventType("USER_REGISTRATION_APPROVED")
                 .build();
@@ -79,10 +84,11 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
 
         return ApproveUserResponse.builder()
                 .taxId(user.getTaxId())
-                .userId(user.getUserId())
+                .userId(userDetails.getUserId())
                 .message("Registration approved. You can log in with your credentials.")
                 .build();
     }
+
     private String generateVoen(Registration registration) {
         if (registration.getTypeOfRegistration() == null) {
             throw new IllegalStateException("Cannot generate VOEN. RegistrationType is missing for registration: " + registration.getId());
@@ -95,7 +101,8 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
             case LEGAL_ENTITY -> "1";
         };
 
-        return ORGANIZATION_CODE + randomPart + typeSuffix;
+        String organizationCode = registration.getOrganizationId().toString();
+        return organizationCode + randomPart + typeSuffix;
     }
 
     private String generateUniqueUserId() {

@@ -53,7 +53,7 @@ class RegistrationApprovalServiceImplTest {
         User pendingUser = User.builder()
                 .id(userId)
                 .approved(false)
-                .dateOfBirth(LocalDate.of(2005, 10, 23))
+               // .dateOfBirth(LocalDate.of(2005, 10, 23))
                 .build();
 
         Registration pendingRegistration = new Registration();
@@ -115,9 +115,9 @@ class RegistrationApprovalServiceImplTest {
         ApproveUserRequest request = new ApproveUserRequest();
         request.setUserId(userId);
 
-        User userWithoutDob = User.builder().id(userId).approved(false).dateOfBirth(null).build();
+     //   User userWithoutDob = User.builder().id(userId).approved(false).dateOfBirth(null).build();
 
-        when(userMapper.findById(userId)).thenReturn(Optional.of(userWithoutDob));
+       // when(userMapper.findById(userId)).thenReturn(Optional.of(userWithoutDob));
         when(registrationMapper.findPendingRegistrationByUserId(userId)).thenReturn(Optional.of(new Registration()));
 
         assertThrows(IllegalStateException.class, () -> approvalService.approveUser(request));
@@ -128,11 +128,11 @@ class RegistrationApprovalServiceImplTest {
         UUID userId = UUID.randomUUID();
         ApproveUserRequest request = new ApproveUserRequest();
         request.setUserId(userId);
-        User pendingUser = User.builder().id(userId).approved(false).dateOfBirth(LocalDate.now()).build();
+//        User pendingUser = User.builder().id(userId).approved(false).dateOfBirth(LocalDate.now()).build();
         Registration pendingRegistration = new Registration();
         pendingRegistration.setTypeOfRegistration(RegistrationType.INDIVIDUAL);
 
-        when(userMapper.findById(userId)).thenReturn(Optional.of(pendingUser));
+//        when(userMapper.findById(userId)).thenReturn(Optional.of(pendingUser));
         when(registrationMapper.findPendingRegistrationByUserId(userId)).thenReturn(Optional.of(pendingRegistration));
 
         when(userMapper.findByUserId(anyString())).thenReturn(Optional.of(new User()));
