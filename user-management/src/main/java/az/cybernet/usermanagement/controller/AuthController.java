@@ -2,10 +2,8 @@ package az.cybernet.usermanagement.controller;
 
 import az.cybernet.usermanagement.dto.request.LoginReq;
 import az.cybernet.usermanagement.dto.request.OtpVerificationRequest;
-import az.cybernet.usermanagement.dto.request.SMSRequest;
 import az.cybernet.usermanagement.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
