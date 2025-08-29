@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="az.cybernet.integration.mybatis.ChatMapper">
+    <insert id="insertChat" parameterType="az.cybernet.integration.dto.ChatDTO">
+        INSERT INTO telegram.chats (chat_id, phone)
+        VALUES (#{chatId}, #{phone})
+    </insert>
+
+    <select id="findChatIdByPhone">
+        SELECT chat_id FROM telegram.chats
+        WHERE phone = #{phone}
+    </select>
+</mapper>

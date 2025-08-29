@@ -6,3 +6,18 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+
+telegram:
+  bot:
+    token: "8337781094:AAHD1DN1C3kig5WemO1bW4cKEmvkKjvoL9c"
+    username: "Findikqdbot"
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-db:5432/${NOTIFICATION_DB_NAME:notification}
+    username: ${NOTIFICATION_DB_USER:notification}
+    password: ${NOTIFICATION_DB_PASS:notification_pass}
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+    enabled: true

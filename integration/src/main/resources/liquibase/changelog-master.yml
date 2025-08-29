@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - includeAll:
+      path: v-1/integration
+      relativeToChangelogFile: true

@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SMSRequest {
+public class MessageRequest {
     @NotBlank
     String phone;
     @NotBlank
