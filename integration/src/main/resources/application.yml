@@ -7,11 +7,6 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
 
-telegram:
-  bot:
-    token: "8337781094:AAHD1DN1C3kig5WemO1bW4cKEmvkKjvoL9c"
-    username: "Findikqdbot"
-
 spring:
   datasource:
     url: jdbc:postgresql://postgres-db:5432/${NOTIFICATION_DB_NAME:notification}
@@ -21,3 +16,11 @@ spring:
   liquibase:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
+
+mybatis:
+  mapperLocations: classpath:mappers/*.xml
+
+telegram:
+  bot:
+    token: 8337781094:AAHD1DN1C3kig5WemO1bW4cKEmvkKjvoL9c
+    username: Findikqdbot

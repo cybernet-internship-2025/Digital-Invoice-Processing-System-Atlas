@@ -2,7 +2,6 @@ package az.cybernet.integration.service;
 
 import az.cybernet.integration.dto.ChatDTO;
 import az.cybernet.integration.mybatis.ChatMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -13,29 +12,29 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class TelegramBotService extends TelegramLongPollingBot {
 
-    @Value("${telegram.bot.token}")
-    private String botToken;
-    @Value("${telegram.bot.username}")
-    private String botUserame;
-
+    private final String botToken;
+    private final String botUserame;
     private final ChatMapper chatMapper;
+
+    public TelegramBotService(@Value("${telegram.bot.token}") String botToken,
+                              @Value("${telegram.bot.username}") String botUserame,
+                              ChatMapper chatMapper) {
+        this.botToken = botToken;
+        this.botUserame = botUserame;
+        this.chatMapper = chatMapper;
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
         String chatId = update.getMessage().getChatId().toString();
         String text = update.getMessage().getText();
-        switch (text) {
-            case "/start":
-                sendStartMessage(chatId);
-                break;
-            case String s when s.matches("^\\d{9}$"):
-                insertChat(chatId, text);
-                break;
-            case null:
-            default:
+
+        if(text.equals("/start")) {
+            sendStartMessage(chatId);
+        } else if(text.matches("\\d{9}$")) {
+            insertChat(chatId, text);
         }
     }
 
@@ -52,7 +51,6 @@ public class TelegramBotService extends TelegramLongPollingBot {
     public void insertChat(String chatId, String phone) {
         ChatDTO chat = new ChatDTO(chatId, phone);
         chatMapper.insertChat(chat);
-
 
         String message = "User remembered, now you will receive OTP for phone number: " + phone;
         SendMessage sendMessage = new SendMessage(chatId, message);
