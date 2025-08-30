@@ -1,10 +1,9 @@
 package az.cybernet.notification.mapper;
 
+import az.cybernet.notification.dto.event.NotificationCreatedEvent;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.UUID;
 
 @Mapper
 public interface NotificationMapper {
-    void insert(UUID userId);
+    void insert(NotificationCreatedEvent event);
 }

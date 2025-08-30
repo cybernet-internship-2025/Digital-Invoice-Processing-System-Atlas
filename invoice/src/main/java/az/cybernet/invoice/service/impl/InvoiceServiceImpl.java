@@ -1,17 +1,20 @@
 package az.cybernet.invoice.service.impl;
 
 import az.cybernet.invoice.client.UserClient;
+import az.cybernet.invoice.dto.event.InvoiceCreatedEvent;
 import az.cybernet.invoice.dto.request.*;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.InvoiceDetailed;
 import az.cybernet.invoice.entity.InvoiceOperation;
+import az.cybernet.invoice.enums.EventStatus;
 import az.cybernet.invoice.enums.InvoiceType;
 import az.cybernet.invoice.enums.Status;
 import az.cybernet.invoice.exceptions.InvalidExcelFileException;
 import az.cybernet.invoice.exceptions.InvoiceNotFoundException;
 import az.cybernet.invoice.exceptions.UserNotFoundException;
+import az.cybernet.invoice.kafka.InvoiceEventProducer;
 import az.cybernet.invoice.mapper.InvoiceMapper;
 import az.cybernet.invoice.mapper.InvoiceOperationMapper;
 import az.cybernet.invoice.mapstruct.InvoiceMapstruct;
@@ -52,6 +55,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceHtmlGenerator invoiceHtmlGenerator;
     private final ExcelFileImporter excelFileImporter;
     private final NotificationProducerService notificationProducerService;
+    private final InvoiceEventProducer producer;
 
     public InvoiceServiceImpl(InvoiceMapper mapper,
                               InvoiceMapstruct mapstruct,
@@ -62,7 +66,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                               InvoiceProductMapstruct invoiceProductMapstruct,
                               ProductMapstruct productMapstruct,
                               InvoiceHtmlGenerator invoiceHtmlGenerator,
-                              ExcelFileImporter excelFileImporter, NotificationProducerService notificationProducerService) {
+                              ExcelFileImporter excelFileImporter,
+                              NotificationProducerService notificationProducerService,
+                              InvoiceEventProducer producer) {
         this.mapper = mapper;
         this.mapstruct = mapstruct;
         this.invoiceProductService = invoiceProductService;
@@ -74,6 +80,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         this.invoiceHtmlGenerator = invoiceHtmlGenerator;
         this.excelFileImporter = excelFileImporter;
         this.notificationProducerService = notificationProducerService;
+        this.producer = producer;
     }
 
     @Override
@@ -124,6 +131,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         productMapstruct.toProductRequestList(productQuantityList).forEach(productService::insertProduct);
         invoiceProductList.forEach(invoiceProductService::insertInvoiceProduct);
         notificationProducerService.sendInvoiceCreatedNotification(request.getSenderId().toString());
+
+        InvoiceCreatedEvent event = new InvoiceCreatedEvent();
+        event.setUserId(invoice.getCustomerId());
+        event.setStatus(EventStatus.CREATED);
+
+        producer.sendInvoiceCreatedEvent(event);
+
         return mapstruct.toDto(invoice);
     }
 
@@ -151,6 +165,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse cancelInvoice(UUID id) {
         mapper.findInvoiceById(id).orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
         Invoice cancelledInvoice = mapper.cancelInvoice(id);
+
+        InvoiceCreatedEvent event = new InvoiceCreatedEvent();
+        event.setUserId(cancelledInvoice.getCustomerId());
+        event.setStatus(EventStatus.CANCELED);
+
+        producer.sendInvoiceCreatedEvent(event);
+
         return mapstruct.toDto(cancelledInvoice);
     }
 
@@ -159,12 +180,23 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse approveInvoice(UUID id) {
         Invoice invoice = mapper.findInvoiceById(id)
                 .orElseThrow(() -> new InvoiceNotFoundException("Invoice not found"));
-        if (!invoice.getStatus().equals(Status.SENT_TO_RECEIVER))
+        InvoiceCreatedEvent event = new InvoiceCreatedEvent();
+        if (!invoice.getStatus().equals(Status.SENT_TO_RECEIVER)) {
+            event.setUserId(invoice.getCustomerId());
+            event.setStatus(EventStatus.REJECTED);
+            producer.sendInvoiceCreatedEvent(event);
+
             throw new IllegalStateException("Only invoices with SENT_TO_RECEIVER status can be APPROVED");
+        }
         invoice.setUpdatedAt(LocalDateTime.now());
         mapper.approveInvoice(invoice);
 
         invoiceOperationMapper.insertInvoiceOperation(mapstruct.invoiceToInvcOper(invoice));
+
+        event.setUserId(invoice.getCustomerId());
+        event.setStatus(EventStatus.APPROVED);
+
+        producer.sendInvoiceCreatedEvent(event);
 
         return mapstruct.toDto(invoice);
     }
@@ -202,10 +234,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceProductRequestList.forEach(invoiceProduct -> invoiceProduct.setActive(true));
         invoiceProductRequestList.forEach(invoiceProductService::insertInvoiceProduct);
 
+        InvoiceCreatedEvent event = new InvoiceCreatedEvent();
+        event.setUserId(invoice.getCustomerId());
+        event.setStatus(EventStatus.UPDATED);
+
+        producer.sendInvoiceCreatedEvent(event);
+
         return mapstruct.toDto(invoice);
     }
 
     @Override
+    @Transactional
     public void importInvoicesFromExcel(MultipartFile file) {
         try {
             String fileType = file.getContentType();

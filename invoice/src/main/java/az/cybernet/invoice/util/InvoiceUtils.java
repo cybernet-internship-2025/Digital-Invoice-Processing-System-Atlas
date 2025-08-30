@@ -22,13 +22,14 @@ public class InvoiceUtils {
         String date = year.concat(month);
         LocalDateTime startOfMonth = now.withDayOfMonth(1).atStartOfDay();
         LocalDateTime startOfNextMonth = now.plusMonths(1).withDayOfMonth(1).atStartOfDay();
-        String start = "INVD"; // Default for standard invoices
+        String start = "INVD";
+
         if(invoiceType == InvoiceType.STANDARD){
             start = "INVD";
-        }
-        else if(invoiceType == InvoiceType.RETURN){
+        } else if(invoiceType == InvoiceType.RETURN){
             start = "INR";
         }
+
         Integer lastNumber = mapper.getLastInvoiceNumberOfMonth(startOfMonth, startOfNextMonth, invoiceType);
         return start + date + String.format("%04d", lastNumber + 1);
     }

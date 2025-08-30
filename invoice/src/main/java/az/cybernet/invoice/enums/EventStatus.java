@@ -1,6 +1,6 @@
-package az.cybernet.notification.enums;
+package az.cybernet.invoice.enums;
 
-public enum Status {
+public enum EventStatus {
     CREATED,
     CANCELED,
     UPDATED,

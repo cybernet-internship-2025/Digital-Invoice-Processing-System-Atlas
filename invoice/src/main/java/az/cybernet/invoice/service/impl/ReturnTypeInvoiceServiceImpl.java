@@ -47,6 +47,7 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
     public ReturnTypeInvoice createReturnTypeInvoice(CreateReturnTypeRequest returnTypeInvoiceRequest) {
         Invoice invoice = new Invoice();
         ReturnTypeInvoice returnType = new ReturnTypeInvoice();
+
         if(invoiceMapper.findInvoiceById(returnTypeInvoiceRequest.getInitialInvoiceId()).isEmpty()) {
             throw new InvoiceNotFoundException("Invoice not found for ID: " + returnTypeInvoiceRequest.getInitialInvoiceId());
         }
@@ -94,6 +95,6 @@ public class ReturnTypeInvoiceServiceImpl implements ReturnTypeInvoiceService {
         returnTypeInvoiceMapper.insertReturnTypeInvoice(returnType.getId(), returnType.getOriginalInvoiceId()); // Save the return type invoice using mapper
         returnTypeInvoiceMapper.insertReturnTypeToInvoice(invoice); // Save the invoice created from return type
 
-        return returnType; // Return the saved entity
+        return returnType;
     }
 }

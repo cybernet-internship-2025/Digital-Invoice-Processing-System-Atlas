@@ -1,7 +1,7 @@
 package az.cybernet.notification.service;
 
-import java.util.UUID;
+import az.cybernet.notification.dto.event.NotificationCreatedEvent;
 
 public interface NotificationService {
-    void insert(UUID userId);
+    void insert(NotificationCreatedEvent event);
 }

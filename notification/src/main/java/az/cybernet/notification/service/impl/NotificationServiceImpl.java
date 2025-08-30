@@ -1,10 +1,9 @@
 package az.cybernet.notification.service.impl;
 
+import az.cybernet.notification.dto.event.NotificationCreatedEvent;
 import az.cybernet.notification.mapper.NotificationMapper;
 import az.cybernet.notification.service.NotificationService;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -15,8 +14,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void insert(UUID userId) {
-        notificationMapper.insert(userId);
+    public void insert(NotificationCreatedEvent event) {
+        notificationMapper.insert(event);
 
     }
 }

@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508280010
+      author: balash300
+      changes:
+        - modifyDataType:
+            schemaName: notification
+            tableName: notification
+            columnName: status
+            newDataType: varchar(20)

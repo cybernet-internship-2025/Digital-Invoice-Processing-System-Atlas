@@ -84,6 +84,7 @@ public class InvoiceBatchOperationsServiceImpl implements InvoiceBatchOperations
             req.setComment(invoice.getComment());
             invoiceOperationService.insertInvoiceOperation(req);
         }
+
         mapper.updateStatusInBatch(ids, newStatus, LocalDateTime.now());
     }
 }

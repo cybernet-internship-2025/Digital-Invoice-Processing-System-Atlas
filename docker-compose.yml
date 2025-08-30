@@ -89,6 +89,7 @@ services:
       INVOICE_DB_NAME: ${INVOICE_DB_NAME}
     depends_on:
       - postgres-db
+      - kafka-broker
     restart: always
 
   notification-service:

@@ -5,8 +5,8 @@
 
 <mapper namespace="az.cybernet.notification.mapper.NotificationMapper">
 
-    <insert id="insert" parameterType="java.util.UUID" useGeneratedKeys="true">
+    <insert id="insert" parameterType="az.cybernet.notification.dto.event.NotificationCreatedEvent" useGeneratedKeys="true">
         INSERT INTO notification.notification(user_id, message, status)
-        VALUES (#{userId}, 'A new invoice has been sent to you', 'UNREAD')
+        VALUES (#{userId}, #{message}, #{status})
     </insert>
 </mapper>

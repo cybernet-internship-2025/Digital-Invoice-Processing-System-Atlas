@@ -1,5 +1,7 @@
 package az.cybernet.notification.service;
 
+import az.cybernet.notification.dto.event.NotificationCreatedEvent;
+
 public interface NotificationConsumerService {
-    void consumeMessage(String userId);
+    void consumeMessage(NotificationCreatedEvent event);
 }
