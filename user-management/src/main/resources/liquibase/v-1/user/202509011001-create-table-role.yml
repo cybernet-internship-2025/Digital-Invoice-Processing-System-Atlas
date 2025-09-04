@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202509011001
+      author: balash300
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: role
+              schemaName: users
+      changes:
+        - createTable:
+            tableName: role
+            schemaName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false

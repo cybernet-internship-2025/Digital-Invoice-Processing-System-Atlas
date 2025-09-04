@@ -6,6 +6,7 @@ import az.cybernet.invoice.entity.Invoice;
 import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.service.impl.InvoiceViewService;
 import az.cybernet.invoice.util.ExcelFileExporter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/invoices/view")
 @Validated
+@SecurityRequirement(name = "bearerAuth")
 public class InvoiceViewController {
     private final InvoiceViewService invoiceViewService;
     private final ExcelFileExporter excelFileExporter;

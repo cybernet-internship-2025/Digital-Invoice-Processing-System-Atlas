@@ -51,6 +51,17 @@ services:
     #      - ./postgres-init:/docker-entrypoint-initdb.d
     restart: always
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
+    depends_on:
+      - redis
+    container_name: auth-service-container
+    environment:
+      TZ: Asia/Baku
+    restart: always
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.1
     container_name: zookeeper

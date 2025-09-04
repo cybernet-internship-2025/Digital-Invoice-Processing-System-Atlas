@@ -35,6 +35,8 @@ spring:
             readTimeout: 10000
             loggerLevel: basic
 
+
+
 mybatis:
   mapperLocations: classpath:mappers/*.xml
   config-location: classpath:config/mybatis.xml

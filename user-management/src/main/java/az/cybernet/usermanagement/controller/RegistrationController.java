@@ -7,6 +7,7 @@ import az.cybernet.usermanagement.dto.response.LegalEntityRegistrationResponse;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
 import az.cybernet.usermanagement.service.RegistrationService;
 import az.cybernet.usermanagement.service.impl.RegistrationServiceImpl;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/registration")
+@SecurityRequirement(name = "bearerAuth")
 public class RegistrationController {
     private final RegistrationService registrationService;
 

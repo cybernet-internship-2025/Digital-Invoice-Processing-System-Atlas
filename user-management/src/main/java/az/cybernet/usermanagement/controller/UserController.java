@@ -1,8 +1,10 @@
 package az.cybernet.usermanagement.controller;
 
 import az.cybernet.usermanagement.dto.request.UserRequest;
+import az.cybernet.usermanagement.dto.response.UserInfoResponse;
 import az.cybernet.usermanagement.dto.response.UserResponse;
 import az.cybernet.usermanagement.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/users")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     private final UserService userService;
@@ -37,5 +40,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<UserInfoResponse> getUserByName(@PathVariable("name") String name){
+        return ResponseEntity.ok(userService.getUserByName(name));
     }
 }

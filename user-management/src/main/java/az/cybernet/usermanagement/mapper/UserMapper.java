@@ -1,5 +1,6 @@
 package az.cybernet.usermanagement.mapper;
 
+import az.cybernet.usermanagement.entity.Role;
 import az.cybernet.usermanagement.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,4 +17,6 @@ public interface UserMapper {
     User findByTaxId(@Param("taxId") String taxId);
     List<User> findAllUsers();
     void updateUser(User user);
+    User findByUsername(@Param("name") String name);
+    List<Role> getRolesByUserId(@Param("userId") Long userId);
 }
