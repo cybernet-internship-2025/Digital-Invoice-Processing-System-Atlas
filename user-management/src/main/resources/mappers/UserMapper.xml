@@ -26,12 +26,7 @@
         SELECT * FROM users.users
     </select>
 
-<!--    <update id="updateUser" parameterType="az.cybernet.usermanagement.entity.User">-->
-<!--        UPDATE users.users-->
-<!--        SET tax_id = #{taxId},-->
-<!--            password = #{password},-->
-<!--        WHERE id = #{id}-->
-<!--    </update>-->
+
 
     <update id="updateTaxAndPassword">
         update users.users
