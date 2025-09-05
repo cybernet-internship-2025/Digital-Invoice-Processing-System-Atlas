@@ -29,4 +29,7 @@ public class LegalEntityRegistrationRequest {
 
     @NotNull
     String legalEntityName;
+
+    @NotNull
+    UUID organizationId;
 }
