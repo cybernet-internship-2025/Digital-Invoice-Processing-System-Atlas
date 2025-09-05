@@ -26,33 +26,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
         this.chatMapper = chatMapper;
     }
 
-    @Override
-    public void onUpdateReceived(Update update) {
-        String chatId = update.getMessage().getChatId().toString();
-        String text = update.getMessage().getText();
-
-        if(text.equals("/start")) {
-            sendStartMessage(chatId);
-        } else if(text.matches("\\d{9}$")) {
-            insertChat(chatId, text);
-        }
-    }
-
-    public void sendStartMessage(String chatId) {
-        String startMessage = "Please enter your phone number in the following form: 012345678.";
-        SendMessage sendMessage = new SendMessage(chatId, startMessage);
-        try{
-            this.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    public void insertChat(String chatId, String phone) {
-        ChatDTO chat = new ChatDTO(chatId, phone);
-        chatMapper.insertChat(chat);
-
-        String message = "User remembered, now you will receive OTP for phone number: " + phone;
+    public void sendMessage(String chatId, String message) {
         SendMessage sendMessage = new SendMessage(chatId, message);
         try{
             this.execute(sendMessage);
@@ -61,16 +35,33 @@ public class TelegramBotService extends TelegramLongPollingBot {
         }
     }
 
+    @Override
+    public void onUpdateReceived(Update update) {
+        String chatId = update.getMessage().getChatId().toString();
+        String text = update.getMessage().getText();
+
+        if(text.equals("/start")) {
+            sendMessage(chatId, "Please enter your phone number in the following form: 012345678.");
+        } else if(text.matches("\\d{9}$")) {
+            insertChat(chatId, text);
+        } else {
+            sendMessage(chatId, "Invalid command/format");
+        }
+    }
+
+    public void insertChat(String chatId, String phone) {
+        ChatDTO chat = new ChatDTO(chatId, phone);
+        chatMapper.insertChat(chat);
+
+        String message = "User remembered, now you will receive OTP for phone number: " + phone;
+        sendMessage(chatId, message);
+    }
+
     public String sendOTP(String phone, String otp) {
         List<String> chatIds = chatMapper.findChatIdByPhone(phone);
 
         for (String chatId : chatIds) {
-            SendMessage sendMessage = new SendMessage(chatId, otp);
-            try {
-                this.execute(sendMessage);
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            sendMessage(chatId, otp);
         }
 
         return "Otp sent successfully";
