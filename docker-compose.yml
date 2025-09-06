@@ -79,7 +79,7 @@ services:
     platform: linux/arm64
     build:
       context: .
-      dockerfile: invoice/Dockerfile
+      dockerfile: ./invoice/Dockerfile
     container_name: invoice-service-container
     environment:
       TZ: Asia/Baku
@@ -96,7 +96,7 @@ services:
     platform: linux/arm64
     build:
       context: .
-      dockerfile: notification/Dockerfile
+      dockerfile: ./notification/Dockerfile
     container_name: notification-service-container
     environment:
       TZ: Asia/Baku
@@ -114,7 +114,7 @@ services:
     platform: linux/arm64
     build:
       context: .
-      dockerfile: integration/Dockerfile
+      dockerfile: ./integration/Dockerfile
     container_name: integration-service-container
     environment:
       TZ: Asia/Baku
@@ -125,7 +125,7 @@ services:
     platform: linux/arm64
     build:
       context: .
-      dockerfile: user-management/Dockerfile
+      dockerfile: ./user-management/Dockerfile
     container_name: user-service-container
     environment:
       TZ: Asia/Baku
