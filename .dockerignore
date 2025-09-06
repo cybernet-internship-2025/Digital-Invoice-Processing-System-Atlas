@@ -1,0 +1,21 @@
+# Git
+.git/
+.gitignore
+
+# Build artifacts
+target/
+**/target/
+
+# IDE configuration files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Maven wrapper
+.mvn/
+mvnw
+mvnw.cmd
+
+# Log files
+*.log

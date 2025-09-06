@@ -21,8 +21,7 @@ public class Registration {
     String phoneNumber;
     String legalEntityName;
     RegistrationType typeOfRegistration;
-    String registrationNumber;
-    RegistrationStatus registrationStatus;
     Timestamp registrationDate;
     UUID organizationId;
+    RegistrationStatus registrationStatus;
 }

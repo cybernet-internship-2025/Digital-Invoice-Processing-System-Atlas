@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202509040945
+      author: GoychakAhmadova
+      changes:
+        - dropColumn:
+            schemaName: users
+            tableName: registrations
+            columnName: status
