@@ -5,23 +5,35 @@
 
 <mapper namespace="az.cybernet.usermanagement.mapper.RegistrationMapper">
     <insert id="insertRegistration" parameterType="az.cybernet.usermanagement.entity.Registration">
-            INSERT INTO users.registrations ("status", "legal_adress", "residential_address", "phone_number", "legal_entity_name", "type_of_registration", "registration_number", "registration_status")
-            VALUES (#{registrationStatus}, #{legalAddress}, #{residentialAddress}, #{phoneNumber}, #{legalEntityName}, #{typeOfRegistration}, #{registrationNumber}, #{registrationStatus})
+            INSERT INTO users.registrations ("legal_address", "residential_address",
+                                             "phone_number", "legal_entity_name",
+                                             "type_of_registration", "id", "registration_status",
+                                             "registration_date", "organization_id", "user_id")
+            VALUES (#{legalAddress}, #{residentialAddress}, #{phoneNumber}, #{legalEntityName},
+                    #{typeOfRegistration}, #{id}, #{registrationStatus}, #{registrationDate},
+                    #{organizationId}, #{userId})
     </insert>
 
     <select id="findPendingRegistrationByUserId" resultType="az.cybernet.usermanagement.entity.Registration">
         SELECT *
         FROM users.registrations
-        WHERE user_id = #{userId} AND registration_status = 'PENDING_APPROVAL'
+        WHERE user_id = #{userId} AND registration_status = 'WAITING_FOR_APPROVAL'
         ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <select id="findPendingRegistrationById" resultType="az.cybernet.usermanagement.entity.Registration">
+        SELECT *
+        FROM users.registrations
+        WHERE id = #{id} AND registration_status = 'WAITING_FOR_APPROVAL'
+        ORDER BY registration_date DESC
             LIMIT 1
     </select>
 
     <update id="updateStatus">
         UPDATE users.registrations
         SET
-            registration_status = #{status},
-            updated_at = now()
+            registration_status = #{status}
         WHERE id = #{registrationId}
     </update>
 </mapper>

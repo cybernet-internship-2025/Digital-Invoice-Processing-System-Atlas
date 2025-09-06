@@ -3,6 +3,7 @@ package az.cybernet.usermanagement.service.impl;
 import az.cybernet.usermanagement.dto.event.UserApprovedEvent;
 import az.cybernet.usermanagement.dto.request.ApproveUserRequest;
 import az.cybernet.usermanagement.dto.response.ApproveUserResponse;
+import az.cybernet.usermanagement.entity.GovernmentTaxOrganization;
 import az.cybernet.usermanagement.entity.Registration;
 import az.cybernet.usermanagement.entity.User;
 import az.cybernet.usermanagement.entity.UserDetails;
@@ -10,6 +11,7 @@ import az.cybernet.usermanagement.enums.RegistrationStatus;
 import az.cybernet.usermanagement.exception.RegistrationNotFoundException;
 import az.cybernet.usermanagement.exception.UserNotFoundException;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
+import az.cybernet.usermanagement.mapper.TaxOrganizationMapper;
 import az.cybernet.usermanagement.mapper.UserDetailsMapper;
 import az.cybernet.usermanagement.mapper.UserMapper;
 import az.cybernet.usermanagement.mapstruct.UserDetailsMapstruct;
@@ -30,13 +32,13 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
 
     private final RegistrationMapper registrationMapper;
     private final UserMapper userMapper;
+    private final TaxOrganizationMapper organizationMapper;
     private final UserDetailsMapstruct userDetailsMapstruct;
     private final NotificationProducerService notificationProducerService;
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_USER_ID_GENERATION_ATTEMPTS = 10;
     private static final DateTimeFormatter PASSWORD_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private static final String ORGANIZATION_CODE = "10";// placeholder
     private final UserDetailsMapper userDetailsMapper;
 
     @Override
@@ -45,8 +47,9 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
         User user = userMapper.findById(request.getUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found for approval: " + request.getUserId()));
 
-        Registration registration = registrationMapper.findPendingRegistrationByUserId(user.getId())
-                .orElseThrow(() -> new RegistrationNotFoundException("No pending registration found for user: " + user.getId()));
+        Registration registration = registrationMapper.findPendingRegistrationById(request.getId()).orElseThrow(
+                (() -> new RegistrationNotFoundException("Registration not found for approval: " + request.getId()))
+        );
 
         LocalDate dob = request.getDateOfBirth();
         if (dob == null) {
@@ -60,10 +63,9 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
         String hashedPassword = passwordEncoder.encode(rawPassword);
 
         user.setTaxId(taxId);
-        user.setName(registration.getLegalEntityName());
         user.setPassword(hashedPassword);
 
-        userMapper.updateUser(user);
+        userMapper.updateTaxAndPassword(user.getId(), taxId, hashedPassword);
         registrationMapper.updateStatus(registration.getId(), RegistrationStatus.APPROVED);
 
         UserDetails userDetails = userDetailsMapstruct.userToUserDetails(user, registration);
@@ -94,24 +96,24 @@ public class RegistrationApprovalServiceImpl implements RegistrationApprovalServ
             throw new IllegalStateException("Cannot generate VOEN. RegistrationType is missing for registration: " + registration.getId());
         }
 
+        GovernmentTaxOrganization org = organizationMapper.findOrganizationById(registration.getOrganizationId())
+                .orElseThrow(() -> new IllegalStateException("Organization not found: " + registration.getOrganizationId()));
+
+       String organizationCode = String.format("%02d", org.getCode());
         long randomPart = ThreadLocalRandom.current().nextLong(1_000_000, 10_000_000);
 
         String typeSuffix = switch (registration.getTypeOfRegistration()) {
             case INDIVIDUAL -> "2";
             case LEGAL_ENTITY -> "1";
         };
-
-        String organizationCode = registration.getOrganizationId().toString();
         return organizationCode + randomPart + typeSuffix;
     }
 
     private String generateUniqueUserId() {
         for (int i = 0; i < MAX_USER_ID_GENERATION_ATTEMPTS; i++) {
             String potentialId = String.format("%06d", ThreadLocalRandom.current().nextInt(100_000, 1_000_000));
-            if (userMapper.findByUserId(potentialId).isEmpty()) {
                 return potentialId;
             }
-        }
         throw new RuntimeException("Failed to generate a unique User ID after " + MAX_USER_ID_GENERATION_ATTEMPTS + " attempts.");
     }
 }

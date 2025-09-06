@@ -18,6 +18,8 @@ public class User {
     String taxId;
     String password;
     Boolean approved;
-
     List<Role> roles;
+
+   // Boolean approved;
+
 }
