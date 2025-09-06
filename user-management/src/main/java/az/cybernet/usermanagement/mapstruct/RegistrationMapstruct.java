@@ -14,13 +14,17 @@ public interface RegistrationMapstruct {
 
     @Mapping(target = "registrationStatus", constant = "WAITING_FOR_APPROVAL")
     @Mapping(target = "typeOfRegistration", constant = "INDIVIDUAL")
-    @Mapping(target = "registrationNumber", expression = "java(java.util.UUID.randomUUID().toString())")
+    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "registrationDate", expression = "java(new java.sql.Timestamp(System.currentTimeMillis()))")
+    @Mapping(target = "organizationId", source = "organizationId")
     Registration toIndividualRegistration(IndividualRegistrationRequest request);
 
 
     @Mapping(target = "registrationStatus", constant = "WAITING_FOR_APPROVAL")
     @Mapping(target = "typeOfRegistration", constant = "LEGAL_ENTITY")
-    @Mapping(target = "registrationNumber", expression = "java(java.util.UUID.randomUUID().toString())")
+    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "registrationDate", expression = "java(new java.sql.Timestamp(System.currentTimeMillis()))")
+    @Mapping(target = "organizationId", source = "organizationId")
     Registration toLegalEntityRegistration(LegalEntityRegistrationRequest request);
 
 }

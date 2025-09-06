@@ -16,5 +16,5 @@ public class User {
     String name;
     String taxId;
     String password;
-    Boolean approved;
+   // Boolean approved;
 }

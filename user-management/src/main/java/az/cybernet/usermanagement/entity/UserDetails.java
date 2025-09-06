@@ -8,7 +8,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)

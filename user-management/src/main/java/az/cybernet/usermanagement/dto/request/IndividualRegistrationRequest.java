@@ -25,4 +25,8 @@ public class IndividualRegistrationRequest {
     @NotNull
     @Pattern(regexp = "^(?:\\+994|994)(?:50|51|55|60|70|77|99)\\d{7}$")
     String phoneNumber;
+
+    @NotNull
+    UUID organizationId;
+
 }

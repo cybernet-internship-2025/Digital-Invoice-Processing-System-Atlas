@@ -14,6 +14,10 @@
         SELECT * FROM users.users WHERE id = #{id}
     </select>
 
+    <select id="findByUserId" parameterType="String" resultType="az.cybernet.usermanagement.entity.User">
+        SELECT * FROM users.users WHERE user_id = #{userId}
+    </select>
+
     <select id="findByTaxId" parameterType="String" resultType="az.cybernet.usermanagement.entity.User">
         SELECT * FROM users.users WHERE tax_id = #{taxId}
     </select>
@@ -22,12 +26,13 @@
         SELECT * FROM users.users
     </select>
 
-    <update id="updateUser" parameterType="az.cybernet.usermanagement.entity.User">
-        UPDATE users.users
-        SET tax_id = #{taxId},
-            user_id = #{userId},
-            password = #{password},
-            approved = #{approved}
-        WHERE id = #{id}
+
+
+    <update id="updateTaxAndPassword">
+        update users.users
+        set tax_id = #{taxId},
+            password = #{password}
+        where id = #{id}
     </update>
+
 </mapper>
