@@ -1,4 +1,4 @@
-package az.cybernet.usermanagement.config;
+package az.cybernet.authstarter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,21 +10,26 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final String secret;
 
-    @Value("${jwt.expiration}")
-    private long expiration;
+    private final long expiration;
 
-    public String generateToken(String pin, String phoneNumber) {
+    public JwtService() {
+        this.secret = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+        this.expiration = 3600000;
+    }
+
+    public String generateToken(String pin, String phoneNumber, List<String> roles) {
         return Jwts.builder()
-                .setSubject(pin)
-                .claim("phone", phoneNumber)
+                .setSubject(phoneNumber)
+                .claim("pin", pin)
+                .claim("roles", roles)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -32,6 +37,15 @@ public class JwtService {
     }
 
     public String extractPin(String token) {
+        return extractClaim(token, claims -> claims.get("pin", String.class));
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> claims.get("roles", List.class));
+    }
+
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
