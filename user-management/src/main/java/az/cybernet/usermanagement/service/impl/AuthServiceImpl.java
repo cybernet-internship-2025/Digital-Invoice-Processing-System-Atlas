@@ -1,6 +1,6 @@
 package az.cybernet.usermanagement.service.impl;
 
-import az.cybernet.usermanagement.config.JwtService;
+import az.cybernet.authstarter.JwtService;
 import az.cybernet.usermanagement.exception.InvalidOtpException;
 import az.cybernet.usermanagement.exception.PhoneNumberNotLinkedException;
 import az.cybernet.usermanagement.service.AuthService;
@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String verifyLoginOTP(String pin, String phoneNumber, String otp) {
         if (otpService.verifyOTP(phoneNumber, otp)) {
-            return jwtService.generateToken(pin, phoneNumber);
+            return jwtService.generateToken(pin, phoneNumber, List.of("ADMIN"));
         }
 
         throw new InvalidOtpException("Invalid or expired OTP");
