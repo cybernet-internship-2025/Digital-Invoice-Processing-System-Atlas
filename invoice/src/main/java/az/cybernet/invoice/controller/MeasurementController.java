@@ -3,6 +3,7 @@ package az.cybernet.invoice.controller;
 import az.cybernet.invoice.dto.request.MeasurementRequest;
 import az.cybernet.invoice.dto.response.MeasurementResponse;
 import az.cybernet.invoice.service.MeasurementService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/measurements")
+@SecurityRequirement(name = "bearerAuth")
 public class MeasurementController {
 
     private final MeasurementService service;

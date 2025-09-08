@@ -5,6 +5,7 @@ import az.cybernet.invoice.service.InvoiceBatchOperationsService;
 import az.cybernet.invoice.dto.response.InvoiceDetailResponse;
 import az.cybernet.invoice.dto.response.InvoiceResponse;
 import az.cybernet.invoice.service.InvoiceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/v1/invoices")
 @Validated
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class InvoiceController {
 
     private final InvoiceService service;
