@@ -8,7 +8,6 @@
         <groupId>az.cybernet</groupId>
         <artifactId>DigitalInvoiceProcessingSystem</artifactId>
         <version>0.0.1</version>
-
     </parent>
 
     <artifactId>invoice</artifactId>
@@ -76,6 +75,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
             <version>7.0.0-M7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>az.cybernet</groupId>
+            <artifactId>auth-starter</artifactId>
+            <version>0.0.1</version>
         </dependency>
     </dependencies>
 
