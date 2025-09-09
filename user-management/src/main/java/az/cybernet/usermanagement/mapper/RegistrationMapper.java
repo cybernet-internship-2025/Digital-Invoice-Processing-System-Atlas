@@ -17,4 +17,6 @@ public interface RegistrationMapper {
     Optional<Registration> findPendingRegistrationById(@Param("id") UUID id);
 
     void updateStatus(@Param("registrationId") UUID registrationId, @Param("status") RegistrationStatus status);
+
+    boolean existsByUserId(@Param("userId") UUID userId);
 }
