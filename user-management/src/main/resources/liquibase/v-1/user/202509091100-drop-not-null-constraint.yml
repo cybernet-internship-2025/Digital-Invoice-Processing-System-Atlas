@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202509091100
+      author: GoychakAhmadova
+      changes:
+        - dropNotNullConstraint:
+            tableName: users
+            schemaName: users
+            columnName: password
+            columnDataType: VARCHAR(255)
