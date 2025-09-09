@@ -12,13 +12,6 @@ spring:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
-  cloud:
-    openfeign:
-      client:
-        config:
-          integration:
-            url: http://integration-service:8080
-
   kafka:
     bootstrap-servers: kafka-broker:9092 # Use 'localhost:9092' for local dev without Docker
     consumer:
@@ -43,4 +36,4 @@ springdoc:
 
 jwt:
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration: 120000
+  expiration: 900000

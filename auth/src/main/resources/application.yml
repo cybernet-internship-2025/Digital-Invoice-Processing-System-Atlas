@@ -1,0 +1,23 @@
+server:
+  servlet:
+    context-path: /api/auth
+
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          integration:
+            url: http://integration-service:8080
+
+          user-management:
+            url: http://user-service:8080
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 900000

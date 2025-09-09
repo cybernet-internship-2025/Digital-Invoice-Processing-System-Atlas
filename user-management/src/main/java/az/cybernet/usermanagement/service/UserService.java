@@ -1,6 +1,7 @@
 package az.cybernet.usermanagement.service;
 
 import az.cybernet.usermanagement.dto.request.UserRequest;
+import az.cybernet.usermanagement.dto.response.UserInfoResponse;
 import az.cybernet.usermanagement.dto.response.UserResponse;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface UserService {
     UserResponse getUserById(UUID id);
     List<UserResponse> getAllUsers();
     UserResponse getUserByTaxId(String taxId);
+    UserInfoResponse getUserByName(String username);
 }

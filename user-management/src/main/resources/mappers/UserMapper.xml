@@ -35,4 +35,22 @@
         where id = #{id}
     </update>
 
+    <select id="findByUsername" parameterType="string" resultType="az.cybernet.usermanagement.entity.User">
+        SELECT
+            u.id, u.name, u.password,
+            r.id role_id, r.name role_name
+        FROM users.users u
+                 LEFT JOIN users.user_roles ur ON u.id = ur.user_id
+                 LEFT JOIN users.roles r ON ur.user_id = r.id
+        WHERE u.name = #{name}
+    </select>
+
+    <select id="getRolesByUserId" parameterType="java.util.UUID" resultType="az.cybernet.usermanagement.entity.Role">
+        SELECT
+            r.id, r.name
+        FROM users.role r
+                 INNER JOIN users.user_roles ur ON r.id = ur.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
+
 </mapper>
