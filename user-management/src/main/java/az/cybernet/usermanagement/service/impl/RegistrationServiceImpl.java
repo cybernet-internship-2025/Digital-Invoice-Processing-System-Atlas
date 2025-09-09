@@ -5,6 +5,7 @@ import az.cybernet.usermanagement.dto.request.LegalEntityRegistrationRequest;
 import az.cybernet.usermanagement.dto.response.IndividualRegistrationResponse;
 import az.cybernet.usermanagement.dto.response.LegalEntityRegistrationResponse;
 import az.cybernet.usermanagement.entity.Registration;
+import az.cybernet.usermanagement.exception.RegistrationAlreadyExistsException;
 import az.cybernet.usermanagement.mapper.RegistrationMapper;
 import az.cybernet.usermanagement.mapstruct.RegistrationMapstruct;
 import az.cybernet.usermanagement.service.RegistrationService;
@@ -19,8 +20,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public IndividualRegistrationResponse registerIndividual(IndividualRegistrationRequest request) {
-        Registration registration = mapstruct.toIndividualRegistration(request);
 
+        if (registrationMapper.existsByUserId(request.getUserId())) {
+            throw new RegistrationAlreadyExistsException("User " + request.getUserId() + " already has a registration");
+        }
+
+        Registration registration = mapstruct.toIndividualRegistration(request);
         registrationMapper.insertRegistration(registration);
 
         IndividualRegistrationResponse response = new IndividualRegistrationResponse();
@@ -31,8 +36,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public LegalEntityRegistrationResponse registerLegalEntity(LegalEntityRegistrationRequest request) {
-        Registration registration = mapstruct.toLegalEntityRegistration(request);
 
+        Registration registration = mapstruct.toLegalEntityRegistration(request);
         registrationMapper.insertRegistration(registration);
 
         LegalEntityRegistrationResponse response = new LegalEntityRegistrationResponse();

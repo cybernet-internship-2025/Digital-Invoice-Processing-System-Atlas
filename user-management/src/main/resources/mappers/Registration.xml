@@ -36,5 +36,12 @@
             registration_status = #{status}
         WHERE id = #{registrationId}
     </update>
+
+    <select id="existsByUserId" parameterType="java.util.UUID" resultType="boolean">
+        SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+        FROM users.registrations
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>
 
