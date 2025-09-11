@@ -26,7 +26,7 @@ public class OTPServiceImpl implements OTPService {
                         5,
                         TimeUnit.MINUTES);
 
-        return integrationService.sendSMS(phone, otp);
+        return integrationService.sendTG(phone, otp);
     }
 
     @Override

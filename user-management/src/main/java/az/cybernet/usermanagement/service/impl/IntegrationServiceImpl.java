@@ -1,7 +1,7 @@
 package az.cybernet.usermanagement.service.impl;
 
 import az.cybernet.usermanagement.client.IntegrationClient;
-import az.cybernet.usermanagement.dto.request.SMSRequest;
+import az.cybernet.usermanagement.dto.request.MessageRequest;
 import az.cybernet.usermanagement.dto.response.IamasDto;
 import az.cybernet.usermanagement.exception.FailedToSendSMSException;
 import az.cybernet.usermanagement.exception.PinDataNotFoundException;
@@ -25,7 +25,13 @@ public class IntegrationServiceImpl implements IntegrationService {
 
     @Override
     public String sendSMS(String phone, String message) {
-        return Optional.ofNullable(integrationClient.sendSMS(new SMSRequest(phone, message)))
+        return Optional.ofNullable(integrationClient.sendSMS(new MessageRequest(phone, message)))
+                .orElseThrow(() -> new FailedToSendSMSException("Failed to send sms to " + phone));
+    }
+
+    @Override
+    public String sendTG(String phone, String message) {
+        return Optional.ofNullable(integrationClient.sendTG(new MessageRequest(phone, message)))
                 .orElseThrow(() -> new FailedToSendSMSException("Failed to send sms to " + phone));
     }
 }

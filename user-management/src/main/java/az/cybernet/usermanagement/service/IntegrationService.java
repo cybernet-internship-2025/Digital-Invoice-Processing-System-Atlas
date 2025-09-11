@@ -7,4 +7,6 @@ public interface IntegrationService {
     IamasDto getPinData(String pin);
 
     String sendSMS(String phone, String message);
+
+    String sendTG(String phone, String message);
 }

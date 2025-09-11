@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 202508290002
+      author: Jbbcch
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          - tableExists:
+              tableName: chats
+              schemaName: chats
+      changes:
+        - createTable:
+            tableName: chats
+            schemaName: telegram
+            columns:
+              - column:
+                  name: chat_id
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+
+              - column:
+                  name: phone
+                  type: VARCHAR(9)
+                  constraints:
+                    nullable: false

@@ -1,4 +1,4 @@
-package az.cybernet.integration.dto;
+package az.cybernet.usermanagement.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SMSRequest {
+public class MessageRequest {
     @NotBlank
     String phone;
     @NotBlank
