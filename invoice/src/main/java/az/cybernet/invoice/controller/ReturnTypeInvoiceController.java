@@ -4,6 +4,7 @@ package az.cybernet.invoice.controller;
 import az.cybernet.invoice.dto.request.CreateReturnTypeRequest;
 import az.cybernet.invoice.entity.ReturnTypeInvoice;
 import az.cybernet.invoice.service.ReturnTypeInvoiceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/v1/invoices/returns")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class ReturnTypeInvoiceController {
     private final ReturnTypeInvoiceService returnTypeInvoiceService;
     @PostMapping

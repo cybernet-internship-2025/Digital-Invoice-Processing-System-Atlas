@@ -3,6 +3,7 @@ package az.cybernet.usermanagement.controller;
 import az.cybernet.usermanagement.dto.request.LoginReq;
 import az.cybernet.usermanagement.dto.request.OtpVerificationRequest;
 import az.cybernet.usermanagement.service.AuthService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/auth")
+@SecurityRequirement(name = "bearerAuth")
 public class AuthController {
     private final AuthService authService;
 
